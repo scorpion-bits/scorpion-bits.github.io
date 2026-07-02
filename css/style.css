@@ -22,7 +22,7 @@
 
 html {
     scroll-behavior: smooth;
-    scroll-snap-type: y proximity;
+    scroll-snap-type: y mandatory;
 }
 
 #inicio,
@@ -30,7 +30,14 @@ html {
 #sobre,
 #portfolio,
 #contato {
-    scroll-margin-top: calc(var(--header-height) + 20px);
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: calc(var(--header-height) + 20px) 24px 40px;
     scroll-snap-align: start;
     scroll-snap-stop: always;
 }
@@ -296,11 +303,7 @@ a {
 
 .hero-section {
     max-width: 800px;
-    margin: 80px auto 40px;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 100%;
 }
 
 .hero-title {
@@ -333,10 +336,8 @@ a {
 }
 
 .tech-stack-section {
-    width: 100%;
     max-width: 800px;
-    margin: 40px auto 60px;
-    padding: 0 20px;
+    width: 100%;
 }
 
 .section-title-sm {
@@ -405,7 +406,6 @@ a {
     background-color: rgba(13, 22, 38, 0.4);
     border-top: 1px solid var(--border-subtle);
     border-bottom: 1px solid var(--border-subtle);
-    padding: 80px 0;
     z-index: 1; 
 }
 
