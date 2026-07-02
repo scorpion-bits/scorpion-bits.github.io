@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nós somos a Scorpion Bits, um estúdio de desenvolvimento de jogos indie independente focado em mecânicas polidas e direções de arte únicas.">
+    <title>Scorpion Bits - Home</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="floating-background" id="floating-background"></div>
+
+    <div class="floating-foreground" id="floating-foreground"></div>
+
+    <header class="site-header">
+        <nav class="navbar" id="main-navbar">
+
+            <a href="#inicio" class="logo-container" id="nav-logo-link">
+                <img src="assets/scorpion_bits_logo_stamp.png" alt="Scorpion Bits" class="logo" id="nav-logo-img">
+            </a>
+
+            <button class="menu-toggle" id="menu-toggle" aria-label="Abrir Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <ul class="nav-menu" id="nav-menu-list">
+                <li><a href="#inicio" class="nav-link" id="link-home">Home</a></li>
+                <li><a href="#sobre" class="nav-link" id="link-sobre">Sobre</a></li>
+                <li><a href="#portfolio" class="nav-link" id="link-portfolio">Portfólio</a></li>
+                <li><a href="#contato" class="nav-link" id="link-contato">Contato</a></li>
+            </ul>
+
+            <div class="nav-actions" id="nav-actions-container">
+                <a href="https://github.com/scorpion-bits" target="_blank" class="social-link" id="link-github" title="GitHub">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+                <a href="https://instagram.com/scorpionbits_" target="_blank" class="social-link" id="link-instagram" title="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="social-link" id="link-linkedin" title="LinkedIn">
+                    <i class="fa-brands fa-linkedin"></i>
+                </a>
+                <a href="https://itch.io" target="_blank" class="social-link" id="link-itchio" title="Itch.io">
+                    <i class="fa-brands fa-itch-io"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="content-wrapper" id="main-content">
+
+        <section class="hero-section" id="inicio">
+
+            <img src="assets/logo.png" alt="Scorpion Bits Logo" class="hero-logo">
+            <h1 class="hero-title">
+                Transformando ideias em <span class="gradient-text">experiências jogáveis</span>. 👾
+            </h1>
+            <p class="hero-description">
+                Nós somos a <strong>Scorpion Bits</strong>, um estúdio de desenvolvimento de jogos indie independente. Nosso foco é criar jogos com mecânicas polidas, <em>game feel</em> responsivo e direções de arte únicas.
+            </p>
+            <div class="hero-actions">
+                <a href="#sobre" class="btn btn-primary" id="hero-cta-primary">Conhecer a Equipe</a>
+                <a href="https://itch.io" target="_blank" class="btn btn-secondary" id="hero-cta-secondary">Nossos Jogos (Itch.io)</a>
+            </div>
+        </section>
+
+        <section class="tech-stack-section reveal-section" style="padding-top: 80px;">
+            <h2 class="section-title" style="font-size: 2.2rem; margin-bottom: 12px;">Ferramentas Utilizadas</h2>
+            <p class="section-description" style="margin-bottom: 40px;">
+                Nossa linha de produção combina as melhores tecnologias do mercado para garantir mecânicas robustas, visual marcante e sonoridade polida:
+            </p>
+
+            <div class="tech-grid">
+
+                <div class="tech-item" title="Godot Engine">
+                    <img src="https://cdn.simpleicons.org/godotengine/478CBF" alt="Godot" />
+                    <span>Godot</span>
+                </div>
+
+                <div class="tech-item" title="Aseprite">
+                    <img src="https://cdn.simpleicons.org/aseprite/7D929E" alt="Aseprite" />
+                    <span>Aseprite</span>
+                </div>
+
+                <div class="tech-item" title="Adobe Photoshop">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/photoshop/photoshop-plain.svg" alt="Photoshop" />
+                    <span>Photoshop</span>
+                </div>
+
+                <div class="tech-item" title="Adobe Illustrator">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/illustrator/illustrator-plain.svg" alt="Illustrator" />
+                    <span>Illustrator</span>
+                </div>
+
+                <div class="tech-item" title="Adobe After Effects">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/aftereffects/aftereffects-plain.svg" alt="After Effects" />
+                    <span>After Effects</span>
+                </div>
+
+                <div class="tech-item" title="FL Studio">
+                    <img src="https://img.icons8.com/ios11/512/40C057/fl-studio.png" alt="FL Studio" />
+                    <span>FL Studio</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section reveal-section" id="sobre" style="background-color: transparent; border: none; width: 100%; padding: 100px 0;">
+            <div class="about-container">
+                <h2 class="section-title">Nossa Equipe</h2>
+                <p class="section-description" style="margin-bottom: 40px;">
+                    Estamos trabalhando duro para dar vida aos nossos primeiros protótipos e construir a nossa identidade na indústria de games. Conheça as mentes por trás da Scorpion Bits:
+                </p>
+
+                <div class="carousel-container">
+                    <button class="carousel-control prev-btn" id="prev-btn" aria-label="Anterior">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <div class="carousel-track-container">
+                        <ul class="carousel-track" id="carousel-track">
+
+                            <li class="carousel-slide">
+                                <div class="team-card">
+                                    <div class="avatar-container float-1">
+                                        <img src="https://github.com/bagimoura.png" alt="Gabriela Moura" class="avatar-img" />
+                                    </div>
+                                    <h3 class="member-name">Gabriela Moura</h3>
+                                    <p class="member-username">@bagimoura</p>
+                                    <a href="https://github.com/bagimoura" target="_blank" class="github-profile-btn">
+                                        <i class="fa-brands fa-github"></i> GitHub
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="carousel-slide">
+                                <div class="team-card">
+                                    <div class="avatar-container float-2">
+                                        <img src="https://github.com/thalesmiguelhajes.png" alt="Thales Hajes" class="avatar-img" />
+                                    </div>
+                                    <h3 class="member-name">Thales Hajes</h3>
+                                    <p class="member-username">@thalesmiguelhajes</p>
+                                    <a href="https://github.com/thalesmiguelhajes" target="_blank" class="github-profile-btn">
+                                        <i class="fa-brands fa-github"></i> GitHub
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="carousel-slide">
+                                <div class="team-card">
+                                    <div class="avatar-container float-3">
+                                        <img src="https://github.com/maekawa1315.png" alt="Ana Laura Maekawa" class="avatar-img" />
+                                    </div>
+                                    <h3 class="member-name">Ana Laura Maekawa</h3>
+                                    <p class="member-username">@maekawa1315</p>
+                                    <a href="https://github.com/maekawa1315" target="_blank" class="github-profile-btn">
+                                        <i class="fa-brands fa-github"></i> GitHub
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="carousel-slide">
+                                <div class="team-card">
+                                    <div class="avatar-container float-4">
+                                        <img src="https://github.com/gisotra.png" alt="Giovane Sotratto" class="avatar-img" />
+                                    </div>
+                                    <h3 class="member-name">Giovane Sotratto</h3>
+                                    <p class="member-username">@gisotra</p>
+                                    <a href="https://github.com/gisotra" target="_blank" class="github-profile-btn">
+                                        <i class="fa-brands fa-github"></i> GitHub
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="carousel-slide">
+                                <div class="team-card">
+                                    <div class="avatar-container float-1">
+                                        <img src="https://github.com/neverevis.png" alt="Milan Bahrami" class="avatar-img" />
+                                    </div>
+                                    <h3 class="member-name">Milan Bahrami</h3>
+                                    <p class="member-username">@neverevis</p>
+                                    <a href="https://github.com/neverevis" target="_blank" class="github-profile-btn">
+                                        <i class="fa-brands fa-github"></i> GitHub
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="carousel-slide">
+                                <div class="team-card">
+                                    <div class="avatar-container float-2">
+                                        <img src="https://github.com/gidessu.png" alt="Christian Amancio" class="avatar-img" />
+                                    </div>
+                                    <h3 class="member-name">Christian Amancio</h3>
+                                    <p class="member-username">@gidessu</p>
+                                    <a href="https://github.com/gidessu" target="_blank" class="github-profile-btn">
+                                        <i class="fa-brands fa-github"></i> GitHub
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="carousel-control next-btn" id="next-btn" aria-label="Próximo">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-section reveal-section" id="portfolio" style="padding: 100px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+            <div class="team-card" style="max-width: 600px; padding: 60px 40px; text-align: center; margin: 0 20px;">
+                <div style="font-size: 4rem; margin-bottom: 24px; color: var(--primary-color); filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.4));">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <h2 class="gradient-text" style="font-size: 2.2rem; font-weight: 700; margin-bottom: 16px;">
+                    Portfólio em Construção
+                </h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 0;">
+                    Estamos desenvolvendo protótipos de jogos indie focados em mecânicas polidas e direções de arte únicas. Volte em breve para conferir nossos lançamentos!
+                </p>
+            </div>
+        </section>
+
+        <section class="contact-section reveal-section" id="contato" style="padding: 100px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+            <div class="team-card" style="max-width: 600px; padding: 60px 40px; text-align: center; margin: 0 20px;">
+                <div style="font-size: 4rem; margin-bottom: 24px; color: var(--primary-color); filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.4));">
+                    <i class="fa-regular fa-envelope"></i>
+                </div>
+                <h2 class="gradient-text" style="font-size: 2.2rem; font-weight: 700; margin-bottom: 16px;">
+                    Entre em Contato
+                </h2>
+                <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; margin-bottom: 32px;">
+                    Tem alguma ideia de jogo, quer fazer uma parceria ou apenas bater um papo? Escreva para nós pelo e-mail oficial:
+                </p>
+
+                <a href="mailto:scorpionbits.contato@gmail.com" class="github-profile-btn" style="font-size: 1.1rem; padding: 12px 28px; margin-bottom: 45px; background-color: rgba(0, 210, 255, 0.05); border-color: rgba(0, 210, 255, 0.2); gap: 10px; display: inline-flex;">
+                    <i class="fa-solid fa-paper-plane" style="color: var(--primary-color);"></i>
+                    scorpionbits.contato@gmail.com
+                </a>
+
+                <h3 style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;">
+                    Nossas Redes Sociais
+                </h3>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://github.com/scorpion-bits" target="_blank" class="social-link" id="contact-github" title="GitHub" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://instagram.com/scorpionbits_" target="_blank" class="social-link" id="contact-instagram" title="Instagram" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" class="social-link" id="contact-linkedin" title="LinkedIn" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                    <a href="https://itch.io" target="_blank" class="social-link" id="contact-itchio" title="Itch.io" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                        <i class="fa-brands fa-itch-io"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>
