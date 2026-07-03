@@ -285,14 +285,29 @@ document.addEventListener("DOMContentLoaded", () => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 const id = entry.target.getAttribute("id");
+                
+                let navId = id;
+                if (id === 'ferramentas' || id === 'equipe') {
+                    navId = 'sobre';
+                }
 
                 navLinks.forEach((link) => {
                     link.classList.remove("active");
                     const href = link.getAttribute("href");
-                    if (href && (href === `#${id}` || href.endsWith(`#${id}`))) {
+                    if (href && (href === `#${navId}` || href.endsWith(`#${navId}`))) {
                         link.classList.add("active");
                     }
                 });
+
+                const dots = document.querySelectorAll(".scroll-dot");
+                if (dots.length > 0) {
+                    dots.forEach(dot => {
+                        dot.classList.remove("active");
+                        if (dot.getAttribute("data-target") === id) {
+                            dot.classList.add("active");
+                        }
+                    });
+                }
             }
         });
     }, scrollSpyOptions);
