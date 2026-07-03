@@ -366,9 +366,16 @@ document.addEventListener("DOMContentLoaded", () => {
         element.classList.add("pixel-started");
 
         const chars = element.querySelectorAll(".glitch-char");
+        if (chars.length === 0) return;
+        
+        let completedCount = 0;
+
         chars.forEach((span, index) => {
             const correctChar = span.getAttribute("data-char");
-            if (!correctChar) return;
+            if (!correctChar) {
+                completedCount++;
+                return;
+            }
 
             // Start hidden
             span.style.opacity = "0";
@@ -399,6 +406,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 setTimeout(() => {
                     span.textContent = correctChar;
                     span.classList.add("done");
+                    
+                    completedCount++;
+                    if (completedCount === chars.length) {
+                        element.classList.add("pixel-done");
+                        // Force WebKit / Safari layout recalculation to repaint the background-clip: text gradient
+                        const currentDisplay = window.getComputedStyle(element).display;
+                        element.style.display = currentDisplay === "inline" ? "inline-block" : "inline";
+                        element.offsetHeight; // trigger reflow
+                        element.style.display = ""; // restore CSS styling
+                    }
                 }, 240);
                 
             }, delay);
