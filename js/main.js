@@ -344,14 +344,18 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const pixelCount = 24;
         const colors = ["#ff0055", "#00ffcc", "#0066ff", "#ff00c1", "#00d2ff"];
+        const segmentWidth = 100 / pixelCount;
         
         for (let i = 0; i < pixelCount; i++) {
             const pixel = document.createElement("div");
             pixel.className = "navbar-pixel";
             
-            // Random positions within the header
-            const top = Math.random() * 70 + 15; // Between 15% and 85%
-            const left = Math.random() * 96 + 2;  // Between 2% and 98%
+            // Uniform horizontal distribution with a slight random jitter
+            const jitter = (Math.random() - 0.5) * (segmentWidth * 0.7);
+            const left = (i * segmentWidth) + (segmentWidth / 2) + jitter;
+            
+            // Random vertical position within the header boundaries
+            const top = Math.random() * 60 + 20; // Between 20% and 80%
             
             pixel.style.top = `${top}%`;
             pixel.style.left = `${left}%`;

@@ -10,7 +10,7 @@
     --primary-gradient: linear-gradient(135deg, #00ffcc 0%, #0077ff 50%, #ff007f 100%); 
     --primary-gradient-hover: linear-gradient(135deg, #00ffaa 0%, #0055ff 50%, #ff0055 100%);
     --border-subtle: rgba(255, 255, 255, 0.08);
-    --glass-bg: rgba(7, 14, 23, 0.4);
+    --glass-bg: rgba(7, 14, 23, 0.15);
     --glass-blur: blur(16px);
 
     --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
