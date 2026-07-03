@@ -410,6 +410,7 @@ a {
 }
 
 .about-container {
+    width: 100%;
     max-width: var(--max-width);
     margin: 0 auto;
     padding: 0 24px;
@@ -438,6 +439,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
     max-width: 1060px;
     margin: 0 auto;
     padding: 0 50px;
@@ -610,14 +612,84 @@ a {
 .reveal-section {
     opacity: 0;
     filter: blur(5px);
-    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
-                filter 1s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, filter;
+    transform: translateY(15px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, filter, transform;
 }
 
 .reveal-section.revealed {
     opacity: 1;
     filter: blur(0);
+    transform: translateY(0);
+}
+
+/* Glitch/Pixel Text Animation */
+.glitch-char {
+    display: inline;
+    opacity: 0;
+    will-change: opacity, filter;
+}
+
+/* While pixelating / resolving */
+.glitch-char:not(.done) {
+    display: inline-block;
+    color: var(--primary-color) !important;
+    -webkit-text-fill-color: var(--primary-color) !important;
+    text-shadow: 0 0 8px var(--primary-color);
+    filter: drop-shadow(0 0 2px var(--primary-color));
+}
+
+/* Once fully resolved */
+.glitch-char.done {
+    display: inline !important;
+    opacity: 1 !important;
+    filter: none !important;
+    text-shadow: none !important;
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+}
+
+.card-large {
+    max-width: 600px;
+    padding: 60px 40px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.email-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 28px;
+    margin-bottom: 45px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    background-color: rgba(0, 210, 255, 0.05);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 30px;
+    transition: var(--transition-smooth);
+    max-width: 100%;
+    word-break: break-all;
+}
+
+.email-btn i {
+    color: var(--primary-color);
+}
+
+.email-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--bg-dark);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.email-btn:hover i {
+    color: var(--bg-dark);
 }
 
 @media (max-width: 900px) {
@@ -645,9 +717,58 @@ a {
     .section-title {
         font-size: 2rem;
     }
+    .card-large {
+        padding: 40px 20px;
+        margin: 0 16px;
+    }
+    .email-btn {
+        font-size: 0.85rem;
+        padding: 10px 16px;
+        margin-bottom: 30px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
 
 @media (max-width: 768px) {
+    :root {
+        --header-height: 70px;
+    }
+    
+    #inicio,
+    .tech-stack-section,
+    #sobre,
+    #portfolio,
+    #contato {
+        padding: calc(var(--header-height) + 15px) 16px 30px;
+    }
+
+    .logo {
+        height: 38px;
+    }
+
+    .avatar-container {
+        width: 85px;
+        height: 85px;
+        margin-bottom: 16px;
+    }
+
+    .team-card {
+        padding: 20px 16px;
+    }
+
+    .member-username {
+        margin-bottom: 12px;
+    }
+
+    .section-description {
+        margin-bottom: 20px;
+    }
+
+    .carousel-track {
+        padding: 10px 0;
+    }
+
     .menu-toggle {
         display: flex;
     }
