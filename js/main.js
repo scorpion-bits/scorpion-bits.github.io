@@ -192,26 +192,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (track && nextBtn && prevBtn) {
         let currentIndex = 0;
-
-        function getVisibleSlidesCount() {
-            const width = window.innerWidth;
-            if (width > 900) return 3;
-            if (width > 600) return 2;
-            return 1;
-        }
+        let activeTimeout;
+        const slides = Array.from(track.querySelectorAll(".carousel-slide"));
 
         function updateCarousel() {
-            const slides = track.querySelectorAll(".carousel-slide");
             if (slides.length === 0) return;
-
-            const slideWidth = slides[0].getBoundingClientRect().width;
-
-            const visibleCount = getVisibleSlidesCount();
-            const maxIndex = slides.length - visibleCount;
+            const maxIndex = slides.length - 1;
             if (currentIndex > maxIndex) currentIndex = maxIndex;
             if (currentIndex < 0) currentIndex = 0;
+            
+            clearTimeout(activeTimeout);
 
-            track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'active-done', 'prev', 'next', 'hidden-left', 'hidden-right');
+                
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else if (index === currentIndex - 1) {
+                    slide.classList.add('prev');
+                } else if (index === currentIndex + 1) {
+                    slide.classList.add('next');
+                } else if (index < currentIndex - 1) {
+                    slide.classList.add('hidden-left');
+                } else if (index > currentIndex + 1) {
+                    slide.classList.add('hidden-right');
+                }
+            });
+
+            activeTimeout = setTimeout(() => {
+                if (slides[currentIndex]) {
+                    slides[currentIndex].classList.add('active-done');
+                }
+            }, 600); // Matches CSS transition duration
 
             prevBtn.style.opacity = currentIndex === 0 ? "0.3" : "1";
             prevBtn.style.pointerEvents = currentIndex === 0 ? "none" : "auto";
@@ -220,9 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         nextBtn.addEventListener("click", () => {
-            const visibleCount = getVisibleSlidesCount();
-            const maxIndex = track.querySelectorAll(".carousel-slide").length - visibleCount;
-            if (currentIndex < maxIndex) {
+            if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateCarousel();
             }
@@ -235,9 +245,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        window.addEventListener("resize", updateCarousel);
+        // Make side cards clickable
+        slides.forEach((slide, index) => {
+            slide.addEventListener("click", () => {
+                if (index !== currentIndex) {
+                    currentIndex = index;
+                    updateCarousel();
+                }
+            });
+        });
 
-        setTimeout(updateCarousel, 150);
+        setTimeout(updateCarousel, 50);
     }
 
     const menuToggle = document.getElementById("menu-toggle");
@@ -395,5 +413,51 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function createCardPixels() {
+        const cards = document.querySelectorAll(".about-section .team-card");
+        if (cards.length === 0) return;
+        
+        cards.forEach(card => {
+            const snakeLength = 15; // Length of each snake trail
+            const duration = 5; // 5 seconds for a full lap
+            const gap = 0.035; // Delay between each segment
+            
+            const cardOffset = Math.random() * duration; // Different offset per card
+            
+            // Create 2 snakes per card (starting on opposite sides)
+            for (let s = 0; s < 2; s++) {
+                const baseDelay = cardOffset + (s * (duration / 2)); 
+                
+                for (let i = 0; i < snakeLength; i++) {
+                    const pixel = document.createElement("div");
+                    pixel.className = "card-pixel";
+                    
+                    // The head of the snake is solid, the tail fades
+                    const opacity = 1 - (i / snakeLength); 
+                    pixel.style.opacity = opacity;
+                    
+                    // Sizing: sharp 8-bit squares
+                    const size = i === 0 ? 5 : 3.5; // Head is slightly bigger
+                    pixel.style.width = `${size}px`;
+                    pixel.style.height = `${size}px`;
+                    pixel.style.borderRadius = '0'; // Pixel art
+                    
+                    // Colors: Head is white, body is neon cyan
+                    pixel.style.backgroundColor = i === 0 ? "#ffffff" : "#00d2ff"; 
+                    pixel.style.boxShadow = `0 0 ${i === 0 ? 12 : 5}px #00d2ff`;
+                    
+                    // The head (i=0) needs the most negative delay to be at the front
+                    const offsetIndex = snakeLength - 1 - i; 
+                    const delay = -(baseDelay + (offsetIndex * gap));
+                    
+                    pixel.style.animation = `cardPixelSnake ${duration}s linear ${delay}s infinite`;
+                    
+                    card.appendChild(pixel);
+                }
+            }
+        });
+    }
+
     createHeaderPixels();
+    createCardPixels();
 });
