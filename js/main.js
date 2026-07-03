@@ -310,11 +310,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (entry.isIntersecting) {
                 entry.target.classList.add("revealed");
                 
-                // Trigger pixelate animation for titles inside this section!
+                // Trigger linear wipe animation for titles inside this section!
                 const titles = entry.target.querySelectorAll(".hero-title, .section-title, .portfolio-section h2, .contact-section h2, h1.gradient-text");
                 titles.forEach(title => {
                     title.classList.add("revealed");
-                    pixelateText(title);
                 });
                 
                 observer.unobserve(entry.target);
@@ -327,108 +326,55 @@ document.addEventListener("DOMContentLoaded", () => {
         revealObserver.observe(section);
     });
 
-    // Glitch/Pixel Text Reveal DOM Helper
-    function prepareGlitchText(element) {
-        let charIndex = 0;
-        
-        function traverse(node) {
-            if (node.nodeType === Node.TEXT_NODE) {
-                const text = node.textContent;
-                const chars = Array.from(text); // Correctly handles surrogate pairs (emojis)
-                const fragment = document.createDocumentFragment();
-                for (let i = 0; i < chars.length; i++) {
-                    const char = chars[i];
-                    if (char === " " || char === "\n" || char === "\r" || char === "\t") {
-                        fragment.appendChild(document.createTextNode(char));
-                    } else {
-                        const span = document.createElement("span");
-                        span.className = "glitch-char";
-                        span.textContent = char; // For layout spacing
-                        span.setAttribute("data-char", char); // Store final correct char
-                        span.style.setProperty("--char-index", charIndex);
-                        charIndex++;
-                        fragment.appendChild(span);
-                    }
-                }
-                node.parentNode.replaceChild(fragment, node);
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
-                const children = Array.from(node.childNodes);
-                children.forEach(child => traverse(child));
-            }
-        }
-        
-        traverse(element);
-    }
-
-    // Pixelate text reveal effect
-    function pixelateText(element) {
-        if (element.classList.contains("pixel-started")) return;
-        element.classList.add("pixel-started");
-
-        const chars = element.querySelectorAll(".glitch-char");
-        if (chars.length === 0) return;
-        
-        let completedCount = 0;
-
-        chars.forEach((span, index) => {
-            const correctChar = span.getAttribute("data-char");
-            if (!correctChar) {
-                completedCount++;
-                return;
-            }
-
-            // Start hidden
-            span.style.opacity = "0";
-            
-            const delay = index * 40; // 40ms stagger per letter
-            
-            setTimeout(() => {
-                // Step 1: Solid block
-                span.style.opacity = "1";
-                span.textContent = "█";
-                
-                // Step 2: Dense block
-                setTimeout(() => {
-                    span.textContent = "▓";
-                }, 60);
-                
-                // Step 3: Medium block
-                setTimeout(() => {
-                    span.textContent = "▒";
-                }, 120);
-                
-                // Step 4: Sparse block
-                setTimeout(() => {
-                    span.textContent = "░";
-                }, 180);
-                
-                // Step 5: Final character
-                setTimeout(() => {
-                    span.textContent = correctChar;
-                    span.classList.add("done");
-                    
-                    completedCount++;
-                    if (completedCount === chars.length) {
-                        element.classList.add("pixel-done");
-                        // Gentle repaint trigger for WebKit
-                        element.offsetHeight;
-                    }
-                }, 240);
-                
-            }, delay);
-        });
-    }
-
-    // Initialize Glitch Text on selected titles
+    // Initialize standalone titles to reveal on load
     const titlesToGlitch = document.querySelectorAll(".hero-title, .section-title, .portfolio-section h2, .contact-section h2, h1.gradient-text");
     titlesToGlitch.forEach(title => {
-        prepareGlitchText(title);
         const parentSection = title.closest(".reveal-section");
         if (!parentSection) {
             setTimeout(() => {
                 title.classList.add("revealed");
-                pixelateText(title);
             }, 150);
         }
     });
+
+    // Create random animated RGB pixels in the header
+    function createHeaderPixels() {
+        const header = document.querySelector(".site-header");
+        if (!header) return;
+        
+        const pixelCount = 24;
+        const colors = ["#ff0055", "#00ffcc", "#0066ff", "#ff00c1", "#00d2ff"];
+        
+        for (let i = 0; i < pixelCount; i++) {
+            const pixel = document.createElement("div");
+            pixel.className = "navbar-pixel";
+            
+            // Random positions within the header
+            const top = Math.random() * 70 + 15; // Between 15% and 85%
+            const left = Math.random() * 96 + 2;  // Between 2% and 98%
+            
+            pixel.style.top = `${top}%`;
+            pixel.style.left = `${left}%`;
+            
+            // Random sizing (2px to 4px)
+            const size = Math.floor(Math.random() * 3) + 2;
+            pixel.style.width = `${size}px`;
+            pixel.style.height = `${size}px`;
+            
+            // Assign random color and glow
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            pixel.style.backgroundColor = color;
+            pixel.style.boxShadow = `0 0 8px ${color}`;
+            
+            // Random animation speed and delay
+            const duration = Math.random() * 3 + 2; // 2s to 5s
+            const delay = Math.random() * 4;        // 0s to 4s
+            
+            pixel.style.animation = `pixelGlow ${duration}s ease-in-out ${delay}s infinite alternate`;
+            
+            header.appendChild(pixel);
+        }
+    }
+
+    createHeaderPixels();
 });

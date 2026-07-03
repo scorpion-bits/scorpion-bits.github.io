@@ -7,11 +7,11 @@
     --text-main: #f3f4f6;
     --text-muted: #9ca3af;
     --primary-color: #00d2ff; 
-    --primary-gradient: linear-gradient(135deg, #00d2ff 0%, #0066ff 100%); 
-    --primary-gradient-hover: linear-gradient(135deg, #00bce5 0%, #005ce6 100%);
+    --primary-gradient: linear-gradient(135deg, #00ffcc 0%, #0077ff 50%, #ff007f 100%); 
+    --primary-gradient-hover: linear-gradient(135deg, #00ffaa 0%, #0055ff 50%, #ff0055 100%);
     --border-subtle: rgba(255, 255, 255, 0.08);
-    --glass-bg: rgba(7, 14, 23, 0.75);
-    --glass-blur: blur(12px);
+    --glass-bg: rgba(7, 14, 23, 0.4);
+    --glass-blur: blur(16px);
 
     --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
@@ -50,6 +50,10 @@ html {
 
 body {
     background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 210, 255, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 0, 127, 0.04) 0%, transparent 40%);
+    background-attachment: fixed;
     color: var(--text-main);
     font-family: var(--font-family);
     min-height: 100vh;
@@ -71,11 +75,68 @@ a {
     background-color: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border-bottom: 1px solid var(--border-subtle);
     z-index: 1000;
     display: flex;
     align-items: center;
     transition: var(--transition-smooth);
+}
+
+/* Horizontal flowing RGB border bottom (gaming style) */
+.site-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        #ff0055 0%, 
+        #00ffcc 25%, 
+        #0066ff 50%, 
+        #ff00c1 75%, 
+        #ff0055 100%
+    );
+    background-size: 200% 100%;
+    animation: rgbHeaderFlow 4s linear infinite;
+    box-shadow: 0 1px 6px rgba(0, 210, 255, 0.3), 0 2px 12px rgba(255, 0, 193, 0.15);
+}
+
+@keyframes rgbHeaderFlow {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+}
+
+/* Ensure header contents sit in front of the decorative pixels */
+.logo-container,
+.nav-menu,
+.nav-actions {
+    position: relative;
+    z-index: 5;
+}
+
+/* Navbar micro-pixels */
+.navbar-pixel {
+    position: absolute;
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 2;
+    will-change: opacity, transform, filter;
+}
+
+@keyframes pixelGlow {
+    0% {
+        opacity: 0.15;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.85;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0.15;
+        transform: scale(0.8);
+        filter: hue-rotate(360deg);
+    }
 }
 
 .navbar {
@@ -423,9 +484,7 @@ a {
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-main);
     margin-bottom: 16px;
 }
 
@@ -628,29 +687,26 @@ a {
     transform: translateY(0);
 }
 
-/* Glitch/Pixel Text Animation */
-.glitch-char {
-    display: inline;
-    opacity: 0;
-    will-change: opacity, filter;
+/* Gentle Floating Text Animation */
+.hero-title,
+.section-title,
+h1.gradient-text,
+h2.gradient-text {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    animation: textFloatWave 6s ease-in-out infinite;
+    will-change: transform;
 }
 
-/* While pixelating / resolving */
-.glitch-char:not(.done) {
-    color: var(--primary-color) !important;
-    -webkit-text-fill-color: var(--primary-color) !important;
-    text-shadow: 0 0 8px var(--primary-color);
-    filter: drop-shadow(0 0 2px var(--primary-color));
-}
 
-/* Once fully resolved */
-.glitch-char.done {
-    display: inline !important;
-    opacity: 1 !important;
-    filter: none !important;
-    text-shadow: none !important;
-    color: inherit !important;
-    -webkit-text-fill-color: inherit !important;
+@keyframes textFloatWave {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
 }
 
 .card-large {
