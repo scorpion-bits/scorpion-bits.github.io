@@ -410,11 +410,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     completedCount++;
                     if (completedCount === chars.length) {
                         element.classList.add("pixel-done");
-                        // Force WebKit / Safari layout recalculation to repaint the background-clip: text gradient
-                        const currentDisplay = window.getComputedStyle(element).display;
-                        element.style.display = currentDisplay === "inline" ? "inline-block" : "inline";
-                        element.offsetHeight; // trigger reflow
-                        element.style.display = ""; // restore CSS styling
+                        // Gentle repaint trigger for WebKit
+                        element.offsetHeight;
                     }
                 }, 240);
                 

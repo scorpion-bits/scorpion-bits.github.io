@@ -637,7 +637,6 @@ a {
 
 /* While pixelating / resolving */
 .glitch-char:not(.done) {
-    display: inline-block;
     color: var(--primary-color) !important;
     -webkit-text-fill-color: var(--primary-color) !important;
     text-shadow: 0 0 8px var(--primary-color);
