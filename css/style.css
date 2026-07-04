@@ -1037,13 +1037,22 @@ h2.gradient-text {
         padding-bottom: 40px;
     }
 
-    #inicio,
+    #inicio {
+        padding: calc(var(--header-height) + 10px) 16px 20px;
+        scroll-snap-align: start;
+    }
+
     .tech-stack-section,
     .about-section,
     #portfolio,
     #contato {
         padding: calc(var(--header-height) + 40px) 16px 20px;
         scroll-snap-align: start;
+    }
+    
+    .hero-logo {
+        max-height: 160px;
+        margin-bottom: 10px;
     }
 
     .scroll-indicator {
