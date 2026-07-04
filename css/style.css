@@ -21,8 +21,7 @@
 }
 
 html {
-    scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
+    
 }
 
 #inicio,
@@ -38,8 +37,6 @@ html {
     align-items: center;
     box-sizing: border-box;
     padding: calc(var(--header-height) + 20px) 24px 40px;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
 }
 
 #sobre {
@@ -208,6 +205,9 @@ a {
     list-style: none;
     gap: 32px;
     align-items: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .nav-link {
@@ -539,45 +539,71 @@ a {
     opacity: 0;
     pointer-events: none;
     z-index: 1;
-    transform: scale(0.6);
-    cursor: pointer; /* To indicate they can be clicked when inactive */
+    transform: translate(0, 100px) scale(0.5);
+    cursor: pointer;
 }
 
 .carousel-slide.active {
     opacity: 1;
     pointer-events: auto;
-    z-index: 3;
-    transform: translateX(0) scale(1);
+    z-index: 5;
+    transform: translate(0, -30px) scale(1);
     filter: none;
     cursor: default;
 }
 
 .carousel-slide.prev {
-    opacity: 0.6;
-    z-index: 2;
-    transform: translateX(-55%) scale(0.85);
-    filter: blur(4px);
+    opacity: 0.85;
+    z-index: 4;
+    transform: translate(-75%, 15px) scale(0.85);
+    filter: blur(2px);
     pointer-events: auto;
 }
 
 .carousel-slide.next {
-    opacity: 0.6;
-    z-index: 2;
-    transform: translateX(55%) scale(0.85);
-    filter: blur(4px);
+    opacity: 0.85;
+    z-index: 4;
+    transform: translate(75%, 15px) scale(0.85);
+    filter: blur(2px);
+    pointer-events: auto;
+}
+
+.carousel-slide.far-left {
+    opacity: 0.4;
+    z-index: 3;
+    transform: translate(-45%, 80px) scale(0.65);
+    filter: blur(5px);
+    pointer-events: auto;
+}
+
+.carousel-slide.far-right {
+    opacity: 0.4;
+    z-index: 3;
+    transform: translate(45%, 80px) scale(0.65);
+    filter: blur(5px);
+    pointer-events: auto;
+}
+
+.carousel-slide.back {
+    transform: translate(0, 110px) scale(0.5);
+    opacity: 0.2;
+    filter: blur(8px);
+    z-index: 1;
     pointer-events: auto;
 }
 
 .carousel-slide.hidden-left {
-    transform: translateX(-100%) scale(0.6);
+    transform: translate(-50%, 140px) scale(0.4);
     opacity: 0;
-    filter: blur(8px);
+    filter: blur(10px);
+    z-index: 0;
 }
 
 .carousel-slide.hidden-right {
-    transform: translateX(100%) scale(0.6);
+    transform: translate(50%, 140px) scale(0.4);
     opacity: 0;
-    filter: blur(8px);
+    filter: blur(10px);
+    z-index: 0;
 }
 
 /* Fix Firefox rendering bug with nested filters */
@@ -588,10 +614,10 @@ a {
 }
 
 .team-card {
-    background-color: var(--bg-card);
-    border: 1px solid transparent;
+    background-color: rgba(30, 45, 75, 0.6); /* Slightly lighter/bluer glass */
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 20px;
-    padding: 32px 24px;
+    padding: 48px 24px 32px; /* Increased top padding for the header */
     text-align: center;
     transition: var(--transition-smooth);
     backdrop-filter: var(--glass-blur);
@@ -603,10 +629,38 @@ a {
     z-index: 1;
 }
 
+/* Mac OS Buttons */
+.team-card::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ff5f56;
+    box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+    z-index: 2;
+}
+
+/* Window Header Bar */
+.team-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.35);
+    border-top-left-radius: 19px;
+    border-top-right-radius: 19px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1;
+}
+
 .team-card:hover {
-    border-color: transparent;
-    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.08);
-    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px var(--primary-color), inset 0 0 8px rgba(0, 210, 255, 0.3);
 }
 
 .card-pixel {
@@ -626,16 +680,33 @@ a {
 }
 
 .avatar-container {
+    --avatar-glow: 0, 210, 255;
     position: relative;
     width: 110px;
     height: 110px;
     border-radius: 50%;
     padding: 3px;
     background: var(--primary-gradient); 
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.35); 
+    box-shadow: 0 0 15px rgba(var(--avatar-glow), 0.35); 
     margin-bottom: 24px;
     transition: var(--transition-smooth);
     will-change: transform;
+}
+.avatar-container.float-1 {
+    --avatar-glow: 255, 144, 0;
+    background: linear-gradient(135deg, #ff4b1f 0%, #ff9000 100%);
+}
+.avatar-container.float-2 {
+    --avatar-glow: 0, 255, 135;
+    background: linear-gradient(135deg, #00ff87 0%, #60efff 100%);
+}
+.avatar-container.float-3 {
+    --avatar-glow: 189, 0, 255;
+    background: linear-gradient(135deg, #bd00ff 0%, #ff00a0 100%);
+}
+.avatar-container.float-4 {
+    --avatar-glow: 0, 85, 255;
+    background: linear-gradient(135deg, #0055ff 0%, #00d2ff 100%);
 }
 
 .avatar-img {
@@ -666,11 +737,11 @@ a {
 @keyframes floatAvatar {
     0% {
         transform: translateY(0px) rotate(0deg);
-        box-shadow: 0 0 15px rgba(0, 210, 255, 0.35);
+        box-shadow: 0 0 15px rgba(var(--avatar-glow), 0.35);
     }
     100% {
         transform: translateY(-10px) rotate(3deg);
-        box-shadow: 0 0 25px rgba(0, 210, 255, 0.65); 
+        box-shadow: 0 0 25px rgba(var(--avatar-glow), 0.65); 
     }
 }
 
@@ -986,6 +1057,8 @@ h2.gradient-text {
         position: fixed;
         top: 0;
         right: -100%;
+        left: auto;
+        transform: none;
         width: 280px;
         height: 100vh;
         background: rgba(10, 18, 30, 0.98);
@@ -1026,16 +1099,94 @@ h2.gradient-text {
     .carousel-slide {
         max-width: 70vw;
     }
+    .carousel-slide.active {
+        transform: translate(0, -20px) scale(1);
+    }
     .carousel-slide.prev {
-        transform: translateX(-38%) scale(0.75);
+        transform: translate(-55%, 10px) scale(0.8);
     }
     .carousel-slide.next {
-        transform: translateX(38%) scale(0.75);
+        transform: translate(55%, 10px) scale(0.8);
+    }
+    .carousel-slide.far-left {
+        transform: translate(-35%, 55px) scale(0.65);
+    }
+    .carousel-slide.far-right {
+        transform: translate(35%, 55px) scale(0.65);
+    }
+    .carousel-slide.back {
+        transform: translate(0, 85px) scale(0.5);
     }
     .carousel-slide.hidden-left {
-        transform: translateX(-80%) scale(0.6);
+        transform: translate(-50%, 100px) scale(0.4);
     }
     .carousel-slide.hidden-right {
-        transform: translateX(80%) scale(0.6);
+        transform: translate(50%, 100px) scale(0.4);
+    }
+}
+
+/* Character Selection UI additions */
+.carousel-slide::after {
+    content: '';
+    position: absolute;
+    bottom: -45px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-bottom: 20px solid var(--primary-color);
+    filter: drop-shadow(0 0 10px var(--primary-color));
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.carousel-slide.active::after {
+    opacity: 1;
+    animation: arrowBounce 1.5s infinite ease-in-out;
+}
+
+@keyframes arrowBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+}
+
+.carousel-slide:not(.active) .card-pixel {
+    opacity: 0 !important;
+}
+
+.carousel-slide.active .avatar-container {
+    animation: coinFlip 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes coinFlip {
+    0% { transform: rotateY(0deg); box-shadow: 0 0 15px rgba(var(--avatar-glow), 0.35); }
+    100% { transform: rotateY(360deg); box-shadow: 0 0 25px rgba(var(--avatar-glow), 0.65); }
+}
+
+/* Enable native scroll snap ONLY on mobile/tablets where touch works perfectly */
+@media (max-width: 1023px) {
+    html {
+        scroll-snap-type: y mandatory;
+    }
+    #inicio,
+    .tech-stack-section,
+    .about-section,
+    #portfolio,
+    #contato {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+}
+
+/* Hide scrollbar on desktop for app-like feeling */
+@media (min-width: 1024px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    html {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }

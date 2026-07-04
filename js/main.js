@@ -197,25 +197,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function updateCarousel() {
             if (slides.length === 0) return;
-            const maxIndex = slides.length - 1;
-            if (currentIndex > maxIndex) currentIndex = maxIndex;
-            if (currentIndex < 0) currentIndex = 0;
+            const N = slides.length;
+            
+            if (currentIndex >= N) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = N - 1;
             
             clearTimeout(activeTimeout);
 
             slides.forEach((slide, index) => {
-                slide.classList.remove('active', 'active-done', 'prev', 'next', 'hidden-left', 'hidden-right');
+                slide.classList.remove('active', 'active-done', 'prev', 'next', 'far-left', 'far-right', 'hidden-left', 'hidden-right', 'back');
                 
-                if (index === currentIndex) {
+                let offset = (index - currentIndex) % N;
+                if (offset < 0) offset += N;
+                if (offset > Math.floor(N / 2)) offset -= N;
+                
+                if (offset === 0) {
                     slide.classList.add('active');
-                } else if (index === currentIndex - 1) {
+                } else if (offset === -1) {
                     slide.classList.add('prev');
-                } else if (index === currentIndex + 1) {
+                } else if (offset === 1) {
                     slide.classList.add('next');
-                } else if (index < currentIndex - 1) {
-                    slide.classList.add('hidden-left');
-                } else if (index > currentIndex + 1) {
-                    slide.classList.add('hidden-right');
+                } else if (offset === -2) {
+                    slide.classList.add('far-left');
+                } else if (offset === 2) {
+                    slide.classList.add('far-right');
+                } else {
+                    slide.classList.add('back');
                 }
             });
 
@@ -224,25 +231,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     slides[currentIndex].classList.add('active-done');
                 }
             }, 600); // Matches CSS transition duration
-
-            prevBtn.style.opacity = currentIndex === 0 ? "0.3" : "1";
-            prevBtn.style.pointerEvents = currentIndex === 0 ? "none" : "auto";
-            nextBtn.style.opacity = currentIndex === maxIndex ? "0.3" : "1";
-            nextBtn.style.pointerEvents = currentIndex === maxIndex ? "none" : "auto";
+            
+            prevBtn.style.opacity = "1";
+            prevBtn.style.pointerEvents = "auto";
+            nextBtn.style.opacity = "1";
+            nextBtn.style.pointerEvents = "auto";
         }
 
         nextBtn.addEventListener("click", () => {
-            if (currentIndex < slides.length - 1) {
-                currentIndex++;
-                updateCarousel();
-            }
+            currentIndex++;
+            updateCarousel();
         });
 
         prevBtn.addEventListener("click", () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCarousel();
-            }
+            currentIndex--;
+            updateCarousel();
         });
 
         // Make side cards clickable
@@ -457,6 +460,106 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // Custom smooth scroll animation function
+    function smoothScrollTo(targetPosition, duration) {
+        const startPosition = window.pageYOffset;
+        const distance = targetPosition - startPosition;
+        let startTime = null;
+
+        function animation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min(timeElapsed / duration, 1);
+            
+            // Easing function (easeInOutCubic)
+            const ease = progress < 0.5 
+                ? 4 * progress * progress * progress 
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+            window.scrollTo(0, startPosition + distance * ease);
+
+            if (timeElapsed < duration) {
+                requestAnimationFrame(animation);
+            }
+        }
+
+        requestAnimationFrame(animation);
+    }
+
+    // Smooth scrolling for anchor links (replacement for CSS scroll-behavior)
+    document.querySelectorAll('a[href^="#"], a[href^="index.html#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            let targetHref = this.getAttribute('href');
+            let targetId = targetHref.split('#')[1];
+            if (!targetId) return;
+            
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                e.preventDefault();
+                const targetY = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                smoothScrollTo(targetY, 600);
+            }
+        });
+    });
+
+    // Custom Wheel and Keyboard Scroll Snap for Windows/Chromium delay fix
+    let isScrolling = false;
+    const scrollSections = Array.from(document.querySelectorAll('section[id]'));
+    
+    function navigateSection(direction) {
+        if (isScrolling) return;
+
+        let currentIdx = 0;
+        let minDistance = Infinity;
+        
+        scrollSections.forEach((sec, idx) => {
+            const dist = Math.abs(sec.getBoundingClientRect().top);
+            if (dist < minDistance) {
+                minDistance = dist;
+                currentIdx = idx;
+            }
+        });
+
+        if (direction > 0) { // next
+            if (currentIdx < scrollSections.length - 1) {
+                isScrolling = true;
+                const targetY = scrollSections[currentIdx + 1].getBoundingClientRect().top + window.pageYOffset;
+                smoothScrollTo(targetY, 600);
+                setTimeout(() => { isScrolling = false; }, 700);
+            }
+        } else if (direction < 0) { // prev
+            if (currentIdx > 0) {
+                isScrolling = true;
+                const targetY = scrollSections[currentIdx - 1].getBoundingClientRect().top + window.pageYOffset;
+                smoothScrollTo(targetY, 600);
+                setTimeout(() => { isScrolling = false; }, 700);
+            }
+        }
+    }
+
+    window.addEventListener('wheel', (e) => {
+        if (window.innerWidth < 1024 || scrollSections.length === 0) return;
+        
+        e.preventDefault();
+        navigateSection(e.deltaY);
+    }, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+        if (window.innerWidth < 1024 || scrollSections.length === 0) return;
+        
+        const keysNext = ['ArrowDown', 'PageDown', ' '];
+        const keysPrev = ['ArrowUp', 'PageUp'];
+        
+        if (keysNext.includes(e.key)) {
+            e.preventDefault();
+            navigateSection(1);
+        } else if (keysPrev.includes(e.key)) {
+            e.preventDefault();
+            navigateSection(-1);
+        }
+    }, { passive: false });
 
     createHeaderPixels();
     createCardPixels();
