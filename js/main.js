@@ -526,15 +526,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentIdx < scrollSections.length - 1) {
                 isScrolling = true;
                 const targetY = scrollSections[currentIdx + 1].getBoundingClientRect().top + window.pageYOffset;
-                smoothScrollTo(targetY, 600);
-                setTimeout(() => { isScrolling = false; }, 700);
+                smoothScrollTo(targetY, 400);
+                setTimeout(() => { isScrolling = false; }, 450);
             }
         } else if (direction < 0) { // prev
             if (currentIdx > 0) {
                 isScrolling = true;
                 const targetY = scrollSections[currentIdx - 1].getBoundingClientRect().top + window.pageYOffset;
-                smoothScrollTo(targetY, 600);
-                setTimeout(() => { isScrolling = false; }, 700);
+                smoothScrollTo(targetY, 400);
+                setTimeout(() => { isScrolling = false; }, 450);
             }
         }
     }
