@@ -1015,12 +1015,18 @@ h2.gradient-text {
         --header-height: 70px;
     }
     
+    .content-wrapper {
+        min-height: auto;
+        padding-top: calc(var(--header-height) + 40px);
+        padding-bottom: 40px;
+    }
+
     #inicio,
     .tech-stack-section,
     .about-section,
     #portfolio,
     #contato {
-        padding: calc(var(--header-height) + 15px) 16px 30px;
+        padding: 40px 16px 20px;
     }
 
     .scroll-indicator {
@@ -1098,9 +1104,27 @@ h2.gradient-text {
     .nav-actions {
         display: none;
     }
+
+    .carousel-control {
+        top: -10px;
+        transform: none;
+        z-index: 10;
+        width: 42px;
+        height: 42px;
+    }
+    .carousel-control.prev-btn {
+        left: calc(50% - 55px);
+    }
+    .carousel-control.next-btn {
+        right: calc(50% - 55px);
+        left: auto;
+    }
 }
 
 @media (max-width: 600px) {
+    .carousel-track {
+        height: 380px;
+    }
     .carousel-slide {
         max-width: 68vw;
     }
