@@ -417,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function createCardPixels() {
+        if (window.innerWidth < 1024) return; // Disable expensive snake animation on mobile
         const cards = document.querySelectorAll(".about-section .team-card");
         if (cards.length === 0) return;
         
