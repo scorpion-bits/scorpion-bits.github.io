@@ -514,7 +514,6 @@ a {
 }
 
 .carousel-track-container {
-    overflow: hidden;
     width: 100%;
 }
 
@@ -676,6 +675,13 @@ a {
     50% { left: 100%; top: 100%; transform: translate(-50%, -50%); }
     79% { left: 100%; top: 0%; transform: translate(-50%, -50%); }
     100% { left: 0%; top: 0%; transform: translate(-50%, -50%); }
+}
+
+/* Hide expensive snake animation completely on mobile */
+@media (max-width: 1023px) {
+    .card-pixel {
+        display: none !important;
+    }
 }
 
 .avatar-container {
@@ -1032,7 +1038,7 @@ h2.gradient-text {
     }
 
     .team-card {
-        padding: 20px 16px;
+        padding: 44px 16px 20px; /* Keep top padding > 36px to prevent overlap with window bar */
     }
 
     .member-username {
@@ -1096,31 +1102,37 @@ h2.gradient-text {
 
 @media (max-width: 600px) {
     .carousel-slide {
-        max-width: 70vw;
+        max-width: 68vw;
     }
     .carousel-slide.active {
-        transform: translate(0, -20px) scale(1);
+        transform: translate(0, -10px) scale(1);
     }
     .carousel-slide.prev {
-        transform: translate(-55%, 10px) scale(0.8);
+        transform: translate(-38%, 15px) scale(0.75);
     }
     .carousel-slide.next {
-        transform: translate(55%, 10px) scale(0.8);
+        transform: translate(38%, 15px) scale(0.75);
     }
     .carousel-slide.far-left {
-        transform: translate(-35%, 55px) scale(0.65);
+        transform: translate(-10%, 40px) scale(0.5);
+        opacity: 0;
+        pointer-events: none;
     }
     .carousel-slide.far-right {
-        transform: translate(35%, 55px) scale(0.65);
+        transform: translate(10%, 40px) scale(0.5);
+        opacity: 0;
+        pointer-events: none;
     }
     .carousel-slide.back {
-        transform: translate(0, 85px) scale(0.5);
+        transform: translate(0, 50px) scale(0.4);
+        opacity: 0;
+        pointer-events: none;
     }
     .carousel-slide.hidden-left {
-        transform: translate(-50%, 100px) scale(0.4);
+        transform: translate(-10%, 60px) scale(0.3);
     }
     .carousel-slide.hidden-right {
-        transform: translate(50%, 100px) scale(0.4);
+        transform: translate(10%, 60px) scale(0.3);
     }
 }
 
