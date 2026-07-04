@@ -21,7 +21,11 @@
 }
 
 html {
-    
+    scroll-behavior: smooth;
+}
+body {
+    position: relative;
+    overflow-x: hidden;
 }
 
 #inicio,
@@ -473,10 +477,12 @@ a {
 .about-section {
     position: relative;
     width: 100%;
+    max-width: 100vw;
     background-color: rgba(13, 22, 38, 0.4);
     border-top: 1px solid var(--border-subtle);
     border-bottom: 1px solid var(--border-subtle);
     z-index: 1; 
+    overflow-x: hidden;
 }
 
 .about-container {
@@ -1010,14 +1016,24 @@ h2.gradient-text {
     }
 }
 
+@media (max-width: 1024px) {
+    html {
+        scroll-snap-type: y mandatory;
+    }
+    #inicio, .tech-stack-section, .about-section, #portfolio, #contato {
+        scroll-snap-align: start;
+        padding-top: var(--header-height);
+    }
+}
+
 @media (max-width: 768px) {
     :root {
         --header-height: 70px;
     }
-    
+
     .content-wrapper {
         min-height: auto;
-        padding-top: calc(var(--header-height) + 40px);
+        padding-top: 0;
         padding-bottom: 40px;
     }
 
@@ -1026,7 +1042,8 @@ h2.gradient-text {
     .about-section,
     #portfolio,
     #contato {
-        padding: 40px 16px 20px;
+        padding: calc(var(--header-height) + 40px) 16px 20px;
+        scroll-snap-align: start;
     }
 
     .scroll-indicator {
@@ -1126,37 +1143,25 @@ h2.gradient-text {
         height: 380px;
     }
     .carousel-slide {
-        max-width: 68vw;
+        max-width: 45vw;
     }
     .carousel-slide.active {
         transform: translate(0, -10px) scale(1);
     }
     .carousel-slide.prev {
-        transform: translate(-38%, 15px) scale(0.75);
+        transform: translate(-60%, 10px) scale(0.85);
     }
     .carousel-slide.next {
-        transform: translate(38%, 15px) scale(0.75);
+        transform: translate(60%, 10px) scale(0.85);
     }
-    .carousel-slide.far-left {
-        transform: translate(-10%, 40px) scale(0.5);
-        opacity: 0;
-        pointer-events: none;
-    }
-    .carousel-slide.far-right {
-        transform: translate(10%, 40px) scale(0.5);
-        opacity: 0;
-        pointer-events: none;
-    }
-    .carousel-slide.back {
-        transform: translate(0, 50px) scale(0.4);
-        opacity: 0;
-        pointer-events: none;
-    }
-    .carousel-slide.hidden-left {
-        transform: translate(-10%, 60px) scale(0.3);
-    }
+    .carousel-slide.far-left,
+    .carousel-slide.far-right,
+    .carousel-slide.back,
+    .carousel-slide.hidden-left,
     .carousel-slide.hidden-right {
-        transform: translate(10%, 60px) scale(0.3);
+        transform: translate(0, 40px) scale(0.5);
+        opacity: 0;
+        pointer-events: none;
     }
 }
 
