@@ -1,567 +1,172 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const bgContainer = document.getElementById("floating-background");
-    const fgContainer = document.getElementById("floating-foreground");
-    if (!bgContainer || !fgContainer) return;
+/* Scorpion Bits — comportamento mínimo.
+   Sem loop de animação, sem física, sem sequestro de scroll.
+   Tudo aqui é orientado a evento ou IntersectionObserver. */
+(() => {
+    "use strict";
 
-    const cubes = [];
+    /* ---------------------------------------------------- menu no celular */
+    const toggle = document.querySelector("[data-menu-toggle]");
+    const menu = document.getElementById("nav-menu");
 
-    function createCube(container, isForeground, xPercent, yPercent) {
-        const cube = document.createElement("img");
-        cube.src = "assets/scorpion_bits_cube_thick_stroke.png";
-        cube.alt = "Cubo Decorativo";
-        cube.className = "floating-cube";
+    if (toggle && menu) {
+        const setOpen = (open) => {
+            menu.classList.toggle("is-open", open);
+            toggle.setAttribute("aria-expanded", String(open));
+            toggle.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+            toggle.querySelector("use").setAttribute(
+                "href",
+                open ? "#i-close" : "#i-menu"
+            );
+        };
 
-        const size = isForeground
-            ? Math.floor(Math.random() * 20) + 25   
-            : Math.floor(Math.random() * 40) + 50;  
+        toggle.addEventListener("click", () =>
+            setOpen(!menu.classList.contains("is-open"))
+        );
 
-        const opacity = isForeground
-            ? (Math.random() * 0.20) + 0.30  
-            : (Math.random() * 0.06) + 0.04; 
+        menu.addEventListener("click", (e) => {
+            if (e.target.closest("a")) setOpen(false);
+        });
 
-        cube.style.width = `${size}px`;
-        cube.style.height = "auto";
-        cube.style.opacity = opacity;
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && menu.classList.contains("is-open")) {
+                setOpen(false);
+                toggle.focus();
+            }
+        });
 
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
-        const startX = (xPercent / 100) * width;
-        const startY = (yPercent / 100) * height;
-
-        container.appendChild(cube);
-
-        cubes.push({
-            element: cube,
-            xPercent: xPercent,
-            yPercent: yPercent,
-            baseX: startX,
-            baseY: startY,
-            currentX: startX,
-            currentY: startY,
-            vx: (Math.random() - 0.5) * 0.2, 
-            vy: (Math.random() - 0.5) * 0.2,
-            rot: Math.random() * 360,
-            rotSpeed: (Math.random() * 0.06) - 0.03, 
-            mass: isForeground ? 1.0 : 2.5
+        // se a janela voltar ao tamanho de desktop, a gaveta não pode ficar presa
+        matchMedia("(min-width: 821px)").addEventListener("change", (e) => {
+            if (e.matches) setOpen(false);
         });
     }
 
-    // Spawn Background Cubes in a 4x5 Grid (20 cubes)
-    const BG_ROWS = 4;
-    const BG_COLS = 5;
-    for (let r = 0; r < BG_ROWS; r++) {
-        for (let c = 0; c < BG_COLS; c++) {
-            const xPercent = (c * 100 / BG_COLS) + (Math.random() * (100 / BG_COLS * 0.6)) + (100 / BG_COLS * 0.2);
-            const yPercent = (r * 100 / BG_ROWS) + (Math.random() * (100 / BG_ROWS * 0.6)) + (100 / BG_ROWS * 0.2);
-            createCube(bgContainer, false, xPercent, yPercent);
-        }
+    /* ------------------------------------ sombra do cabeçalho ao rolar */
+    const header = document.querySelector(".site-header");
+    const sentinel = document.querySelector("[data-header-sentinel]");
+
+    if (header && sentinel && "IntersectionObserver" in window) {
+        new IntersectionObserver(
+            ([entry]) => header.classList.toggle("is-stuck", !entry.isIntersecting),
+            { threshold: 0 }
+        ).observe(sentinel);
     }
 
-    // Spawn Foreground Cubes in a 3x4 Grid (12 cubes)
-    const FG_ROWS = 3;
-    const FG_COLS = 4;
-    for (let r = 0; r < FG_ROWS; r++) {
-        for (let c = 0; c < FG_COLS; c++) {
-            const xPercent = (c * 100 / FG_COLS) + (Math.random() * (100 / FG_COLS * 0.6)) + (100 / FG_COLS * 0.2);
-            const yPercent = (r * 100 / FG_ROWS) + (Math.random() * (100 / FG_ROWS * 0.6)) + (100 / FG_ROWS * 0.2);
-            createCube(fgContainer, true, xPercent, yPercent);
-        }
+    /* ------------------------------------ holofote que segue o cursor */
+    /* Um listener por página, delegado. Só escreve duas custom properties;
+       o gradiente já está pintado, então não há reflow. Ignorado no toque. */
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        const SPOT = ".card, .status-item, .member, .tool-group";
+        let pending = null;
+
+        document.addEventListener(
+            "pointermove",
+            (e) => {
+                const card = e.target.closest(SPOT);
+                if (!card) return;
+
+                pending = { card, x: e.clientX, y: e.clientY };
+
+                requestAnimationFrame(() => {
+                    if (!pending) return;
+                    const { card, x, y } = pending;
+                    pending = null;
+                    const r = card.getBoundingClientRect();
+                    card.style.setProperty("--mx", `${x - r.left}px`);
+                    card.style.setProperty("--my", `${y - r.top}px`);
+                });
+            },
+            { passive: true }
+        );
     }
 
-    window.addEventListener("resize", () => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        cubes.forEach(cube => {
-            cube.baseX = (cube.xPercent / 100) * width;
-            cube.baseY = (cube.yPercent / 100) * height;
-        });
+    if (!("IntersectionObserver" in window)) return;
+
+    /* --------------------------------- contagem dos números do hero */
+    const stats = document.querySelectorAll("[data-count]");
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (stats.length && !still) {
+        const countObserver = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    obs.unobserve(entry.target);
+
+                    const el = entry.target;
+                    const target = Number(el.dataset.count);
+                    const start = performance.now();
+                    const dur = 900;
+
+                    const step = (now) => {
+                        const p = Math.min((now - start) / dur, 1);
+                        // easeOutCubic: rápido no começo, assenta no fim
+                        const eased = 1 - Math.pow(1 - p, 3);
+                        el.textContent = Math.round(target * eased);
+                        if (p < 1) requestAnimationFrame(step);
+                    };
+
+                    el.textContent = "0";
+                    requestAnimationFrame(step);
+                });
+            },
+            { threshold: 0.6 }
+        );
+
+        stats.forEach((el) => countObserver.observe(el));
+    }
+
+    /* ------------------------------------------- entrada suave das seções */
+    const revealed = document.querySelectorAll(".reveal");
+
+    if (revealed.length) {
+        const revealObserver = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add("is-visible");
+                    obs.unobserve(entry.target);
+                });
+            },
+            { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+        );
+
+        revealed.forEach((el) => revealObserver.observe(el));
+    }
+
+    /* ------------------------------------------- link ativo na navegação */
+    const links = new Map();
+    document.querySelectorAll(".nav-link[href*='#']").forEach((link) => {
+        const id = link.getAttribute("href").split("#")[1];
+        if (id) links.set(id, link);
     });
 
-    let mouseX = -1000;
-    let mouseY = -1000;
-    let isMouseActive = false;
+    const sections = [...links.keys()]
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
 
-    window.addEventListener("mousemove", (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        isMouseActive = true;
-    });
+    if (sections.length) {
+        const visible = new Set();
 
-    window.addEventListener("mouseleave", () => {
-        isMouseActive = false;
-    });
-
-    function animate() {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
-        // 1. Pairwise repulsion between cubes
-        for (let i = 0; i < cubes.length; i++) {
-            const c1 = cubes[i];
-            const w1 = parseFloat(c1.element.style.width) || 50;
-            for (let j = i + 1; j < cubes.length; j++) {
-                const c2 = cubes[j];
-                const w2 = parseFloat(c2.element.style.width) || 50;
-                
-                const dx = c2.currentX - c1.currentX;
-                const dy = c2.currentY - c1.currentY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                
-                const minDistance = (w1 + w2) * 0.65;
-                
-                if (dist < minDistance && dist > 0) {
-                    const overlap = minDistance - dist;
-                    const nx = dx / dist;
-                    const ny = dy / dist;
-                    
-                    c1.currentX -= nx * overlap * 0.5;
-                    c1.currentY -= ny * overlap * 0.5;
-                    c2.currentX += nx * overlap * 0.5;
-                    c2.currentY += ny * overlap * 0.5;
-                    
-                    const k = 0.03;
-                    c1.vx -= nx * overlap * k;
-                    c1.vy -= ny * overlap * k;
-                    c2.vx += nx * overlap * k;
-                    c2.vy += ny * overlap * k;
-                }
-            }
-        }
-
-        // 2. Physics updates, spring pull towards base, mouse push, boundary bouncing
-        cubes.forEach((cube) => {
-            // Very gentle spring pull back to home base (gravity coordinates)
-            const springForce = 0.00015; 
-            cube.vx += (cube.baseX - cube.currentX) * springForce;
-            cube.vy += (cube.baseY - cube.currentY) * springForce;
-
-            cube.currentX += cube.vx;
-            cube.currentY += cube.vy;
-            cube.rot += cube.rotSpeed;
-
-            // Damping (drift friction)
-            cube.vx *= 0.98;
-            cube.vy *= 0.98;
-
-            // Mouse push acceleration
-            if (isMouseActive) {
-                const dx = cube.currentX - mouseX;
-                const dy = cube.currentY - mouseY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const repelRadius = 220;
-
-                if (dist < repelRadius && dist > 0) {
-                    const force = (repelRadius - dist) / repelRadius;
-                    const accel = force * 0.8; 
-                    cube.vx += (dx / dist) * accel;
-                    cube.vy += (dy / dist) * accel;
-                }
-            }
-
-            // Bounce off edges with low restitution to stay inside spring space
-            const margin = 100;
-            const bounceDamping = -0.4;
-            if (cube.currentX < -margin) {
-                cube.currentX = -margin;
-                cube.vx *= bounceDamping;
-            } else if (cube.currentX > width + margin) {
-                cube.currentX = width + margin;
-                cube.vx *= bounceDamping;
-            }
-
-            if (cube.currentY < -margin) {
-                cube.currentY = -margin;
-                cube.vy *= bounceDamping;
-            } else if (cube.currentY > height + margin) {
-                cube.currentY = height + margin;
-                cube.vy *= bounceDamping;
-            }
-
-            cube.element.style.transform = `translate3d(${cube.currentX}px, ${cube.currentY}px, 0) rotate(${cube.rot}deg)`;
-        });
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    const track = document.getElementById("carousel-track");
-    const nextBtn = document.getElementById("next-btn");
-    const prevBtn = document.getElementById("prev-btn");
-
-    if (track && nextBtn && prevBtn) {
-        let currentIndex = 0;
-        let activeTimeout;
-        const slides = Array.from(track.querySelectorAll(".carousel-slide"));
-
-        function updateCarousel() {
-            if (slides.length === 0) return;
-            const N = slides.length;
-            
-            if (currentIndex >= N) currentIndex = 0;
-            if (currentIndex < 0) currentIndex = N - 1;
-            
-            clearTimeout(activeTimeout);
-
-            slides.forEach((slide, index) => {
-                slide.classList.remove('active', 'active-done', 'prev', 'next', 'far-left', 'far-right', 'hidden-left', 'hidden-right', 'back');
-                
-                let offset = (index - currentIndex) % N;
-                if (offset < 0) offset += N;
-                if (offset > Math.floor(N / 2)) offset -= N;
-                
-                if (offset === 0) {
-                    slide.classList.add('active');
-                } else if (offset === -1) {
-                    slide.classList.add('prev');
-                } else if (offset === 1) {
-                    slide.classList.add('next');
-                } else if (offset === -2) {
-                    slide.classList.add('far-left');
-                } else if (offset === 2) {
-                    slide.classList.add('far-right');
-                } else {
-                    slide.classList.add('back');
-                }
-            });
-
-            activeTimeout = setTimeout(() => {
-                if (slides[currentIndex]) {
-                    slides[currentIndex].classList.add('active-done');
-                }
-            }, 600); // Matches CSS transition duration
-            
-            prevBtn.style.opacity = "1";
-            prevBtn.style.pointerEvents = "auto";
-            nextBtn.style.opacity = "1";
-            nextBtn.style.pointerEvents = "auto";
-        }
-
-        nextBtn.addEventListener("click", () => {
-            currentIndex++;
-            updateCarousel();
-        });
-
-        prevBtn.addEventListener("click", () => {
-            currentIndex--;
-            updateCarousel();
-        });
-
-        // Make side cards clickable
-        slides.forEach((slide, index) => {
-            slide.addEventListener("click", () => {
-                if (index !== currentIndex) {
-                    currentIndex = index;
-                    updateCarousel();
-                }
-            });
-        });
-
-        setTimeout(updateCarousel, 50);
-    }
-
-    const menuToggle = document.getElementById("menu-toggle");
-    const navMenu = document.getElementById("nav-menu-list");
-
-    if (menuToggle && navMenu) {
-        menuToggle.addEventListener("click", (e) => {
-            e.stopPropagation();
-            navMenu.classList.toggle("active");
-            const icon = menuToggle.querySelector("i");
-            if (navMenu.classList.contains("active")) {
-                icon.className = "fa-solid fa-xmark";
-            } else {
-                icon.className = "fa-solid fa-bars";
-            }
-        });
-
-        document.addEventListener("click", (e) => {
-            if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-                navMenu.classList.remove("active");
-                const icon = menuToggle.querySelector("i");
-                if (icon) icon.className = "fa-solid fa-bars";
-            }
-        });
-
-        const navLinks = navMenu.querySelectorAll(".nav-link");
-        navLinks.forEach((link) => {
-            link.addEventListener("click", () => {
-                navMenu.classList.remove("active");
-                const icon = menuToggle.querySelector("i");
-                if (icon) icon.className = "fa-solid fa-bars";
-            });
-        });
-    }
-
-    const sections = document.querySelectorAll("section[id]");
-    const navLinks = document.querySelectorAll(".nav-link");
-
-    const scrollSpyOptions = {
-        rootMargin: "-30% 0px -30% 0px",
-        threshold: 0
-    };
-
-    const scrollSpyObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                const id = entry.target.getAttribute("id");
-                
-                let navId = id;
-                if (id === 'ferramentas' || id === 'equipe') {
-                    navId = 'sobre';
-                }
-
-                navLinks.forEach((link) => {
-                    link.classList.remove("active");
-                    const href = link.getAttribute("href");
-                    if (href && (href === `#${navId}` || href.endsWith(`#${navId}`))) {
-                        link.classList.add("active");
-                    }
+        const spy = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) visible.add(entry.target.id);
+                    else visible.delete(entry.target.id);
                 });
 
-                const dots = document.querySelectorAll(".scroll-dot");
-                if (dots.length > 0) {
-                    dots.forEach(dot => {
-                        dot.classList.remove("active");
-                        if (dot.getAttribute("data-target") === id) {
-                            dot.classList.add("active");
-                        }
-                    });
-                }
-            }
-        });
-    }, scrollSpyOptions);
+                // a seção ativa é a primeira visível na ordem do documento
+                const active = sections.find((s) => visible.has(s.id));
 
-    sections.forEach((section) => {
-        scrollSpyObserver.observe(section);
-    });
-
-    const revealObserverOptions = {
-        threshold: 0.05
-    };
-
-    const revealObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("revealed");
-                
-                // Trigger linear wipe animation for titles inside this section!
-                const titles = entry.target.querySelectorAll(".hero-title, .section-title, .portfolio-section h2, .contact-section h2, h1.gradient-text");
-                titles.forEach(title => {
-                    title.classList.add("revealed");
+                links.forEach((link, id) => {
+                    const on = Boolean(active) && id === active.id;
+                    link.classList.toggle("is-active", on);
+                    if (on) link.setAttribute("aria-current", "true");
+                    else link.removeAttribute("aria-current");
                 });
-                
-                observer.unobserve(entry.target);
-            }
-        });
-    }, revealObserverOptions);
+            },
+            { rootMargin: "-25% 0px -55% 0px", threshold: 0 }
+        );
 
-    const revealSections = document.querySelectorAll(".reveal-section");
-    revealSections.forEach((section) => {
-        revealObserver.observe(section);
-    });
-
-    // Initialize standalone titles to reveal on load
-    const titlesToGlitch = document.querySelectorAll(".hero-title, .section-title, .portfolio-section h2, .contact-section h2, h1.gradient-text");
-    titlesToGlitch.forEach(title => {
-        const parentSection = title.closest(".reveal-section");
-        if (!parentSection) {
-            setTimeout(() => {
-                title.classList.add("revealed");
-            }, 150);
-        }
-    });
-
-    // Create random animated RGB pixels in the header
-    function createHeaderPixels() {
-        const header = document.querySelector(".site-header");
-        if (!header) return;
-        
-        const pixelCount = 24;
-        const colors = ["#ff0055", "#00ffcc", "#0066ff", "#ff00c1", "#00d2ff"];
-        const segmentWidth = 100 / pixelCount;
-        
-        for (let i = 0; i < pixelCount; i++) {
-            const pixel = document.createElement("div");
-            pixel.className = "navbar-pixel";
-            
-            // Uniform horizontal distribution with a slight random jitter
-            const jitter = (Math.random() - 0.5) * (segmentWidth * 0.7);
-            const left = (i * segmentWidth) + (segmentWidth / 2) + jitter;
-            
-            // Random vertical position within the header boundaries
-            const top = Math.random() * 60 + 20; // Between 20% and 80%
-            
-            pixel.style.top = `${top}%`;
-            pixel.style.left = `${left}%`;
-            
-            // Random sizing (2px to 4px)
-            const size = Math.floor(Math.random() * 3) + 2;
-            pixel.style.width = `${size}px`;
-            pixel.style.height = `${size}px`;
-            
-            // Assign random color and glow
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            pixel.style.backgroundColor = color;
-            pixel.style.boxShadow = `0 0 8px ${color}`;
-            
-            // Random animation speed and delay
-            const duration = Math.random() * 3 + 2; // 2s to 5s
-            const delay = Math.random() * 4;        // 0s to 4s
-            
-            pixel.style.animation = `pixelGlow ${duration}s ease-in-out ${delay}s infinite alternate`;
-            
-            header.appendChild(pixel);
-        }
+        sections.forEach((section) => spy.observe(section));
     }
-
-    function createCardPixels() {
-        if (window.innerWidth < 1024) return; // Disable expensive snake animation on mobile
-        const cards = document.querySelectorAll(".about-section .team-card");
-        if (cards.length === 0) return;
-        
-        cards.forEach(card => {
-            const snakeLength = 15; // Length of each snake trail
-            const duration = 5; // 5 seconds for a full lap
-            const gap = 0.035; // Delay between each segment
-            
-            const cardOffset = Math.random() * duration; // Different offset per card
-            
-            // Create 2 snakes per card (starting on opposite sides)
-            for (let s = 0; s < 2; s++) {
-                const baseDelay = cardOffset + (s * (duration / 2)); 
-                
-                for (let i = 0; i < snakeLength; i++) {
-                    const pixel = document.createElement("div");
-                    pixel.className = "card-pixel";
-                    
-                    // The head of the snake is solid, the tail fades
-                    const opacity = 1 - (i / snakeLength); 
-                    pixel.style.opacity = opacity;
-                    
-                    // Sizing: sharp 8-bit squares
-                    const size = i === 0 ? 5 : 3.5; // Head is slightly bigger
-                    pixel.style.width = `${size}px`;
-                    pixel.style.height = `${size}px`;
-                    pixel.style.borderRadius = '0'; // Pixel art
-                    
-                    // Colors: Head is white, body is neon cyan
-                    pixel.style.backgroundColor = i === 0 ? "#ffffff" : "#00d2ff"; 
-                    pixel.style.boxShadow = `0 0 ${i === 0 ? 12 : 5}px #00d2ff`;
-                    
-                    // The head (i=0) needs the most negative delay to be at the front
-                    const offsetIndex = snakeLength - 1 - i; 
-                    const delay = -(baseDelay + (offsetIndex * gap));
-                    
-                    pixel.style.animation = `cardPixelSnake ${duration}s linear ${delay}s infinite`;
-                    
-                    card.appendChild(pixel);
-                }
-            }
-        });
-    }
-
-    // Custom smooth scroll animation function
-    function smoothScrollTo(targetPosition, duration) {
-        const startPosition = window.pageYOffset;
-        const distance = targetPosition - startPosition;
-        let startTime = null;
-
-        function animation(currentTime) {
-            if (startTime === null) startTime = currentTime;
-            const timeElapsed = currentTime - startTime;
-            const progress = Math.min(timeElapsed / duration, 1);
-            
-            // Easing function (easeInOutCubic)
-            const ease = progress < 0.5 
-                ? 4 * progress * progress * progress 
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-            window.scrollTo(0, startPosition + distance * ease);
-
-            if (timeElapsed < duration) {
-                requestAnimationFrame(animation);
-            }
-        }
-
-        requestAnimationFrame(animation);
-    }
-
-    // Smooth scrolling for anchor links (replacement for CSS scroll-behavior)
-    document.querySelectorAll('a[href^="#"], a[href^="index.html#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            let targetHref = this.getAttribute('href');
-            let targetId = targetHref.split('#')[1];
-            if (!targetId) return;
-            
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                e.preventDefault();
-                const targetY = targetElement.getBoundingClientRect().top + window.pageYOffset;
-                smoothScrollTo(targetY, 600);
-            }
-        });
-    });
-
-    // Custom Wheel and Keyboard Scroll Snap for Windows/Chromium delay fix
-    let isScrolling = false;
-    const scrollSections = Array.from(document.querySelectorAll('section[id]'));
-    
-    function navigateSection(direction) {
-        if (isScrolling) return;
-
-        let currentIdx = 0;
-        let minDistance = Infinity;
-        
-        scrollSections.forEach((sec, idx) => {
-            const dist = Math.abs(sec.getBoundingClientRect().top);
-            if (dist < minDistance) {
-                minDistance = dist;
-                currentIdx = idx;
-            }
-        });
-
-        if (direction > 0) { // next
-            if (currentIdx < scrollSections.length - 1) {
-                isScrolling = true;
-                const targetY = scrollSections[currentIdx + 1].getBoundingClientRect().top + window.pageYOffset;
-                smoothScrollTo(targetY, 400);
-                setTimeout(() => { isScrolling = false; }, 450);
-            }
-        } else if (direction < 0) { // prev
-            if (currentIdx > 0) {
-                isScrolling = true;
-                const targetY = scrollSections[currentIdx - 1].getBoundingClientRect().top + window.pageYOffset;
-                smoothScrollTo(targetY, 400);
-                setTimeout(() => { isScrolling = false; }, 450);
-            }
-        }
-    }
-
-    window.addEventListener('wheel', (e) => {
-        if (window.innerWidth < 1024 || scrollSections.length === 0) return;
-        
-        e.preventDefault();
-        navigateSection(e.deltaY);
-    }, { passive: false });
-
-    window.addEventListener('keydown', (e) => {
-        if (window.innerWidth < 1024 || scrollSections.length === 0) return;
-        
-        const keysNext = ['ArrowDown', 'PageDown', ' '];
-        const keysPrev = ['ArrowUp', 'PageUp'];
-        
-        if (keysNext.includes(e.key)) {
-            e.preventDefault();
-            navigateSection(1);
-        } else if (keysPrev.includes(e.key)) {
-            e.preventDefault();
-            navigateSection(-1);
-        }
-    }, { passive: false });
-
-    createHeaderPixels();
-    createCardPixels();
-});
+})();
