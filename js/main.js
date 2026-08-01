@@ -1,16 +1,16 @@
 /* Scorpion Bits — comportamento mínimo.
-   Sem loop de animação, sem física, sem sequestro de scroll.
-   Tudo aqui é orientado a evento ou IntersectionObserver. */
+   Sem física, sem loop de requestAnimationFrame solto: cada efeito é
+   orientado a evento ou a IntersectionObserver. */
 (() => {
     "use strict";
 
-    /* ---------------------------------------------------- menu no celular */
-    const toggle = document.querySelector("[data-menu-toggle]");
-    const menu = document.getElementById("nav-menu");
+    /* ------------------------------------------------------ menu no dock */
+    const toggle = document.querySelector("[data-dock-toggle]");
+    const panel = document.getElementById("dock-panel");
 
-    if (toggle && menu) {
+    if (toggle && panel) {
         const setOpen = (open) => {
-            menu.classList.toggle("is-open", open);
+            panel.classList.toggle("is-open", open);
             toggle.setAttribute("aria-expanded", String(open));
             toggle.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
             toggle.querySelector("use").setAttribute(
@@ -20,42 +20,39 @@
         };
 
         toggle.addEventListener("click", () =>
-            setOpen(!menu.classList.contains("is-open"))
+            setOpen(!panel.classList.contains("is-open"))
         );
 
-        menu.addEventListener("click", (e) => {
+        panel.addEventListener("click", (e) => {
             if (e.target.closest("a")) setOpen(false);
         });
 
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && menu.classList.contains("is-open")) {
+            if (e.key === "Escape" && panel.classList.contains("is-open")) {
                 setOpen(false);
                 toggle.focus();
             }
         });
 
-        // se a janela voltar ao tamanho de desktop, a gaveta não pode ficar presa
-        matchMedia("(min-width: 821px)").addEventListener("change", (e) => {
+        matchMedia("(min-width: 861px)").addEventListener("change", (e) => {
             if (e.matches) setOpen(false);
         });
     }
 
-    /* ------------------------------------ sombra do cabeçalho ao rolar */
-    const header = document.querySelector(".site-header");
-    const sentinel = document.querySelector("[data-header-sentinel]");
+    /* --------------------------------------- sombra do dock ao grudar -- */
+    const dock = document.querySelector(".dock");
+    const sentinel = document.querySelector("[data-dock-sentinel]");
 
-    if (header && sentinel && "IntersectionObserver" in window) {
+    if (dock && sentinel && "IntersectionObserver" in window) {
         new IntersectionObserver(
-            ([entry]) => header.classList.toggle("is-stuck", !entry.isIntersecting),
+            ([entry]) => dock.classList.toggle("is-stuck", !entry.isIntersecting),
             { threshold: 0 }
         ).observe(sentinel);
     }
 
-    /* ------------------------------------ holofote que segue o cursor */
-    /* Um listener por página, delegado. Só escreve duas custom properties;
-       o gradiente já está pintado, então não há reflow. Ignorado no toque. */
+    /* ------------------------- holofote que segue o cursor nos cards -- */
     if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
-        const SPOT = ".card, .status-item, .member, .tool-group";
+        const SPOT = ".work-item";
         let pending = null;
 
         document.addEventListener(
@@ -79,43 +76,112 @@
         );
     }
 
-    if (!("IntersectionObserver" in window)) return;
+    /* --------------------------------------------- carrossel da equipe -- */
+    const rosterWrap = document.querySelector("[data-roster]");
 
-    /* --------------------------------- contagem dos números do hero */
-    const stats = document.querySelectorAll("[data-count]");
-    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (rosterWrap) {
+        const stageEl = rosterWrap.querySelector("[data-stage]");
+        const track = rosterWrap.querySelector("[data-track]");
+        const slides = [...track.children];
+        const dots = [...rosterWrap.querySelectorAll(".roster-btn")];
+        const prevBtn = rosterWrap.querySelector("[data-prev]");
+        const nextBtn = rosterWrap.querySelector("[data-next]");
+        const rail = rosterWrap.querySelector("[data-rail]");
+        const countEl = rosterWrap.querySelector("[data-count]");
+        const total = slides.length;
+        const pad = (n) => String(n).padStart(2, "0");
 
-    if (stats.length && !still) {
-        const countObserver = new IntersectionObserver(
-            (entries, obs) => {
-                entries.forEach((entry) => {
-                    if (!entry.isIntersecting) return;
-                    obs.unobserve(entry.target);
+        rail.parentElement.style.setProperty("--total", total);
 
-                    const el = entry.target;
-                    const target = Number(el.dataset.count);
-                    const start = performance.now();
-                    const dur = 900;
+        let index = 0;
 
-                    const step = (now) => {
-                        const p = Math.min((now - start) / dur, 1);
-                        // easeOutCubic: rápido no começo, assenta no fim
-                        const eased = 1 - Math.pow(1 - p, 3);
-                        el.textContent = Math.round(target * eased);
-                        if (p < 1) requestAnimationFrame(step);
-                    };
+        const render = () => {
+            track.style.transform = `translateX(-${index * 100}%)`;
+            rail.style.setProperty("--i", index);
+            countEl.textContent = `${pad(index + 1)} / ${pad(total)}`;
 
-                    el.textContent = "0";
-                    requestAnimationFrame(step);
-                });
-            },
-            { threshold: 0.6 }
-        );
+            dots.forEach((dot, i) => {
+                const on = i === index;
+                dot.classList.toggle("is-on", on);
+                dot.setAttribute("aria-selected", String(on));
+            });
+        };
 
-        stats.forEach((el) => countObserver.observe(el));
+        const goTo = (i) => {
+            index = (i + total) % total;
+            render();
+        };
+
+        dots.forEach((dot) => {
+            dot.addEventListener("click", () => goTo(Number(dot.dataset.go)));
+        });
+
+        prevBtn.addEventListener("click", () => goTo(index - 1));
+        nextBtn.addEventListener("click", () => goTo(index + 1));
+
+        rosterWrap.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight") goTo(index + 1);
+            if (e.key === "ArrowLeft") goTo(index - 1);
+        });
+
+        /* arrastar/deslizar o palco — ponteiro unificado (mouse + toque) */
+        let dragging = false;
+        let startX = 0;
+        let deltaX = 0;
+        let width = stageEl.clientWidth || 1;
+
+        const onDown = (e) => {
+            dragging = true;
+            startX = e.clientX;
+            deltaX = 0;
+            width = stageEl.clientWidth || 1;
+            stageEl.classList.add("is-dragging");
+            stageEl.setPointerCapture?.(e.pointerId);
+        };
+
+        const onMove = (e) => {
+            if (!dragging) return;
+            deltaX = e.clientX - startX;
+            const pct = (deltaX / width) * 100;
+            track.style.transform = `translateX(calc(-${index * 100}% + ${pct}%))`;
+        };
+
+        const onUp = () => {
+            if (!dragging) return;
+            dragging = false;
+            stageEl.classList.remove("is-dragging");
+
+            const threshold = width * 0.16;
+            if (deltaX <= -threshold) goTo(index + 1);
+            else if (deltaX >= threshold) goTo(index - 1);
+            else render();
+        };
+
+        stageEl.addEventListener("pointerdown", onDown);
+        stageEl.addEventListener("pointermove", onMove);
+        stageEl.addEventListener("pointerup", onUp);
+        stageEl.addEventListener("pointercancel", onUp);
+        stageEl.addEventListener("pointerleave", (e) => {
+            if (dragging && e.buttons === 0) onUp();
+        });
+
+        // arrastar não deve disparar o link dentro do slide
+        track.querySelectorAll("a").forEach((a) => {
+            a.addEventListener("click", (e) => {
+                if (Math.abs(deltaX) > 6) e.preventDefault();
+            });
+        });
+
+        window.addEventListener("resize", () => {
+            width = stageEl.clientWidth || 1;
+        });
+
+        render();
     }
 
-    /* ------------------------------------------- entrada suave das seções */
+    if (!("IntersectionObserver" in window)) return;
+
+    /* --------------------------------------------- entrada das seções -- */
     const revealed = document.querySelectorAll(".reveal");
 
     if (revealed.length) {
@@ -135,7 +201,7 @@
 
     /* ------------------------------------------- link ativo na navegação */
     const links = new Map();
-    document.querySelectorAll(".nav-link[href*='#']").forEach((link) => {
+    document.querySelectorAll(".dock-link[href*='#']").forEach((link) => {
         const id = link.getAttribute("href").split("#")[1];
         if (id) links.set(id, link);
     });
@@ -154,14 +220,10 @@
                     else visible.delete(entry.target.id);
                 });
 
-                // a seção ativa é a primeira visível na ordem do documento
                 const active = sections.find((s) => visible.has(s.id));
 
                 links.forEach((link, id) => {
-                    const on = Boolean(active) && id === active.id;
-                    link.classList.toggle("is-active", on);
-                    if (on) link.setAttribute("aria-current", "true");
-                    else link.removeAttribute("aria-current");
+                    link.classList.toggle("is-active", Boolean(active) && id === active.id);
                 });
             },
             { rootMargin: "-25% 0px -55% 0px", threshold: 0 }
