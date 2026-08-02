@@ -198,38 +198,51 @@ p {
     position: absolute;
     inset: -25%;
     --par: -0.08;
+    /* --cell: lado do losango; --line-w: espessura do traço */
+    --cell: 78px;
+    --line-w: 1px;
     translate: 0 calc(var(--sy, 0px) * var(--par));
     background-image: repeating-linear-gradient(
             30deg,
-            transparent 0 47px,
-            var(--grid-line) 47px 48px
+            transparent 0 calc(var(--cell) - var(--line-w)),
+            var(--grid-line) calc(var(--cell) - var(--line-w)) var(--cell)
         ),
         repeating-linear-gradient(
             -30deg,
-            transparent 0 47px,
-            var(--grid-line) 47px 48px
+            transparent 0 calc(var(--cell) - var(--line-w)),
+            var(--grid-line) calc(var(--cell) - var(--line-w)) var(--cell)
         );
     animation: grid-drift 48s linear infinite;
     will-change: transform;
 }
 
-/* segunda malha, mais funda: maior, desfocada e com parallax mais lento.
-   A diferença de velocidade entre as duas é o que cria a sensação de
-   profundidade. */
+/* Segunda malha, mais funda: losango maior, traço mais grosso e mais claro,
+   blur leve e parallax mais lento. A diferença de escala e de velocidade
+   entre as duas é o que cria a profundidade.
+   O `background-size: 190%` anterior não fazia nada: parada de cor em px
+   absoluto não escala com background-size, então as duas malhas tinham
+   exatamente o mesmo tamanho de célula. E blur de 2.5px sobre um traço de
+   1px com alfa 0.055 espalhava a linha até ela sumir — daí não dar para
+   ver. Traço mais grosso e mais opaco aguenta o desfoque. */
 .backdrop-grid--far {
     inset: -45%;
     --par: -0.028;
-    background-size: 190% 190%;
-    filter: blur(2.5px);
-    opacity: 0.75;
+    --cell: 132px;
+    --line-w: 2px;
+    --grid-line: rgba(106, 216, 254, 0.075);
+    filter: blur(0.8px);
     animation-duration: 96s;
     animation-direction: reverse;
 }
 
 @keyframes grid-drift {
     to {
-        /* 96px = dois períodos da grade: o laço fecha sem salto */
-        transform: translate3d(0, -96px, 0);
+        /* Linhas a 30°: um deslocamento vertical d avança cos(30°)·d ao
+           longo da normal, então o padrão só fecha quando
+           d = k · célula / cos(30°) = k · célula · 1.1547.
+           Aqui k = 4. O valor fixo de -96px que estava antes dava 1,73
+           período e o laço saltava a cada volta. */
+        transform: translate3d(0, calc(var(--cell) * -4.6188), 0);
     }
 }
 
