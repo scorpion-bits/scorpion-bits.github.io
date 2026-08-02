@@ -194,10 +194,16 @@ p {
    da própria grade isométrica. Animar `background-position` repintaria a
    viewport inteira a cada quadro; `transform` numa camada já pintada é
    trabalho de compositor e não custa praticamente nada. */
+/* As malhas são estáticas: só o parallax de rolagem as move.
+   Sem animação de loop, sem `filter` e sem excesso de área — os três
+   juntos é que faziam o navegador rasterizar a camada num bitmap enorme
+   e reduzir a escala dele, dando aquele aspecto de imagem escalonada.
+   A altura extra é só o que o parallax percorre; largura extra não existe
+   porque nada se move na horizontal. */
 .backdrop-grid {
     position: absolute;
-    inset: -25%;
-    --par: -0.08;
+    inset: 0 0 -620px 0;
+    --par: -0.06;
     /* --cell: lado do losango; --line-w: espessura do traço */
     --cell: 78px;
     --line-w: 1px;
@@ -212,38 +218,19 @@ p {
             transparent 0 calc(var(--cell) - var(--line-w)),
             var(--grid-line) calc(var(--cell) - var(--line-w)) var(--cell)
         );
-    animation: grid-drift 48s linear infinite;
     will-change: transform;
 }
 
-/* Segunda malha, mais funda: losango maior, traço mais grosso e mais claro,
-   blur leve e parallax mais lento. A diferença de escala e de velocidade
-   entre as duas é o que cria a profundidade.
-   O `background-size: 190%` anterior não fazia nada: parada de cor em px
-   absoluto não escala com background-size, então as duas malhas tinham
-   exatamente o mesmo tamanho de célula. E blur de 2.5px sobre um traço de
-   1px com alfa 0.055 espalhava a linha até ela sumir — daí não dar para
-   ver. Traço mais grosso e mais opaco aguenta o desfoque. */
+/* Malha mais funda: losango maior e traço mais apagado. A profundidade vem
+   da diferença de escala e da velocidade menor do parallax — não de blur.
+   Qualquer `filter` aqui obrigaria a rasterizar a camada e devolveria o
+   serrilhado; linha fina e nítida lê melhor que linha borrada. */
 .backdrop-grid--far {
-    inset: -45%;
-    --par: -0.028;
-    --cell: 132px;
-    --line-w: 2px;
-    --grid-line: rgba(106, 216, 254, 0.075);
-    filter: blur(0.8px);
-    animation-duration: 96s;
-    animation-direction: reverse;
-}
-
-@keyframes grid-drift {
-    to {
-        /* Linhas a 30°: um deslocamento vertical d avança cos(30°)·d ao
-           longo da normal, então o padrão só fecha quando
-           d = k · célula / cos(30°) = k · célula · 1.1547.
-           Aqui k = 4. O valor fixo de -96px que estava antes dava 1,73
-           período e o laço saltava a cada volta. */
-        transform: translate3d(0, calc(var(--cell) * -4.6188), 0);
-    }
+    inset: 0 0 -340px 0;
+    --par: -0.022;
+    --cell: 134px;
+    --line-w: 1px;
+    --grid-line: rgba(106, 216, 254, 0.085);
 }
 
 /* névoa: manchas grandes que derivam devagar. Só transform anima. */
@@ -287,7 +274,7 @@ p {
 
 .backdrop-mist {
     position: absolute;
-    inset: -45%;
+    inset: -32%;
     --par: -0.03;
     translate: 0 calc(var(--sy, 0px) * var(--par));
     background: radial-gradient(
@@ -320,8 +307,8 @@ p {
    pintada uma vez, depois só `transform` anima. */
 .backdrop-stars {
     position: absolute;
-    inset: -30%;
-    --par: -0.14;
+    inset: 0 -6% -780px -6%;
+    --par: -0.08;
     translate: 0 calc(var(--sy, 0px) * var(--par));
     background-image: radial-gradient(1.6px 1.6px at 45.2% 56.0%, rgba(160, 226, 255, 0.55), transparent 100%),
             radial-gradient(1.6px 1.6px at 92.4% 46.6%, rgba(160, 226, 255, 0.55), transparent 100%),
@@ -356,15 +343,43 @@ p {
             radial-gradient(1.6px 1.6px at 8.7% 33.3%, rgba(160, 226, 255, 0.55), transparent 100%),
             radial-gradient(1.6px 1.6px at 96.4% 75.8%, rgba(160, 226, 255, 0.55), transparent 100%),
             radial-gradient(1.6px 1.6px at 11.8% 24.6%, rgba(160, 226, 255, 0.55), transparent 100%),
-            radial-gradient(1.6px 1.6px at 10.1% 6.0%, rgba(160, 226, 255, 0.55), transparent 100%);
+            radial-gradient(1.6px 1.6px at 10.1% 6.0%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 79.7% 17.8%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 55.9% 44.7%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 19.1% 73.2%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 13.1% 64.4%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 11.7% 42.1%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 21.3% 27.0%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 97.1% 80.3%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 30.4% 88.5%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 21.1% 39.4%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 85.4% 64.2%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 10.0% 98.9%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 21.3% 25.8%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 77.3% 32.9%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 29.6% 7.3%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 9.0% 58.3%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 24.3% 60.1%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 37.2% 45.3%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 95.9% 48.4%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 57.5% 86.7%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 18.3% 15.4%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 90.8% 81.8%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 24.9% 19.0%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 73.9% 94.0%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 19.7% 95.0%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 88.2% 60.4%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 42.1% 10.4%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 3.9% 96.3%, rgba(160, 226, 255, 0.55), transparent 100%),
+            radial-gradient(1.6px 1.6px at 23.8% 70.5%, rgba(160, 226, 255, 0.55), transparent 100%);
     background-repeat: no-repeat;
     animation: star-drift-a 120s linear infinite;
     will-change: transform;
 }
 
 .backdrop-stars--far {
-    inset: -20%;
-    --par: -0.05;
+    inset: 0 -6% -460px -6%;
+    --par: -0.04;
     background-image: radial-gradient(1px 1px at 54.8% 34.6%, rgba(160, 226, 255, 0.32), transparent 100%),
             radial-gradient(1px 1px at 84.5% 28.9%, rgba(160, 226, 255, 0.32), transparent 100%),
             radial-gradient(1px 1px at 51.0% 34.4%, rgba(160, 226, 255, 0.32), transparent 100%),
@@ -410,7 +425,45 @@ p {
             radial-gradient(1px 1px at 11.3% 16.5%, rgba(160, 226, 255, 0.32), transparent 100%),
             radial-gradient(1px 1px at 3.4% 78.4%, rgba(160, 226, 255, 0.32), transparent 100%),
             radial-gradient(1px 1px at 86.6% 20.2%, rgba(160, 226, 255, 0.32), transparent 100%),
-            radial-gradient(1px 1px at 63.4% 87.6%, rgba(160, 226, 255, 0.32), transparent 100%);
+            radial-gradient(1px 1px at 63.4% 87.6%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 24.4% 33.3%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 88.1% 76.2%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 62.1% 79.4%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 57.3% 31.5%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 68.5% 78.4%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 5.5% 32.2%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 29.4% 88.6%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 28.8% 67.4%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 43.5% 37.8%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 50.0% 89.5%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 65.8% 38.9%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 15.0% 34.4%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 47.1% 64.6%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 99.9% 32.5%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 94.0% 91.1%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 44.3% 22.2%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 23.4% 92.1%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 17.4% 64.8%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 65.2% 16.7%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 3.1% 63.8%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 5.3% 54.9%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 97.1% 46.4%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 31.2% 10.6%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 30.2% 32.0%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 11.7% 70.2%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 60.2% 71.8%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 10.7% 25.0%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 92.5% 0.9%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 37.0% 81.8%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 22.9% 22.0%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 63.7% 25.2%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 33.6% 39.2%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 29.9% 65.9%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 73.5% 76.1%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 98.0% 7.3%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 25.7% 98.7%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 79.8% 76.0%, rgba(160, 226, 255, 0.32), transparent 100%),
+            radial-gradient(1px 1px at 22.2% 12.8%, rgba(160, 226, 255, 0.32), transparent 100%);
     animation: star-drift-b 190s linear infinite;
 }
 
@@ -431,9 +484,9 @@ p {
    (0.16 x 0.34 = 0.05) e sumiria tudo. Cada uma controla a sua. */
 .backdrop-cubes {
     position: absolute;
-    inset: 0;
+    inset: 0 0 -980px 0;
     color: var(--cyan);
-    --par: -0.2;
+    --par: -0.11;
     translate: 0 calc(var(--sy, 0px) * var(--par));
 }
 
