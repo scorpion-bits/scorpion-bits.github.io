@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-mark.png">
-    <link rel="stylesheet" href="css/style.css?v=7">
+    <link rel="stylesheet" href="css/style.css?v=9">
     <script>document.documentElement.className += " js";</script>
 </head>
 
@@ -178,9 +178,9 @@
                 </div>
             </div>
 
-            <div class="hero-stage">
+            <div class="hero-stage" data-float="26">
                 <div class="hero-ring hero-ring--a" aria-hidden="true"></div>
-                <div class="hero-ring hero-ring--b" aria-hidden="true"></div>
+                <div class="hero-ring hero-ring--b" data-float="-14" aria-hidden="true"></div>
                 <img class="hero-mascot" src="assets/logo-mark.png" width="437" height="535" fetchpriority="high"
                     alt="Mascote da Scorpion Bits: um escorpião montado com cubos isométricos">
             </div>
@@ -246,45 +246,53 @@
             <div class="why reveal">
                 <div class="why-col why-col--l">
                     <article class="why-card o1">
-                        <span class="why-num">01</span>
-                        <h3>Mecânicas polidas</h3>
-                        <p>
-                            Poucas mecânicas bem resolvidas valem mais que uma lista de
-                            recursos pela metade. Testamos até parecer óbvio pra quem joga.
-                        </p>
+                        <div class="why-card-in">
+                            <span class="why-num">01</span>
+                            <h3>Mecânicas polidas</h3>
+                            <p>
+                                Poucas mecânicas bem resolvidas valem mais que uma lista de
+                                recursos pela metade. Testamos até parecer óbvio pra quem joga.
+                            </p>
+                        </div>
                     </article>
 
                     <article class="why-card o3">
-                        <span class="why-num">03</span>
-                        <h3>Arte e som da casa</h3>
-                        <p>
-                            Do sprite à trilha, tudo é produzido internamente. Cada projeto
-                            sai com uma cara que só ele tem.
-                        </p>
+                        <div class="why-card-in">
+                            <span class="why-num">03</span>
+                            <h3>Arte e som da casa</h3>
+                            <p>
+                                Do sprite à trilha, tudo é produzido internamente. Cada projeto
+                                sai com uma cara que só ele tem.
+                            </p>
+                        </div>
                     </article>
                 </div>
 
-                <div class="why-core" aria-hidden="true">
+                <div class="why-core" data-float aria-hidden="true">
                     <img src="assets/cube.png" width="142" height="160" alt="" loading="lazy">
                 </div>
 
-                <div class="why-col">
+                <div class="why-col why-col--r">
                     <article class="why-card o2">
-                        <span class="why-num">02</span>
-                        <h3>Game feel responsivo</h3>
-                        <p>
-                            Peso, aceleração, recuo, pausa de impacto. É o que separa um
-                            comando que funciona de um que dá vontade de repetir.
-                        </p>
+                        <div class="why-card-in">
+                            <span class="why-num">02</span>
+                            <h3>Game feel responsivo</h3>
+                            <p>
+                                Peso, aceleração, recuo, pausa de impacto. É o que separa um
+                                comando que funciona de um que dá vontade de repetir.
+                            </p>
+                        </div>
                     </article>
 
                     <article class="why-card o4">
-                        <span class="why-num">04</span>
-                        <h3>Ensinar o que fazemos</h3>
-                        <p>
-                            Escrevemos material de curso do zero. Quem explica bem entende
-                            melhor — e a turma sai fazendo, não assistindo.
-                        </p>
+                        <div class="why-card-in">
+                            <span class="why-num">04</span>
+                            <h3>Ensinar o que fazemos</h3>
+                            <p>
+                                Escrevemos material de curso do zero. Quem explica bem entende
+                                melhor — e a turma sai fazendo, não assistindo.
+                            </p>
+                        </div>
                     </article>
                 </div>
             </div>
@@ -377,109 +385,145 @@
                 </div>
 
                 <div class="stage" data-stage>
+                    <p class="stage-ghost" data-ghost-out aria-hidden="true"></p>
                     <div class="stage-track" data-track>
-                        <article class="slide">
+                        <article class="slide" data-ghost="Gabriela">
+                            <!-- CARGO/BIO PROPOSTOS: confirmar com a pessoa antes de publicar -->
                             <div class="slide-face">
-                                <img src="https://github.com/bagimoura.png?size=400" width="168" height="168"
+                                <img src="https://github.com/bagimoura.png?size=400" width="200" height="200"
                                     alt="Gabriela Moura" decoding="async">
                             </div>
                             <div class="slide-body">
                                 <p class="slide-no">Integrante 01</p>
                                 <h3>Gabriela Moura</h3>
-                                <p class="slide-handle">@bagimoura</p>
-                                <a class="slide-link" href="https://github.com/bagimoura" target="_blank"
-                                    rel="noopener">
+                                <p class="slide-role">Game Design</p>
+                                <p class="slide-bio">Desenha as regras antes de virar código: o que o jogador pode fazer, o que ele descobre sozinho e em que ordem. Trabalha o ritmo das fases para que a dificuldade suba sem travar quem está começando.</p>
+                                <ul class="slide-tags">
+                                    <li>Level design</li>
+                                    <li>Progressão</li>
+                                    <li>Playtest</li>
+                                </ul>
+                                <a class="slide-link" href="https://github.com/bagimoura" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
                                         <use href="#i-github" />
-                                    </svg> Ver perfil
+                                    </svg> @bagimoura
                                 </a>
                             </div>
                         </article>
 
-                        <article class="slide">
+                        <article class="slide" data-ghost="Thales">
                             <div class="slide-face">
-                                <img src="https://github.com/thalesmiguelhajes.png?size=400" width="168" height="168"
+                                <img src="https://github.com/thalesmiguelhajes.png?size=400" width="200" height="200"
                                     alt="Thales Hajes" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
                                 <p class="slide-no">Integrante 02</p>
                                 <h3>Thales Hajes</h3>
-                                <p class="slide-handle">@thalesmiguelhajes</p>
-                                <a class="slide-link" href="https://github.com/thalesmiguelhajes" target="_blank"
-                                    rel="noopener">
+                                <p class="slide-role">Programação · Física e Combate</p>
+                                <p class="slide-bio">Cuida do que dá peso ao jogo: colisão, empurrão, dano e o retorno que o jogador sente na mão. Escreveu o módulo de Física para Jogos e o fluxo de combate que o resto do curso usa como base.</p>
+                                <ul class="slide-tags">
+                                    <li>Godot</li>
+                                    <li>Física 2D</li>
+                                    <li>Game feel</li>
+                                </ul>
+                                <a class="slide-link" href="https://github.com/thalesmiguelhajes" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
                                         <use href="#i-github" />
-                                    </svg> Ver perfil
+                                    </svg> @thalesmiguelhajes
                                 </a>
                             </div>
                         </article>
 
-                        <article class="slide">
+                        <article class="slide" data-ghost="Ana Laura">
+                            <!-- CARGO/BIO PROPOSTOS: confirmar com a pessoa antes de publicar -->
                             <div class="slide-face">
-                                <img src="https://github.com/maekawa1315.png?size=400" width="168" height="168"
+                                <img src="https://github.com/maekawa1315.png?size=400" width="200" height="200"
                                     alt="Ana Laura Maekawa" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
                                 <p class="slide-no">Integrante 03</p>
                                 <h3>Ana Laura Maekawa</h3>
-                                <p class="slide-handle">@maekawa1315</p>
-                                <a class="slide-link" href="https://github.com/maekawa1315" target="_blank"
-                                    rel="noopener">
+                                <p class="slide-role">Arte e Animação</p>
+                                <p class="slide-bio">Define a cara dos projetos — paleta, sprites e animação. Produz a arte em pixel que sustenta a leitura visual do jogo, do personagem parado ao quadro de impacto.</p>
+                                <ul class="slide-tags">
+                                    <li>Pixel art</li>
+                                    <li>Aseprite</li>
+                                    <li>Animação</li>
+                                </ul>
+                                <a class="slide-link" href="https://github.com/maekawa1315" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
                                         <use href="#i-github" />
-                                    </svg> Ver perfil
+                                    </svg> @maekawa1315
                                 </a>
                             </div>
                         </article>
 
-                        <article class="slide">
+                        <article class="slide" data-ghost="Giovane">
                             <div class="slide-face">
-                                <img src="https://github.com/gisotra.png?size=400" width="168" height="168"
+                                <img src="https://github.com/gisotra.png?size=400" width="200" height="200"
                                     alt="Giovane Sotratto" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
                                 <p class="slide-no">Integrante 04</p>
                                 <h3>Giovane Sotratto</h3>
-                                <p class="slide-handle">@gisotra</p>
+                                <p class="slide-role">Programação · Sistemas de Jogo</p>
+                                <p class="slide-bio">Monta os sistemas que ligam o jogador ao mundo: interação com objetos, puzzles e os componentes reaproveitados entre as cenas. Divide com o Thales a base de física do curso.</p>
+                                <ul class="slide-tags">
+                                    <li>Godot</li>
+                                    <li>Componentes</li>
+                                    <li>Puzzles</li>
+                                </ul>
                                 <a class="slide-link" href="https://github.com/gisotra" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
                                         <use href="#i-github" />
-                                    </svg> Ver perfil
+                                    </svg> @gisotra
                                 </a>
                             </div>
                         </article>
 
-                        <article class="slide">
+                        <article class="slide" data-ghost="Milan">
                             <div class="slide-face">
-                                <img src="https://github.com/neverevis.png?size=400" width="168" height="168"
+                                <img src="https://github.com/neverevis.png?size=400" width="200" height="200"
                                     alt="Milan Bahrami" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
                                 <p class="slide-no">Integrante 05</p>
                                 <h3>Milan Bahrami</h3>
-                                <p class="slide-handle">@neverevis</p>
-                                <a class="slide-link" href="https://github.com/neverevis" target="_blank"
-                                    rel="noopener">
+                                <p class="slide-role">Programação · Sistemas e Conteúdo</p>
+                                <p class="slide-bio">Escreve os sistemas de progressão — inventário, status, perigos e batalha — e o material de aula que ensina tudo isso do zero. Responsável por seis dos módulos de programação do curso.</p>
+                                <ul class="slide-tags">
+                                    <li>Godot</li>
+                                    <li>GDScript</li>
+                                    <li>Material didático</li>
+                                </ul>
+                                <a class="slide-link" href="https://github.com/neverevis" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
                                         <use href="#i-github" />
-                                    </svg> Ver perfil
+                                    </svg> @neverevis
                                 </a>
                             </div>
                         </article>
 
-                        <article class="slide">
+                        <article class="slide" data-ghost="Christian">
+                            <!-- CARGO/BIO PROPOSTOS: confirmar com a pessoa antes de publicar -->
                             <div class="slide-face">
-                                <img src="https://github.com/gidessu.png?size=400" width="168" height="168"
+                                <img src="https://github.com/gidessu.png?size=400" width="200" height="200"
                                     alt="Christian Amancio" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
                                 <p class="slide-no">Integrante 06</p>
                                 <h3>Christian Amancio</h3>
-                                <p class="slide-handle">@gidessu</p>
+                                <p class="slide-role">Música e Sound Design</p>
+                                <p class="slide-bio">Faz a trilha e os efeitos sonoros da casa. Ajusta o som ao ritmo da mecânica, porque metade da sensação de impacto num jogo entra pelo ouvido, não pelos olhos.</p>
+                                <ul class="slide-tags">
+                                    <li>FL Studio</li>
+                                    <li>Trilha</li>
+                                    <li>SFX</li>
+                                </ul>
                                 <a class="slide-link" href="https://github.com/gidessu" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
                                         <use href="#i-github" />
-                                    </svg> Ver perfil
+                                    </svg> @gidessu
                                 </a>
                             </div>
                         </article>
@@ -689,7 +733,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=7" defer></script>
+    <script src="js/main.js?v=9" defer></script>
 </body>
 
 </html>

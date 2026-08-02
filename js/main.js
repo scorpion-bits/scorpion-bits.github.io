@@ -95,6 +95,9 @@
 
         let index = 0;
 
+        const ghost = rosterWrap.querySelector("[data-ghost-out]");
+        let ghostTimer = null;
+
         const render = () => {
             track.style.transform = `translateX(-${index * 100}%)`;
             rail.style.setProperty("--i", index);
@@ -105,6 +108,20 @@
                 dot.classList.toggle("is-on", on);
                 dot.setAttribute("aria-selected", String(on));
             });
+
+            // só o slide visível recebe as animações de entrada, senão
+            // todas disparariam de uma vez fora da tela
+            slides.forEach((s, i) => s.classList.toggle("is-live", i === index));
+
+            // nome gigante ao fundo: sai, troca, volta
+            if (ghost) {
+                ghost.classList.remove("is-in");
+                clearTimeout(ghostTimer);
+                ghostTimer = setTimeout(() => {
+                    ghost.textContent = slides[index].dataset.ghost || "";
+                    ghost.classList.add("is-in");
+                }, 180);
+            }
         };
 
         const goTo = (i) => {
@@ -177,6 +194,41 @@
         });
 
         render();
+    }
+
+    /* ------------------------------------------- parallax no desktop -- */
+    /* O desktop ficava parado demais em comparação ao mobile, onde cada
+       bloco entra com o scroll. Aqui o mascote e o cubo reagem ao mouse.
+       Só transform, um rAF por movimento, e nada disso roda no toque. */
+    const canHover = matchMedia("(hover: hover) and (pointer: fine)");
+    const stillMQ = matchMedia("(prefers-reduced-motion: reduce)");
+    const floaters = document.querySelectorAll("[data-float]");
+
+    if (floaters.length && canHover.matches && !stillMQ.matches) {
+        let queued = false;
+        let px = 0;
+        let py = 0;
+
+        window.addEventListener(
+            "pointermove",
+            (e) => {
+                px = e.clientX / window.innerWidth - 0.5;
+                py = e.clientY / window.innerHeight - 0.5;
+
+                if (queued) return;
+                queued = true;
+
+                requestAnimationFrame(() => {
+                    queued = false;
+                    floaters.forEach((el) => {
+                        const depth = Number(el.dataset.float) || 18;
+                        el.style.setProperty("--px", `${px * depth}px`);
+                        el.style.setProperty("--py", `${py * depth}px`);
+                    });
+                });
+            },
+            { passive: true }
+        );
     }
 
     if (!("IntersectionObserver" in window)) return;
