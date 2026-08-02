@@ -222,6 +222,34 @@
         render();
     }
 
+    /* --------------------------------------- parallax de rolagem -- */
+    /* Publica scrollY numa custom property; as camadas do fundo aplicam
+       o próprio multiplicador (--par) em CSS. Um listener passivo, uma
+       escrita de estilo por quadro, e o deslocamento vai em `translate` —
+       propriedade separada do `transform` que carrega os loops, então as
+       duas compõem sem se sobrescrever. */
+    {
+        const root = document.documentElement;
+        let ticking = false;
+
+        const sync = () => {
+            ticking = false;
+            root.style.setProperty("--sy", `${window.scrollY}px`);
+        };
+
+        addEventListener(
+            "scroll",
+            () => {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(sync);
+            },
+            { passive: true }
+        );
+
+        sync();
+    }
+
     /* ------------------------------------------- parallax no desktop -- */
     /* O desktop ficava parado demais em comparação ao mobile, onde cada
        bloco entra com o scroll. Aqui o mascote e o cubo reagem ao mouse.

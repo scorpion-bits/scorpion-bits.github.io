@@ -197,6 +197,8 @@ p {
 .backdrop-grid {
     position: absolute;
     inset: -25%;
+    --par: -0.08;
+    translate: 0 calc(var(--sy, 0px) * var(--par));
     background-image: repeating-linear-gradient(
             30deg,
             transparent 0 47px,
@@ -209,6 +211,19 @@ p {
         );
     animation: grid-drift 48s linear infinite;
     will-change: transform;
+}
+
+/* segunda malha, mais funda: maior, desfocada e com parallax mais lento.
+   A diferença de velocidade entre as duas é o que cria a sensação de
+   profundidade. */
+.backdrop-grid--far {
+    inset: -45%;
+    --par: -0.028;
+    background-size: 190% 190%;
+    filter: blur(2.5px);
+    opacity: 0.75;
+    animation-duration: 96s;
+    animation-direction: reverse;
 }
 
 @keyframes grid-drift {
@@ -260,6 +275,8 @@ p {
 .backdrop-mist {
     position: absolute;
     inset: -45%;
+    --par: -0.03;
+    translate: 0 calc(var(--sy, 0px) * var(--par));
     background: radial-gradient(
             circle at 22% 68%,
             rgba(106, 216, 254, 0.14),
@@ -291,6 +308,8 @@ p {
 .backdrop-stars {
     position: absolute;
     inset: -30%;
+    --par: -0.14;
+    translate: 0 calc(var(--sy, 0px) * var(--par));
     background-image: radial-gradient(1.6px 1.6px at 45.2% 56.0%, rgba(160, 226, 255, 0.55), transparent 100%),
             radial-gradient(1.6px 1.6px at 92.4% 46.6%, rgba(160, 226, 255, 0.55), transparent 100%),
             radial-gradient(1.6px 1.6px at 50.8% 58.7%, rgba(160, 226, 255, 0.55), transparent 100%),
@@ -332,6 +351,7 @@ p {
 
 .backdrop-stars--far {
     inset: -20%;
+    --par: -0.05;
     background-image: radial-gradient(1px 1px at 54.8% 34.6%, rgba(160, 226, 255, 0.32), transparent 100%),
             radial-gradient(1px 1px at 84.5% 28.9%, rgba(160, 226, 255, 0.32), transparent 100%),
             radial-gradient(1px 1px at 51.0% 34.4%, rgba(160, 226, 255, 0.32), transparent 100%),
@@ -400,6 +420,8 @@ p {
     position: absolute;
     inset: 0;
     color: var(--cyan);
+    --par: -0.2;
+    translate: 0 calc(var(--sy, 0px) * var(--par));
 }
 
 .backdrop-cubes svg {
@@ -905,14 +927,30 @@ p {
 /* Tipografia gigante em três camadas com o mascote no meio: a linha do
    meio fica atrás (vazada), a de baixo na frente. É o que dá profundidade
    real em vez de "imagem ao lado do texto". */
+/* O rodapé do hero (21 / role / stack) fica ancorado embaixo, e só o bloco
+   principal se centraliza no espaço restante. Antes tudo entrava no mesmo
+   centro, então o conjunto subia e sobrava vazio no pé da tela. */
 .hero {
     position: relative;
-    display: grid;
-    align-content: center;
-    justify-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     min-height: calc(100svh - var(--dock-h) - 14px);
     padding-block: clamp(1.5rem, 5vh, 3rem);
     text-align: center;
+}
+
+.hero-mid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 0;
+}
+
+.hero-base {
+    flex: none;
 }
 
 /* -- o bloco tipográfico --------------------------------------------------- */
@@ -2863,35 +2901,17 @@ p {
 }
 
 /* ------------------------------------------------------- menos movimento -- */
-/* A intenção desta media query é cortar movimento vestibular — deslocamento,
-   escala, rotação, loop infinito — e NÃO apagar todo retorno visual.
-   A versão anterior zerava a duração de tudo com `*`, o que deixava o site
-   completamente estático para quem tem "efeitos de animação" desligado no
-   sistema (padrão em muita máquina Windows). Aqui só a translação morre;
-   fades, cor e opacidade continuam. */
+/* Escopo deliberadamente estreito, a pedido do estúdio.
+   Fica desligado só o parallax de ponteiro (o mais desorientador, porque
+   persegue o cursor) e o deslizamento dos blocos ao entrar, que viram
+   fade. O movimento ambiente (órbitas, névoa,
+   grade, líquido do botão) é lento, de amplitude pequena e não segue o
+   cursor, então permanece ligado mesmo com a preferência marcada.
+   Muita máquina Windows tem "efeitos de animação" desligado por padrão, e
+   desligar tudo deixava o site inteiro estático para essas pessoas. */
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
-    }
-
-    /* loops infinitos e flutuação: fora */
-    .backdrop-grid,
-    .backdrop-mist,
-    .backdrop-stars,
-    .backdrop-cubes svg,
-    .btn--solid:hover,
-    .btn--wire:hover,
-    .btn--solid::before,
-    .backdrop::before,
-    .hero-mascot,
-    .orbit-spin,
-    .orbit-static use,
-    .why-core img,
-    .hero-cue i,
-    .hero-note i,
-    .glow-text,
-    .roster-btn::after {
-        animation: none !important;
     }
 
     /* parallax de ponteiro: fora */
