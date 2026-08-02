@@ -188,6 +188,15 @@ p {
     overflow: hidden;
     pointer-events: none;
     background: var(--ink-950);
+}
+
+/* A malha vive numa camada própria, maior que a tela, que desliza no eixo
+   da própria grade isométrica. Animar `background-position` repintaria a
+   viewport inteira a cada quadro; `transform` numa camada já pintada é
+   trabalho de compositor e não custa praticamente nada. */
+.backdrop-grid {
+    position: absolute;
+    inset: -25%;
     background-image: repeating-linear-gradient(
             30deg,
             transparent 0 47px,
@@ -198,6 +207,15 @@ p {
             transparent 0 47px,
             var(--grid-line) 47px 48px
         );
+    animation: grid-drift 48s linear infinite;
+    will-change: transform;
+}
+
+@keyframes grid-drift {
+    to {
+        /* 96px = dois períodos da grade: o laço fecha sem salto */
+        transform: translate3d(0, -96px, 0);
+    }
 }
 
 /* névoa: manchas grandes que derivam devagar. Só transform anima. */
@@ -236,6 +254,33 @@ p {
 
     100% {
         transform: translate3d(3%, -3%, 0) scale(1.12) rotate(6deg);
+    }
+}
+
+.backdrop-mist {
+    position: absolute;
+    inset: -45%;
+    background: radial-gradient(
+            circle at 22% 68%,
+            rgba(106, 216, 254, 0.14),
+            transparent 42%
+        ),
+        radial-gradient(
+            circle at 80% 40%,
+            rgba(139, 92, 246, 0.12),
+            transparent 44%
+        );
+    animation: drift-mist-b 44s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes drift-mist-b {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1.06) rotate(0deg);
+    }
+
+    100% {
+        transform: translate3d(-4%, 4%, 0) scale(1) rotate(-8deg);
     }
 }
 
@@ -562,9 +607,54 @@ p {
 .btn--solid {
     position: relative;
     overflow: hidden;
+    isolation: isolate;
     background: linear-gradient(120deg, var(--cyan), var(--blue) 55%, var(--indigo));
     color: #03101c;
     box-shadow: 0 10px 30px -12px rgba(81, 168, 246, 0.9);
+}
+
+/* Gradiente "líquido": três manchas de cor girando dentro do botão.
+   Custo real ~zero — é só `transform` numa camada de ~200x50px, ou seja
+   trabalho de compositor, sem repintura. O caminho caro seria um filtro
+   SVG (feTurbulence + feDisplacementMap), que recalcula pixel a pixel a
+   cada quadro e derruba o mobile; por isso não uso.
+   z-index -1 pinta acima do fundo do botão e abaixo do texto. */
+.btn--solid::before {
+    content: "";
+    position: absolute;
+    inset: -75%;
+    z-index: -1;
+    background: radial-gradient(
+            circle at 28% 38%,
+            rgba(139, 92, 246, 0.95),
+            transparent 46%
+        ),
+        radial-gradient(
+            circle at 72% 62%,
+            rgba(106, 216, 254, 0.95),
+            transparent 46%
+        ),
+        radial-gradient(
+            circle at 52% 88%,
+            rgba(47, 127, 212, 0.9),
+            transparent 48%
+        );
+    animation: liquid 16s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes liquid {
+    0% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: translate3d(5%, -4%, 0) rotate(140deg) scale(1.18);
+    }
+
+    100% {
+        transform: translate3d(-4%, 3%, 0) rotate(260deg) scale(1.06);
+    }
 }
 
 .btn--solid::after {
@@ -691,11 +781,20 @@ p {
     text-align: left;
 }
 
-/* a de baixo passa na frente do mascote — é o que cria a profundidade */
+/* A linha de baixo passa na frente do mascote e é subtraída dele.
+   CSS não tem "subtract"; `difference` é o equivalente. O truque está na
+   cor: difference(texto, fundo) só resulta em escuro se os canais forem
+   próximos. Com texto branco o canal R sobrava (255-106) e o trecho
+   sobreposto ficava LARANJA, brigando com a paleta. Este ciano claro tem
+   R próximo do R do mascote, então a sobreposição vira recorte escuro e
+   o resto da palavra continua claro.
+   Para desligar o efeito, basta remover as duas linhas abaixo. */
 .hero-l3 {
     z-index: 3;
     text-align: right;
     margin-top: clamp(2.5rem, 8vw, 7rem);
+    color: #9debff;
+    mix-blend-mode: difference;
 }
 
 .hero-l3 em {
@@ -1094,16 +1193,15 @@ p {
    preenchimento — assim o corte diagonal também tem contorno, o que
    um clip-path sozinho não consegue fazer. */
 .why-card {
-    --cut: 30px;
+    --slope: 24px;
     position: relative;
     width: min(330px, 100%);
     padding: 1px;
     clip-path: polygon(
-        var(--cut) 0,
+        0 var(--slope),
         100% 0,
-        100% 100%,
-        0 100%,
-        0 var(--cut)
+        100% calc(100% - var(--slope)),
+        0 100%
     );
     background: linear-gradient(
         var(--tilt, 150deg),
@@ -1111,17 +1209,6 @@ p {
         rgba(126, 190, 232, 0.1) 55%
     );
     transition: transform 0.45s var(--ease), filter 0.45s var(--ease);
-}
-
-/* coluna da direita espelha o corte, apontando para o centro */
-.why-col--r .why-card {
-    clip-path: polygon(
-        0 0,
-        calc(100% - var(--cut)) 0,
-        100% var(--cut),
-        100% 100%,
-        0 100%
-    );
 }
 
 .why-card::before {
@@ -1144,14 +1231,10 @@ p {
     z-index: 1;
 }
 
-/* respiro extra no canto cortado para o texto não encostar na diagonal */
+/* folga vertical extra: as duas diagonais comem altura nas pontas */
 .why-card-in {
     display: block;
-    padding: 26px 26px 26px calc(var(--cut) * 0.9);
-}
-
-.why-col--r .why-card-in {
-    padding: 26px calc(var(--cut) * 0.9) 26px 26px;
+    padding: calc(24px + var(--slope) * 0.7) 26px;
 }
 
 .why-card:hover {
@@ -2568,6 +2651,9 @@ p {
     }
 
     /* loops infinitos e flutuação: fora */
+    .backdrop-grid,
+    .backdrop-mist,
+    .btn--solid::before,
     .backdrop::before,
     .hero-mascot,
     .hero-ring--a,
