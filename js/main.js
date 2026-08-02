@@ -82,14 +82,40 @@
     if (rosterWrap) {
         const stageEl = rosterWrap.querySelector("[data-stage]");
         const track = rosterWrap.querySelector("[data-track]");
-        const slides = [...track.children];
-        const dots = [...rosterWrap.querySelectorAll(".roster-btn")];
+        const rosterEl = rosterWrap.querySelector(".roster");
         const prevBtn = rosterWrap.querySelector("[data-prev]");
         const nextBtn = rosterWrap.querySelector("[data-next]");
         const rail = rosterWrap.querySelector("[data-rail]");
         const countEl = rosterWrap.querySelector("[data-count]");
-        const total = slides.length;
         const pad = (n) => String(n).padStart(2, "0");
+
+        /* Ordem sorteada a cada carregamento: ninguém fica sempre em
+           primeiro. Fisher–Yates, e o mesmo sorteio é aplicado aos slides
+           e aos avatares para os dois continuarem pareados. */
+        const order = [...track.children].map((_, i) => i);
+        for (let i = order.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [order[i], order[j]] = [order[j], order[i]];
+        }
+
+        const slidesRaw = [...track.children];
+        const dotsRaw = [...rosterEl.children];
+        const slides = order.map((i) => slidesRaw[i]);
+        const dots = order.map((i) => dotsRaw[i]);
+        slides.forEach((el) => track.appendChild(el));
+        dots.forEach((el) => rosterEl.appendChild(el));
+
+        const total = slides.length;
+
+        // numeração é posicional, então só faz sentido depois do sorteio
+        slides.forEach((el, i) => {
+            el.querySelector(".slide-no").textContent = `Integrante ${pad(i + 1)}`;
+        });
+
+        dots.forEach((el, i) => {
+            el.dataset.go = i;
+            el.dataset.n = i + 1;
+        });
 
         rail.parentElement.style.setProperty("--total", total);
 

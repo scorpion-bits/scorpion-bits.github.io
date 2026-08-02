@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-mark.png">
-    <link rel="stylesheet" href="css/style.css?v=9">
+    <link rel="stylesheet" href="css/style.css?v=17">
     <script>document.documentElement.className += " js";</script>
 </head>
 
@@ -150,56 +150,87 @@
     <main id="conteudo">
 
         <!-- =============================================================
-             HERO — mascote no palco, números numa fileira só, sem sobrepor
+             HERO — tipografia gigante em camadas com o mascote no meio
              ============================================================= -->
         <section class="wrap hero" id="topo">
-            <div class="hero-copy">
-                <p class="hero-tag"><b>Novo</b> Curso de game dev no SESC</p>
+            <nav class="hero-rail hero-rail--l" aria-label="Seções">
+                <a href="#topo" class="is-on">01</a>
+                <a href="#estudio">02</a>
+                <a href="#curso">03</a>
+                <a href="#equipe">04</a>
+                <a href="#projetos">05</a>
+            </nav>
 
-                <h1 class="hero-title">
-                    <span>Ideias que</span>
-                    <span class="fade-out">viram jogo.</span>
-                </h1>
-
-                <p class="hero-lead">
-                    Estúdio indie brasileiro. Mexemos numa mecânica até ela ficar gostosa
-                    na mão — e ensinamos o mesmo ofício a quem nunca escreveu uma linha
-                    de código.
-                </p>
-
-                <div class="hero-actions">
-                    <a class="btn btn--solid btn--lg" href="#curso">
-                        Ver o curso SESC
-                        <svg class="icon">
-                            <use href="#i-arrow-right" />
-                        </svg>
-                    </a>
-                    <a class="btn btn--wire btn--lg" href="#equipe">Conhecer o time</a>
-                </div>
+            <div class="hero-rail hero-rail--r">
+                <a class="icon-btn" data-brand="github" href="https://github.com/scorpion-bits" target="_blank"
+                    rel="noopener" aria-label="GitHub">
+                    <svg class="icon icon--brand">
+                        <use href="#i-github" />
+                    </svg>
+                </a>
+                <a class="icon-btn" data-brand="instagram" href="https://instagram.com/scorpionbits_" target="_blank"
+                    rel="noopener" aria-label="Instagram">
+                    <svg class="icon icon--brand">
+                        <use href="#i-instagram" />
+                    </svg>
+                </a>
+                <a class="icon-btn" data-brand="itch" href="https://scorpionbits.itch.io/" target="_blank"
+                    rel="noopener" aria-label="itch.io">
+                    <svg class="icon icon--brand">
+                        <use href="#i-itch" />
+                    </svg>
+                </a>
             </div>
 
-            <div class="hero-stage" data-float="26">
-                <div class="hero-ring hero-ring--a" aria-hidden="true"></div>
-                <div class="hero-ring hero-ring--b" data-float="-14" aria-hidden="true"></div>
+            <p class="hero-tag"><b>Novo</b> Curso de game dev no SESC</p>
+
+            <div class="hero-stage">
+                <h1 class="hero-type">
+                    <span class="hero-l1">Ideias que</span>
+                    <span class="hero-l3">viram jogo<em>.</em></span>
+                </h1>
+
+            <div class="hero-orb" data-float="26" aria-hidden="true">
+                <div class="hero-ring hero-ring--a"></div>
+                <div class="hero-ring hero-ring--b" data-float="-12"></div>
                 <img class="hero-mascot" src="assets/logo-mark.png" width="437" height="535" fetchpriority="high"
                     alt="Mascote da Scorpion Bits: um escorpião montado com cubos isométricos">
             </div>
 
-            <ul class="specs">
-                <li><b>21</b><span>módulos do curso</span></li>
-                <li><b>15</b><span>encontros · GameLab</span></li>
-                <li><b>6</b><span>pessoas no estúdio</span></li>
-                <li><b>4</b><span>frentes: código, arte, design, som</span></li>
-            </ul>
+            <p class="hero-note hero-note--l">
+                <i></i>
+                <span><b>Estúdio indie</b>mecânicas polidas</span>
+            </p>
 
-            <div class="hero-foot">
+            <p class="hero-note hero-note--r">
+                <i></i>
+                <span><b>Contrato SESC</b>turma GameLab 2026</span>
+            </p>
+            </div>
+
+            <div class="hero-actions">
+                <a class="btn btn--solid btn--lg" href="#curso">
+                    Ver o curso SESC
+                    <svg class="icon">
+                        <use href="#i-arrow-right" />
+                    </svg>
+                </a>
+                <a class="btn btn--wire btn--lg" href="#equipe">Conhecer o time</a>
+            </div>
+
+            <div class="hero-base">
+                <p class="hero-stat">
+                    <b>21</b>
+                    <span>módulos de curso escritos por nós</span>
+                </p>
+
                 <a class="hero-cue" href="#estudio">
                     <i>
                         <svg class="icon">
                             <use href="#i-arrow-down" />
                         </svg>
                     </i>
-                    01 / 05 &nbsp;·&nbsp; role para baixo
+                    role para baixo
                 </a>
 
                 <div class="hero-stack">
@@ -352,32 +383,32 @@
 
             <div class="reveal" data-roster>
                 <div class="roster" role="tablist" aria-label="Integrantes da Scorpion Bits">
-                    <button class="roster-btn is-on" role="tab" aria-selected="true" data-go="0" data-n="1"
+                    <button class="roster-btn" role="tab" aria-selected="false"
                         aria-label="Gabriela Moura">
                         <img src="https://github.com/bagimoura.png?size=160" width="54" height="54" alt=""
                             decoding="async">
                     </button>
-                    <button class="roster-btn" role="tab" aria-selected="false" data-go="1" data-n="2"
+                    <button class="roster-btn" role="tab" aria-selected="false"
                         aria-label="Thales Hajes">
                         <img src="https://github.com/thalesmiguelhajes.png?size=160" width="54" height="54" alt=""
                             decoding="async">
                     </button>
-                    <button class="roster-btn" role="tab" aria-selected="false" data-go="2" data-n="3"
+                    <button class="roster-btn" role="tab" aria-selected="false"
                         aria-label="Ana Laura Maekawa">
                         <img src="https://github.com/maekawa1315.png?size=160" width="54" height="54" alt=""
                             decoding="async">
                     </button>
-                    <button class="roster-btn" role="tab" aria-selected="false" data-go="3" data-n="4"
+                    <button class="roster-btn" role="tab" aria-selected="false"
                         aria-label="Giovane Sotratto">
                         <img src="https://github.com/gisotra.png?size=160" width="54" height="54" alt=""
                             decoding="async">
                     </button>
-                    <button class="roster-btn" role="tab" aria-selected="false" data-go="4" data-n="5"
+                    <button class="roster-btn" role="tab" aria-selected="false"
                         aria-label="Milan Bahrami">
                         <img src="https://github.com/neverevis.png?size=160" width="54" height="54" alt=""
                             decoding="async">
                     </button>
-                    <button class="roster-btn" role="tab" aria-selected="false" data-go="5" data-n="6"
+                    <button class="roster-btn" role="tab" aria-selected="false"
                         aria-label="Christian Amancio">
                         <img src="https://github.com/gidessu.png?size=160" width="54" height="54" alt=""
                             decoding="async">
@@ -388,20 +419,19 @@
                     <p class="stage-ghost" data-ghost-out aria-hidden="true"></p>
                     <div class="stage-track" data-track>
                         <article class="slide" data-ghost="Gabriela">
-                            <!-- CARGO/BIO PROPOSTOS: confirmar com a pessoa antes de publicar -->
                             <div class="slide-face">
                                 <img src="https://github.com/bagimoura.png?size=400" width="200" height="200"
-                                    alt="Gabriela Moura" decoding="async">
+                                    alt="Gabriela Moura" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
-                                <p class="slide-no">Integrante 01</p>
+                                <p class="slide-no"></p>
                                 <h3>Gabriela Moura</h3>
-                                <p class="slide-role">Game Design</p>
-                                <p class="slide-bio">Desenha as regras antes de virar código: o que o jogador pode fazer, o que ele descobre sozinho e em que ordem. Trabalha o ritmo das fases para que a dificuldade suba sem travar quem está começando.</p>
+                                <p class="slide-role">Game Design & Parcerias</p>
+                                <p class="slide-bio">Pensa o jogo antes do código: conceito, regras e o que o jogador descobre pelo caminho. Também é a ponte com quem contrata — foi por um contato dela que fechamos o contrato com o SESC.</p>
                                 <ul class="slide-tags">
+                                    <li>Conceito de jogo</li>
                                     <li>Level design</li>
-                                    <li>Progressão</li>
-                                    <li>Playtest</li>
+                                    <li>Relação com cliente</li>
                                 </ul>
                                 <a class="slide-link" href="https://github.com/bagimoura" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
@@ -417,14 +447,14 @@
                                     alt="Thales Hajes" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
-                                <p class="slide-no">Integrante 02</p>
+                                <p class="slide-no"></p>
                                 <h3>Thales Hajes</h3>
-                                <p class="slide-role">Programação · Física e Combate</p>
-                                <p class="slide-bio">Cuida do que dá peso ao jogo: colisão, empurrão, dano e o retorno que o jogador sente na mão. Escreveu o módulo de Física para Jogos e o fluxo de combate que o resto do curso usa como base.</p>
+                                <p class="slide-role">Planejamento & Áudio</p>
+                                <p class="slide-bio">Cuida do lado que mantém o estúdio de pé: planejamento, negócio e divulgação. E assina a parte sonora — trilha e efeitos — que é metade da sensação de impacto num jogo.</p>
                                 <ul class="slide-tags">
-                                    <li>Godot</li>
-                                    <li>Física 2D</li>
-                                    <li>Game feel</li>
+                                    <li>Business</li>
+                                    <li>Marketing</li>
+                                    <li>Música & Sound FX</li>
                                 </ul>
                                 <a class="slide-link" href="https://github.com/thalesmiguelhajes" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
@@ -435,20 +465,19 @@
                         </article>
 
                         <article class="slide" data-ghost="Ana Laura">
-                            <!-- CARGO/BIO PROPOSTOS: confirmar com a pessoa antes de publicar -->
                             <div class="slide-face">
                                 <img src="https://github.com/maekawa1315.png?size=400" width="200" height="200"
                                     alt="Ana Laura Maekawa" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
-                                <p class="slide-no">Integrante 03</p>
+                                <p class="slide-no"></p>
                                 <h3>Ana Laura Maekawa</h3>
-                                <p class="slide-role">Arte e Animação</p>
-                                <p class="slide-bio">Define a cara dos projetos — paleta, sprites e animação. Produz a arte em pixel que sustenta a leitura visual do jogo, do personagem parado ao quadro de impacto.</p>
+                                <p class="slide-role">Arte</p>
+                                <p class="slide-bio">Responsável pela produção de arte do estúdio. Define paleta, traço e a leitura visual que faz o jogador entender uma cena antes de ler qualquer texto.</p>
                                 <ul class="slide-tags">
+                                    <li>Ilustração</li>
                                     <li>Pixel art</li>
-                                    <li>Aseprite</li>
-                                    <li>Animação</li>
+                                    <li>Direção visual</li>
                                 </ul>
                                 <a class="slide-link" href="https://github.com/maekawa1315" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
@@ -464,14 +493,14 @@
                                     alt="Giovane Sotratto" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
-                                <p class="slide-no">Integrante 04</p>
+                                <p class="slide-no"></p>
                                 <h3>Giovane Sotratto</h3>
-                                <p class="slide-role">Programação · Sistemas de Jogo</p>
-                                <p class="slide-bio">Monta os sistemas que ligam o jogador ao mundo: interação com objetos, puzzles e os componentes reaproveitados entre as cenas. Divide com o Thales a base de física do curso.</p>
+                                <p class="slide-role">Programação & Concept Art</p>
+                                <p class="slide-bio">Transita entre o código e o papel: monta os sistemas que ligam o jogador ao mundo e também desenha como esse mundo deveria ser antes de alguém modelar qualquer coisa.</p>
                                 <ul class="slide-tags">
                                     <li>Godot</li>
-                                    <li>Componentes</li>
-                                    <li>Puzzles</li>
+                                    <li>Concept art</li>
+                                    <li>Ilustração</li>
                                 </ul>
                                 <a class="slide-link" href="https://github.com/gisotra" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
@@ -487,14 +516,14 @@
                                     alt="Milan Bahrami" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
-                                <p class="slide-no">Integrante 05</p>
+                                <p class="slide-no"></p>
                                 <h3>Milan Bahrami</h3>
-                                <p class="slide-role">Programação · Sistemas e Conteúdo</p>
-                                <p class="slide-bio">Escreve os sistemas de progressão — inventário, status, perigos e batalha — e o material de aula que ensina tudo isso do zero. Responsável por seis dos módulos de programação do curso.</p>
+                                <p class="slide-role">Sistemas & Design</p>
+                                <p class="slide-bio">Arquitetura do código e dos sistemas de progressão, mais a parte visual que não é in-game: animação e design gráfico. Escreveu seis dos módulos de programação do curso.</p>
                                 <ul class="slide-tags">
-                                    <li>Godot</li>
-                                    <li>GDScript</li>
-                                    <li>Material didático</li>
+                                    <li>Engenharia de sistemas</li>
+                                    <li>Animação</li>
+                                    <li>Design gráfico</li>
                                 </ul>
                                 <a class="slide-link" href="https://github.com/neverevis" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
@@ -505,20 +534,19 @@
                         </article>
 
                         <article class="slide" data-ghost="Christian">
-                            <!-- CARGO/BIO PROPOSTOS: confirmar com a pessoa antes de publicar -->
                             <div class="slide-face">
                                 <img src="https://github.com/gidessu.png?size=400" width="200" height="200"
                                     alt="Christian Amancio" loading="lazy" decoding="async">
                             </div>
                             <div class="slide-body">
-                                <p class="slide-no">Integrante 06</p>
+                                <p class="slide-no"></p>
                                 <h3>Christian Amancio</h3>
-                                <p class="slide-role">Música e Sound Design</p>
-                                <p class="slide-bio">Faz a trilha e os efeitos sonoros da casa. Ajusta o som ao ritmo da mecânica, porque metade da sensação de impacto num jogo entra pelo ouvido, não pelos olhos.</p>
+                                <p class="slide-role">Concept Art & Animação</p>
+                                <p class="slide-bio">Desenha a primeira versão de tudo — personagem, inimigo, cenário — e depois dá movimento. É de onde sai a identidade visual antes de virar sprite final.</p>
                                 <ul class="slide-tags">
-                                    <li>FL Studio</li>
-                                    <li>Trilha</li>
-                                    <li>SFX</li>
+                                    <li>Concept art</li>
+                                    <li>Ilustração</li>
+                                    <li>Animação</li>
                                 </ul>
                                 <a class="slide-link" href="https://github.com/gidessu" target="_blank" rel="noopener">
                                     <svg class="icon icon--brand">
@@ -733,7 +761,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=9" defer></script>
+    <script src="js/main.js?v=17" defer></script>
 </body>
 
 </html>
