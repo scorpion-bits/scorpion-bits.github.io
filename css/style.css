@@ -1002,8 +1002,9 @@ p {
     flex-direction: column;
     align-items: center;
     min-height: calc(100svh - var(--dock-h) - 14px);
-    padding-block: clamp(1.5rem, 5vh, 3rem);
+    padding-block: clamp(1rem, 3.5vh, 2.25rem);
     text-align: center;
+    --orb-w: clamp(150px, min(26vw, 27vh), 320px);
 }
 
 .hero-mid {
@@ -1013,6 +1014,9 @@ p {
     justify-content: center;
     width: 100%;
     min-height: 0;
+    /* os botões ficam abaixo do palco e puxam o centro óptico para cima;
+       este respiro devolve a órbita para o meio da tela */
+    padding-top: clamp(0.75rem, 3.5vh, 2.75rem);
 }
 
 .hero-base {
@@ -1068,6 +1072,12 @@ p {
 .hero-stage {
     position: relative;
     width: 100%;
+    /* reserva a altura da órbita: sendo absoluta, ela não entrava na conta
+       do layout e ficava colada no dock, com sobra morta embaixo */
+    min-height: calc(var(--orb-w) * 2.16);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .hero-orb {
@@ -1075,7 +1085,7 @@ p {
     top: 50%;
     left: 50%;
     z-index: 2;
-    width: clamp(170px, 26vw, 340px);
+    width: var(--orb-w);
     aspect-ratio: 437 / 535;
     transform: translate(-50%, -50%);
     translate: var(--px, 0) var(--py, 0);
@@ -1108,7 +1118,7 @@ p {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 200%;
+    width: 216%;
     /* o reset tem `svg { max-width: 100% }`, que prendia a órbita ao
        tamanho do mascote — precisa ser liberado aqui */
     max-width: none;
@@ -1257,7 +1267,7 @@ p {
 }
 
 .hero-note--l {
-    top: 34%;
+    top: 70%;
     right: calc(50% + clamp(190px, 17vw, 250px));
     flex-direction: row-reverse;
     text-align: right;
@@ -1268,7 +1278,7 @@ p {
 }
 
 .hero-note--r {
-    bottom: 30%;
+    top: 22%;
     left: calc(50% + clamp(190px, 17vw, 250px));
 }
 
@@ -2731,9 +2741,16 @@ p {
 
     /* o mascote sai de trás do texto e vira uma peça própria em cima:
        sobreposição em tela estreita só atrapalha a leitura */
+    /* no celular o mascote volta ao fluxo normal, entao a orbita nao
+       transborda o palco e a reserva de altura so criava sobra morta */
     .hero-stage {
         display: flex;
         flex-direction: column;
+        min-height: 0;
+    }
+
+    .hero-mid {
+        padding-top: 0;
     }
 
     /* relative, não static: os anéis são absolutos e precisam do orbe como
@@ -2744,15 +2761,17 @@ p {
         left: auto;
         order: -1;
         align-self: center;
-        width: min(200px, 46vw);
+        margin-top: clamp(0.75rem, 3vh, 2rem);
+        width: min(186px, 44vw);
         transform: none;
         translate: none;
         margin-bottom: clamp(1rem, 3vh, 1.75rem);
     }
 
-    /* a órbita encolhe no celular para não vazar da tela */
+    /* a órbita encolhe no celular para não vazar da tela nem encostar
+       no dock, já que ali ela transborda a caixa do mascote */
     .orbit {
-        width: 168%;
+        width: 150%;
     }
 
     /* empilhado no celular: as linhas voltam a alinhar juntas */
