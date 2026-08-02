@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-mark.png">
-    <link rel="stylesheet" href="css/style.css?v=23">
+    <link rel="stylesheet" href="css/style.css?v=26">
     <script>document.documentElement.className += " js";</script>
 </head>
 
@@ -36,12 +36,96 @@
         <div class="backdrop-stars backdrop-stars--far"></div>
         <div class="backdrop-stars"></div>
         <div class="backdrop-cubes">
-        <svg viewBox="-11 -11 22 22" style="top:12%;left:6%;--s:54px;--d:24s" aria-hidden="true"><path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-        <svg viewBox="-11 -11 22 22" style="top:38%;right:8%;--s:38px;--d:31s;animation-delay:-6s" aria-hidden="true"><path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-        <svg viewBox="-11 -11 22 22" style="top:68%;left:12%;--s:30px;--d:27s;animation-delay:-13s" aria-hidden="true"><path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-        <svg viewBox="-11 -11 22 22" style="top:82%;right:18%;--s:46px;--d:35s;animation-delay:-3s" aria-hidden="true"><path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-        <svg viewBox="-11 -11 22 22" style="top:24%;left:44%;--s:26px;--d:29s;animation-delay:-18s" aria-hidden="true"><path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-        <svg viewBox="-11 -11 22 22" style="top:56%;right:38%;--s:34px;--d:22s;animation-delay:-9s" aria-hidden="true"><path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+        <svg class="orbit-mini" style="top:9%;left:3%;--s:210px;--o:.34" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor"
+                    stroke-width="1" opacity="0.3" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <g class="orbit-spin" style="--dur:58s">
+                <circle cx="100" cy="100" r="46" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.45"/>
+                <use href="#orb-cube" transform="translate(68.5 133.5) scale(0.8)"/>
+                <circle cx="110.5" cy="55.2" r="2.4" fill="currentColor" opacity="0.6"/>
+            </g>
+            <g class="orbit-spin" style="--dur:26s" data-rev>
+                <circle cx="100" cy="100" r="20" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.28" stroke-dasharray="14 8"/>
+                <use href="#orb-cube" transform="translate(84.1 87.8) scale(0.6)"/>
+            </g>
+        </svg>
+        <svg class="orbit-mini" style="top:34%;right:2%;--s:150px;--o:.26" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor"
+                    stroke-width="1" opacity="0.3" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <g class="orbit-spin" style="--dur:46s">
+                <circle cx="100" cy="100" r="46" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.45"/>
+                <use href="#orb-cube" transform="translate(116.1 143.1) scale(0.8)"/>
+                <circle cx="64.5" cy="70.7" r="2.4" fill="currentColor" opacity="0.6"/>
+            </g>
+            <g class="orbit-spin" style="--dur:26s" data-rev>
+                <circle cx="100" cy="100" r="24" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.28" stroke-dasharray="14 8"/>
+                <use href="#orb-cube" transform="translate(123.1 106.5) scale(0.6)"/>
+            </g>
+        </svg>
+        <svg class="orbit-mini" style="top:62%;left:7%;--s:170px;--o:.3" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor"
+                    stroke-width="1" opacity="0.3" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <g class="orbit-spin" style="--dur:58s">
+                <circle cx="100" cy="100" r="46" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.45"/>
+                <use href="#orb-cube" transform="translate(144.8 110.4) scale(0.8)"/>
+                <circle cx="56.0" cy="113.4" r="2.4" fill="currentColor" opacity="0.6"/>
+            </g>
+            <g class="orbit-spin" style="--dur:50s" data-rev>
+                <circle cx="100" cy="100" r="30" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.28" stroke-dasharray="14 8"/>
+                <use href="#orb-cube" transform="translate(125.6 84.4) scale(0.6)"/>
+            </g>
+        </svg>
+        <svg class="orbit-mini" style="top:80%;right:11%;--s:230px;--o:.24" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor"
+                    stroke-width="1" opacity="0.3" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <g class="orbit-spin" style="--dur:58s">
+                <circle cx="100" cy="100" r="46" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.45"/>
+                <use href="#orb-cube" transform="translate(69.6 65.5) scale(0.8)"/>
+                <circle cx="143.6" cy="114.7" r="2.4" fill="currentColor" opacity="0.6"/>
+            </g>
+            <g class="orbit-spin" style="--dur:38s" data-rev>
+                <circle cx="100" cy="100" r="24" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.28" stroke-dasharray="14 8"/>
+                <use href="#orb-cube" transform="translate(76.2 103.1) scale(0.6)"/>
+            </g>
+        </svg>
+        <svg class="orbit-mini" style="top:20%;right:26%;--s:120px;--o:.2" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="84" fill="none" stroke="currentColor"
+                    stroke-width="1" opacity="0.3" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <g class="orbit-spin" style="--dur:58s">
+                <circle cx="100" cy="100" r="70" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.45"/>
+                <use href="#orb-cube" transform="translate(138.7 41.7) scale(0.8)"/>
+                <circle cx="95.6" cy="169.9" r="2.4" fill="currentColor" opacity="0.6"/>
+            </g>
+            <g class="orbit-spin" style="--dur:26s" data-rev>
+                <circle cx="100" cy="100" r="48" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.28" stroke-dasharray="14 8"/>
+                <use href="#orb-cube" transform="translate(138.6 71.5) scale(0.6)"/>
+            </g>
+        </svg>
+        <svg class="orbit-mini" style="top:52%;left:38%;--s:140px;--o:.16" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="72" fill="none" stroke="currentColor"
+                    stroke-width="1" opacity="0.3" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <g class="orbit-spin" style="--dur:46s">
+                <circle cx="100" cy="100" r="58" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.45"/>
+                <use href="#orb-cube" transform="translate(44.4 116.6) scale(0.8)"/>
+                <circle cx="139.8" cy="57.8" r="2.4" fill="currentColor" opacity="0.6"/>
+            </g>
+            <g class="orbit-spin" style="--dur:50s" data-rev>
+                <circle cx="100" cy="100" r="42" fill="none" stroke="currentColor"
+                        stroke-width="1" opacity="0.28" stroke-dasharray="14 8"/>
+                <use href="#orb-cube" transform="translate(76.7 135.0) scale(0.6)"/>
+            </g>
+        </svg>
         </div>
         <div class="backdrop-mist"></div>
     </div>
@@ -243,19 +327,19 @@
                     </g>
 
                     <g class="orbit-spin orbit-spin--c">
-                        <ellipse cx="300" cy="300" rx="278" ry="96" fill="none"
-                                 stroke="currentColor" stroke-width="1" opacity="0.25"
-                                 transform="rotate(-22 300 300)"/>
-                        <use href="#orb-cube" x="0" y="0" transform="translate(575.3 338.7) scale(0.65)"/>
-                        <circle cx="29.5" cy="271.6" r="2.6" fill="currentColor" opacity="0.7"/>
+                        <circle cx="300" cy="300" r="278" fill="none" stroke="currentColor"
+                                stroke-width="1" opacity="0.14" stroke-dasharray="1 9"
+                                stroke-linecap="round"/>
+                        <use href="#orb-cube" transform="translate(575.3 338.7) scale(0.65)"/>
+                        <circle cx="23.5" cy="270.9" r="2.6" fill="currentColor" opacity="0.45"/>
+                        <circle cx="439.0" cy="59.2" r="2" fill="currentColor" opacity="0.35"/>
                     </g>
 
                     <g class="orbit-spin orbit-spin--d">
-                        <ellipse cx="300" cy="300" rx="214" ry="74" fill="none"
-                                 stroke="currentColor" stroke-width="1" opacity="0.31"
-                                 transform="rotate(31 300 300)"/>
-                        <circle cx="451.1" cy="445.9" r="3" fill="currentColor" opacity="0.78"/>
-                        <use href="#orb-cube" x="0" y="0" transform="translate(142.2 167.6) scale(0.6)"/>
+                        <circle cx="300" cy="300" r="214" fill="none" stroke="currentColor"
+                                stroke-width="1" opacity="0.2" stroke-dasharray="30 14"/>
+                        <circle cx="453.9" cy="448.7" r="3" fill="currentColor" opacity="0.5"/>
+                        <use href="#orb-cube" transform="translate(136.1 162.4) scale(0.6)"/>
                     </g>
                 </svg>
                 <img class="hero-mascot" src="assets/logo-mark.png" width="437" height="535" fetchpriority="high"
@@ -826,7 +910,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=23" defer></script>
+    <script src="js/main.js?v=26" defer></script>
 </body>
 
 </html>
