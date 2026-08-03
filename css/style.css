@@ -208,8 +208,12 @@ p {
        Por isso `--par` tem que ser negativo — é o que faz a camada subir
        junto com o conteúdo. Positivo manda ela para o lado contrário do
        scroll, que lê na hora como defeito.
-       Módulo maior = parece mais perto. Esta é a da frente. */
-    --par: -0.05;
+
+       Esta é a malha DE TRÁS: losango pequeno, traço mais apagado e
+       módulo de `--par` menor. Numa perspectiva, uma grade de tamanho
+       real fixo aparece MENOR quanto mais longe está — então losango
+       pequeno tem que ser o fundo, e o fundo se desloca menos. */
+    --par: -0.018;
     /* --cell: lado do losango; --line-w: espessura do traço */
     --cell: 78px;
     --line-w: 1px;
@@ -227,28 +231,28 @@ p {
     will-change: transform;
 }
 
-/* Malha mais funda: losango maior e traço mais apagado. A profundidade vem
-   da diferença de escala e da velocidade do parallax — não de blur.
-   Qualquer `filter` aqui obrigaria a rasterizar a camada e devolveria o
-   serrilhado; linha fina e nítida lê melhor que linha borrada.
+/* Malha DA FRENTE: losango maior, traço mais aceso e o maior deslocamento
+   das duas. A profundidade vem da diferença de escala e da velocidade —
+   não de blur. Qualquer `filter` aqui obrigaria a rasterizar a camada e
+   devolveria o serrilhado; linha fina e nítida lê melhor que borrada.
 
-   Mesmo sinal da malha da frente, módulo menor: ela também sobe junto com
-   a rolagem, só que menos — objeto longe se desloca menos no campo de
-   visão. É a mesma convenção das estrelas (-0.08 perto, -0.04 longe).
+   O nome da classe já foi `--far`, com os papéis trocados: eu tinha posto
+   o losango grande no fundo. É ao contrário — perto de uma grade, os
+   losangos ficam grandes; longe, apertam. Grande = perto = anda mais.
 
-   Já esteve positivo aqui, na tentativa de "andar mais devagar que a
-   página". Estava errado: com o `.backdrop` fixo não existe movimento de
-   página para descontar, então positivo simplesmente empurra a camada
-   contra o scroll.
+   Este `--par` também já esteve positivo, na tentativa de "andar mais
+   devagar que a página". Estava errado: com o `.backdrop` fixo não existe
+   movimento de página para descontar, então positivo simplesmente empurra
+   a camada contra o scroll.
 
    O preço de velocidades diferentes: as duas deixam de ficar travadas em
    registro. Antes compartilhavam a mesma justamente para os vértices da
    malha fina (78px) nunca saírem de dentro dos da grossa (156px, o dobro
    exato). Agora deslizam uma sobre a outra durante a rolagem — que é o
    efeito pedido, mas alinhadas mesmo só no topo da página. */
-.backdrop-grid--far {
+.backdrop-grid--perto {
     inset: 0 0 -620px 0;
-    --par: -0.018;
+    --par: -0.05;
     --cell: 156px;
     --line-w: 1px;
     --grid-line: rgba(106, 216, 254, 0.085);
