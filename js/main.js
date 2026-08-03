@@ -551,6 +551,60 @@
        incomodava mais do que dava profundidade. O que sobrou de reação ao
        mouse é o brilho líquido no título, que é local e intencional. */
 
+    /* ------------------------ bolha líquida dos botões segue o mouse -- */
+    /* O filtro é um só, compartilhado: só um botão fica sob o cursor por
+       vez, então basta reposicionar a bolha do `feImage` na coordenada
+       local do botão que estiver em hover. Fora de qualquer botão ela vai
+       para longe e o filtro deixa de deformar.
+
+       `primitiveUnits="userSpaceOnUse"` faz x/y valerem em px da caixa do
+       botão, então é só descontar o retângulo dele do ponteiro.
+
+       Uma escrita de atributo por quadro, e só enquanto o cursor está em
+       cima de um botão. */
+    {
+        const bolha = document.getElementById("bolha-liquida");
+        const LADO = 130;
+
+        if (bolha && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+            let botao = null;
+            let mx = 0;
+            let my = 0;
+            let raf = 0;
+
+            const guardar = () => {
+                raf = 0;
+                if (!botao) return;
+                const r = botao.getBoundingClientRect();
+                bolha.setAttribute("x", (mx - r.left - LADO / 2).toFixed(1));
+                bolha.setAttribute("y", (my - r.top - LADO / 2).toFixed(1));
+            };
+
+            const parquear = () => {
+                botao = null;
+                bolha.setAttribute("x", -500);
+                bolha.setAttribute("y", -500);
+            };
+
+            document.addEventListener(
+                "pointermove",
+                (e) => {
+                    if (e.pointerType !== "mouse") return;
+                    const alvo = e.target.closest(".btn");
+                    if (!alvo) return botao && parquear();
+
+                    botao = alvo;
+                    mx = e.clientX;
+                    my = e.clientY;
+                    if (!raf) raf = requestAnimationFrame(guardar);
+                },
+                { passive: true }
+            );
+
+            parquear();
+        }
+    }
+
     /* ------------------------------------------- rolagem suavizada -- */
     /* A roda do mouse anda em degraus de ~100px e o salto seco brigava
        com o parallax das camadas do fundo. Aqui o degrau vira alvo e a

@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-poster.png">
-    <link rel="stylesheet" href="css/style.css?v=53">
+    <link rel="stylesheet" href="css/style.css?v=58">
     <script>document.documentElement.className += " js";</script>
 </head>
 
@@ -187,24 +187,46 @@
                 <path d="M8 0v4H4v4H0v16h16v-4h4v-4h4V0Zm4 8h4v4h-4v4H8v-4h4Z" />
             </symbol>
 
-            <!-- PROTÓTIPO — distorção líquida do botão sob o cursor.
+            <!-- Distorção líquida do botão sob o cursor.
+
                  feTurbulence gera um ruído contínuo; feDisplacementMap usa
                  os canais R e G desse ruído como deslocamento em x e y,
-                 então a borda do botão ondula em vez de ficar reta. Isso é
+                 então a borda do botão ondula em vez de ficar reta. É
                  distorção de verdade num elemento HTML real, sem WebGL e
                  sem biblioteca.
-                 A animação é SMIL, não JS: quem move o ruído é o próprio
-                 SVG, sem passar pela thread principal a cada quadro.
-                 O filtro só entra no :hover — fora dele não custa nada. -->
-            <filter id="liquido" x="-12%" y="-45%" width="124%" height="190%"
-                    color-interpolation-filters="sRGB">
-                <feTurbulence type="fractalNoise" baseFrequency="0.009 0.016"
+
+                 A turbulência é LOCAL: o `feImage` desenha uma bolha
+                 radial que o JS reposiciona no ponteiro, e o `in` recorta
+                 o ruído para dentro dela. Fora da bolha entra o cinza
+                 neutro do feFlood — 128 nos canais R e G é o valor de
+                 "não desloca", então o resto do botão fica intacto. Sem
+                 esse cinza, a área transparente valeria 0 e empurraria o
+                 botão inteiro para um canto.
+
+                 O borrão no ruído existe contra o serrilhado: sem ele,
+                 pixels vizinhos se deslocam por valores muito diferentes e
+                 a borda sai escadinha.
+
+                 `primitiveUnits="userSpaceOnUse"` deixa x/y da bolha em px
+                 da caixa do botão, que é o que o JS consegue calcular. -->
+            <filter id="liquido" x="-14%" y="-55%" width="128%" height="210%"
+                    color-interpolation-filters="sRGB"
+                    primitiveUnits="userSpaceOnUse">
+                <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03"
                               numOctaves="2" seed="4" result="ruido">
-                    <animate attributeName="baseFrequency" dur="7s"
-                             values="0.009 0.016;0.017 0.009;0.009 0.016"
+                    <animate attributeName="baseFrequency" dur="6s"
+                             values="0.018 0.03;0.032 0.018;0.018 0.03"
                              repeatCount="indefinite"/>
                 </feTurbulence>
-                <feDisplacementMap in="SourceGraphic" in2="ruido" scale="7"
+                <feGaussianBlur in="ruido" stdDeviation="1.7" result="macio"/>
+                <feFlood flood-color="rgb(128,128,128)" result="neutro"/>
+                <feImage id="bolha-liquida" result="bolha"
+                         x="-500" y="-500" width="130" height="130"
+                         preserveAspectRatio="none"
+                         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130'%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.55' stop-color='%23fff' stop-opacity='.7'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='130' height='130' fill='url(%23g)'/%3E%3C/svg%3E"/>
+                <feComposite in="macio" in2="bolha" operator="in" result="local"/>
+                <feComposite in="local" in2="neutro" operator="over" result="campo"/>
+                <feDisplacementMap in="SourceGraphic" in2="campo" scale="16"
                                    xChannelSelector="R" yChannelSelector="G"/>
             </filter>
         </defs>
@@ -934,7 +956,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=53" defer></script>
+    <script src="js/main.js?v=58" defer></script>
 </body>
 
 </html>

@@ -203,7 +203,12 @@ p {
 .backdrop-grid {
     position: absolute;
     inset: 0 0 -620px 0;
-    /* Malha da frente: anda 5% MAIS rápido que a página. */
+    /* O `.backdrop` é `position: fixed`: estas camadas NÃO acompanham a
+       rolagem sozinhas, o `translate` daqui é todo o movimento delas.
+       Por isso `--par` tem que ser negativo — é o que faz a camada subir
+       junto com o conteúdo. Positivo manda ela para o lado contrário do
+       scroll, que lê na hora como defeito.
+       Módulo maior = parece mais perto. Esta é a da frente. */
     --par: -0.05;
     /* --cell: lado do losango; --line-w: espessura do traço */
     --cell: 78px;
@@ -227,19 +232,23 @@ p {
    Qualquer `filter` aqui obrigaria a rasterizar a camada e devolveria o
    serrilhado; linha fina e nítida lê melhor que linha borrada.
 
-   `--par` positivo: esta malha anda 3,5% MAIS DEVAGAR que a página,
-   enquanto a da frente anda 5% mais rápido. É o que faz ela ler como
-   distante — objeto longe se desloca menos no campo de visão.
+   Mesmo sinal da malha da frente, módulo menor: ela também sobe junto com
+   a rolagem, só que menos — objeto longe se desloca menos no campo de
+   visão. É a mesma convenção das estrelas (-0.08 perto, -0.04 longe).
 
-   O preço: as duas deixam de ficar travadas em registro. Antes
-   compartilhavam a mesma velocidade justamente para os vértices da malha
-   fina (78px) nunca saírem de dentro dos da grossa (156px, o dobro
-   exato). Com velocidades diferentes elas deslizam uma sobre a outra
-   durante a rolagem — que é o efeito pedido, mas alinhadas mesmo só no
-   topo da página. */
+   Já esteve positivo aqui, na tentativa de "andar mais devagar que a
+   página". Estava errado: com o `.backdrop` fixo não existe movimento de
+   página para descontar, então positivo simplesmente empurra a camada
+   contra o scroll.
+
+   O preço de velocidades diferentes: as duas deixam de ficar travadas em
+   registro. Antes compartilhavam a mesma justamente para os vértices da
+   malha fina (78px) nunca saírem de dentro dos da grossa (156px, o dobro
+   exato). Agora deslizam uma sobre a outra durante a rolagem — que é o
+   efeito pedido, mas alinhadas mesmo só no topo da página. */
 .backdrop-grid--far {
     inset: 0 0 -620px 0;
-    --par: 0.035;
+    --par: -0.018;
     --cell: 156px;
     --line-w: 1px;
     --grid-line: rgba(106, 216, 254, 0.085);
@@ -824,9 +833,9 @@ p {
         border-color 0.25s, color 0.25s, box-shadow 0.3s;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-}
+/* O `:hover` não levanta nem deforma mais o botão: quem responde ao
+   cursor agora é o filtro líquido, e somar um squash-and-stretch por cima
+   dava dois movimentos disputando a mesma leitura. */
 
 /* PROTÓTIPO — distorção líquida sob o cursor (ver o filtro em index.html).
    Só com ponteiro fino: em toque não há hover, e o filtro ficaria preso
@@ -838,10 +847,6 @@ p {
     .btn:hover {
         filter: url("#liquido");
     }
-}
-
-.btn:active {
-    transform: translateY(0);
 }
 
 .btn .icon {
@@ -905,49 +910,9 @@ p {
     }
 }
 
-/* Hover gelatinoso: squash-and-stretch com várias oscilações que vão
-   perdendo força, como massa mole assentando. A versão anterior tinha só
-   3% de deformação e um easing de overshoot — o olho lia como "subiu um
-   pouco", não como gelatina. Aqui a primeira compressão é de 16% e o
-   ricochete é explícito nos keyframes. */
 .btn--solid:hover::before {
     animation-duration: 2.2s;
     filter: blur(8px);
-}
-
-.btn--solid:hover,
-.btn--wire:hover {
-    animation: gel 0.78s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-@keyframes gel {
-    0% {
-        transform: translateY(0) scale(1, 1);
-    }
-
-    16% {
-        transform: translateY(-3px) scale(1.16, 0.84);
-    }
-
-    34% {
-        transform: translateY(-2px) scale(0.9, 1.14);
-    }
-
-    52% {
-        transform: translateY(-2px) scale(1.09, 0.93);
-    }
-
-    68% {
-        transform: translateY(-2px) scale(0.96, 1.05);
-    }
-
-    84% {
-        transform: translateY(-2px) scale(1.03, 0.98);
-    }
-
-    100% {
-        transform: translateY(-2px) scale(1, 1);
-    }
 }
 
 .btn--solid::after {
@@ -1128,22 +1093,30 @@ p {
    equilíbrio, então as duas linhas ficam centradas, e qualquer par de
    palavras sai simétrico sozinho.
 
-   Consequência: as duas passam NA FRENTE do mascote (z-index 3). Centrada
-   e por trás, a linha de cima teria justamente o miolo tapado pelo
-   escorpião — "Ideias que" viraria "Ide___ue", e "Scorpion", que é o nome
-   da marca, ficaria ilegível. Na frente, o cubo com os olhos continua
-   aparecendo na folga entre as linhas, que é onde ele estava antes.
+   As duas passam ATRÁS do mascote (z-index 1). Na frente, o texto tapava
+   o escorpião inteiro e ele virava plano de fundo do próprio site. Atrás,
+   ele morde só um pedaço de cada linha, que é o encaixe que dá graça à
+   composição.
+
+   Para isso funcionar as linhas precisam de FOLGA: quanto mais separadas,
+   menos cada uma cruza o corpo do escorpião — a de cima passa na altura
+   dos cubos, a de baixo na das patas, e o cubo com os olhos fica livre no
+   meio. Por isso o afastamento aqui é bem maior que o padrão de um título
+   de duas linhas.
 
    A sombra existe para as letras não sumirem quando cruzam a arte. */
 .hero-l1,
 .hero-l3 {
-    z-index: 3;
+    z-index: 1;
     text-align: center;
     text-shadow: 0 6px 34px rgba(5, 9, 15, 0.55);
 }
 
+/* A folga precisa ceder à ALTURA, não só à largura: em 1366x768 uma folga
+   presa em 13vw dava 178px e empurrava o rodapé do herói 69px abaixo da
+   dobra. O `min` com vh é quem segura isso — mesma lógica do --orb-w. */
 .hero-l3 {
-    margin-top: clamp(2.5rem, 8vw, 7rem);
+    margin-top: clamp(3.5rem, min(13vw, 14vh), 11.5rem);
 }
 
 .hero-l1 em,
@@ -1175,7 +1148,13 @@ p {
     .hero-l3::after {
         content: attr(data-text);
         position: absolute;
-        inset: 0;
+        /* Só o fundo é esticado, e de propósito. A caixa do bloco tem a
+           altura da entrelinha (0.92em), mas o texto desce 21px abaixo
+           dela — e é essa faixa que continha as descidas de j, g, q, p
+           cortadas pela máscara. Esticar por baixo põe as descidas dentro
+           da caixa; esticar por cima moveria o texto, porque a linha
+           começa no topo da caixa de conteúdo. */
+        inset: 0 0 -0.34em 0;
         pointer-events: none;
         background-image: linear-gradient(96deg,
                 var(--cyan) 0%,
