@@ -233,19 +233,20 @@
        a versão 14, então dá para servir um arquivo só para todo mundo e
        dispensar a detecção de capacidade que existia aqui.
 
-       1,1 MB é caro para um enfeite, então três portas ficam fechadas:
-       modo de economia de dados, conexão lenta e quem pediu menos
-       movimento — um WebP animado não tem como pausar depois de carregado,
-       então nesse caso o certo é não baixar. Em qualquer uma delas fica o
-       poster, que é o quadro 0 da própria animação. */
+       1,1 MB é caro para um enfeite, então duas portas ficam fechadas:
+       modo de economia de dados e conexão lenta. Em qualquer uma delas
+       fica o poster, que é o quadro 0 da própria animação.
+
+       `prefers-reduced-motion` NÃO é consultado aqui, por decisão do
+       Milan: a máquina dele reporta `reduce` e a logo parada era o efeito
+       colateral. A animação é a peça central da home, então ela ganha. */
     {
         const anim = document.querySelector("img[data-anim]");
         const poster = document.querySelector("img.hero-mascot:not([data-anim])");
         const rede = navigator.connection || {};
         const lenta = /2g/.test(rede.effectiveType || "");
-        const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        if (anim && poster && !rede.saveData && !lenta && !calmo) {
+        if (anim && poster && !rede.saveData && !lenta) {
             const iniciar = () => {
                 anim.addEventListener(
                     "load",
@@ -273,15 +274,15 @@
        visíveis são `aria-hidden`, senão o leitor de tela anunciaria o
        título de novo a cada letra.
 
-       Nada disso roda com `prefers-reduced-motion`: é movimento contínuo
-       e sem fim, exatamente o que a preferência pede para desligar. */
+       `prefers-reduced-motion` não desliga isso — ver a nota no bloco do
+       mascote animado. O que sobra de defesa é a pausa por aba oculta,
+       lá embaixo. */
     {
         const titulo = document.querySelector(".hero-type");
         const linhas = titulo && [
             titulo.querySelector(".hero-l1 .hero-ln"),
             titulo.querySelector(".hero-l3 .hero-ln"),
         ];
-        const calmo = matchMedia("(prefers-reduced-motion: reduce)");
 
         const FRASES = [
             ["Ideias que", "viram jogo."],
@@ -308,7 +309,7 @@
             el.parentElement.dataset.text = txt;
         };
 
-        if (linhas && linhas[0] && linhas[1] && !calmo.matches) {
+        if (linhas && linhas[0] && linhas[1]) {
             let frase = 0;
             let n = 0;
             let apagando = false;
@@ -371,9 +372,8 @@
             ? [titulo.querySelector(".hero-l1"), titulo.querySelector(".hero-l3")]
             : [];
         const podeApontar = matchMedia("(hover: hover) and (pointer: fine)");
-        const calmo = matchMedia("(prefers-reduced-motion: reduce)");
 
-        if (heroi && alvos[0] && alvos[1] && podeApontar.matches && !calmo.matches) {
+        if (heroi && alvos[0] && alvos[1] && podeApontar.matches) {
             const estado = alvos.map(() => ({ x: 0, y: 0, iniciado: false }));
             let mx = 0;
             let my = 0;
@@ -470,12 +470,13 @@
     /* ------------------------------------------- parallax no desktop -- */
     /* O desktop ficava parado demais em comparação ao mobile, onde cada
        bloco entra com o scroll. Aqui o mascote e o cubo reagem ao mouse.
-       Só transform, um rAF por movimento, e nada disso roda no toque. */
+       Só transform, um rAF por movimento, e nada disso roda no toque.
+       `prefers-reduced-motion` não desliga mais — ver a nota no bloco do
+       mascote animado. */
     const canHover = matchMedia("(hover: hover) and (pointer: fine)");
-    const stillMQ = matchMedia("(prefers-reduced-motion: reduce)");
     const floaters = document.querySelectorAll("[data-float]");
 
-    if (floaters.length && canHover.matches && !stillMQ.matches) {
+    if (floaters.length && canHover.matches) {
         let queued = false;
         let px = 0;
         let py = 0;

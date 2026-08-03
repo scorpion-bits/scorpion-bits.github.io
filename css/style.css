@@ -3128,48 +3128,20 @@ p {
 }
 
 /* ------------------------------------------------------- menos movimento -- */
-/* Escopo deliberadamente estreito, a pedido do estúdio.
-   Fica desligado só o parallax de ponteiro (o mais desorientador, porque
-   persegue o cursor) e o deslizamento dos blocos ao entrar, que viram
-   fade. O movimento ambiente (órbitas, névoa,
-   grade, líquido do botão) é lento, de amplitude pequena e não segue o
-   cursor, então permanece ligado mesmo com a preferência marcada.
-   Muita máquina Windows tem "efeitos de animação" desligado por padrão, e
-   desligar tudo deixava o site inteiro estático para essas pessoas. */
+/* Reduzido ao mínimo a pedido do estúdio, em 03/08/2026.
+   A máquina do Milan reporta `prefers-reduced-motion: reduce` — o Windows
+   marca isso quando "efeitos de animação" está desligado, que é o padrão
+   em muita instalação. Enquanto este bloco desligava o parallax de
+   ponteiro e o deslizamento dos blocos, o site chegava estático a ele e a
+   uma fatia grande dos visitantes, o que não é o que o estúdio quer.
+
+   Sobra só a rolagem instantânea, que é a parte da preferência que não
+   custa nada visualmente. As animações de JS (título que se digita,
+   brilho líquido e mascote animado) também deixaram de consultá-la —
+   ver as notas em js/main.js. */
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
-    }
-
-    /* parallax de ponteiro: fora */
-    [data-float] {
-        translate: none !important;
-        transition: none !important;
-    }
-
-    /* entradas continuam, mas só como fade — sem deslizar */
-    .js .reveal,
-    .js .stagger > *,
-    .slide.is-live .slide-body > *,
-    .slide.is-live .slide-face img,
-    .stage-ghost {
-        transform: none !important;
-    }
-
-    .js .reveal,
-    .js .stagger > * {
-        transition: opacity 0.4s ease;
-    }
-
-    .slide.is-live .slide-body > *,
-    .slide.is-live .slide-face img {
-        animation-name: fade-only;
-    }
-
-    @keyframes fade-only {
-        from {
-            opacity: 0;
-        }
     }
 }
 
