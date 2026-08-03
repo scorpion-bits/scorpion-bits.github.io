@@ -203,7 +203,13 @@ p {
 .backdrop-grid {
     position: absolute;
     inset: 0 0 -620px 0;
-    --par: -0.06;
+    /* As duas malhas compartilham a MESMA velocidade de parallax de
+       propósito: com velocidades diferentes elas deslizavam uma contra a
+       outra e os vértices saíam de registro durante a rolagem. Travadas,
+       a malha fina (78px) fica sempre encaixada dentro da grossa (156px),
+       que é o dobro exato. A profundidade continua vindo das estrelas,
+       constelações e névoa, que têm velocidades próprias. */
+    --par: -0.05;
     /* --cell: lado do losango; --line-w: espessura do traço */
     --cell: 78px;
     --line-w: 1px;
@@ -226,9 +232,9 @@ p {
    Qualquer `filter` aqui obrigaria a rasterizar a camada e devolveria o
    serrilhado; linha fina e nítida lê melhor que linha borrada. */
 .backdrop-grid--far {
-    inset: 0 0 -340px 0;
-    --par: -0.022;
-    --cell: 134px;
+    inset: 0 0 -620px 0;
+    --par: -0.05;
+    --cell: 156px;
     --line-w: 1px;
     --grid-line: rgba(106, 216, 254, 0.085);
 }
@@ -494,7 +500,6 @@ p {
     position: absolute;
     width: var(--s, 46px);
     animation: cube-float var(--d, 26s) ease-in-out infinite alternate;
-    will-change: transform;
 }
 
 @keyframes cube-float {
@@ -1086,7 +1091,7 @@ p {
     left: 50%;
     z-index: 2;
     width: var(--orb-w);
-    aspect-ratio: 437 / 535;
+    aspect-ratio: 442 / 588;
     transform: translate(-50%, -50%);
     translate: var(--px, 0) var(--py, 0);
     transition: translate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1168,6 +1173,9 @@ p {
 
 .orbit-mini .orbit-spin {
     transform-origin: 100px 100px;
+    /* sem will-change: em SVG ele congela o traço num raster e o vetor
+       fino aparece serrilhado, como imagem ampliada */
+    will-change: auto;
 }
 
 .orbit-mini [data-rev] {
@@ -1366,8 +1374,8 @@ p {
 
 .hero-stat {
     display: flex;
-    align-items: baseline;
-    gap: 12px;
+    align-items: center;
+    gap: 14px;
 }
 
 .hero-stat b {
@@ -1388,8 +1396,8 @@ p {
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-faint);
-    max-width: 16ch;
-    line-height: 1.5;
+    line-height: 1.45;
+    text-align: left;
 }
 
 .hero-cue {
