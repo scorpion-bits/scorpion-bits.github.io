@@ -203,12 +203,7 @@ p {
 .backdrop-grid {
     position: absolute;
     inset: 0 0 -620px 0;
-    /* As duas malhas compartilham a MESMA velocidade de parallax de
-       propósito: com velocidades diferentes elas deslizavam uma contra a
-       outra e os vértices saíam de registro durante a rolagem. Travadas,
-       a malha fina (78px) fica sempre encaixada dentro da grossa (156px),
-       que é o dobro exato. A profundidade continua vindo das estrelas,
-       constelações e névoa, que têm velocidades próprias. */
+    /* Malha da frente: anda 5% MAIS rápido que a página. */
     --par: -0.05;
     /* --cell: lado do losango; --line-w: espessura do traço */
     --cell: 78px;
@@ -228,12 +223,23 @@ p {
 }
 
 /* Malha mais funda: losango maior e traço mais apagado. A profundidade vem
-   da diferença de escala e da velocidade menor do parallax — não de blur.
+   da diferença de escala e da velocidade do parallax — não de blur.
    Qualquer `filter` aqui obrigaria a rasterizar a camada e devolveria o
-   serrilhado; linha fina e nítida lê melhor que linha borrada. */
+   serrilhado; linha fina e nítida lê melhor que linha borrada.
+
+   `--par` positivo: esta malha anda 3,5% MAIS DEVAGAR que a página,
+   enquanto a da frente anda 5% mais rápido. É o que faz ela ler como
+   distante — objeto longe se desloca menos no campo de visão.
+
+   O preço: as duas deixam de ficar travadas em registro. Antes
+   compartilhavam a mesma velocidade justamente para os vértices da malha
+   fina (78px) nunca saírem de dentro dos da grossa (156px, o dobro
+   exato). Com velocidades diferentes elas deslizam uma sobre a outra
+   durante a rolagem — que é o efeito pedido, mas alinhadas mesmo só no
+   topo da página. */
 .backdrop-grid--far {
     inset: 0 0 -620px 0;
-    --par: -0.05;
+    --par: 0.035;
     --cell: 156px;
     --line-w: 1px;
     --grid-line: rgba(106, 216, 254, 0.085);
@@ -1119,15 +1125,50 @@ p {
     color: var(--cyan);
 }
 
+/* -- frase curta: linhas ancoradas no mascote ------------------------------
+   "Ideias que / viram jogo." é longa e preenche a largura, então alinhar
+   uma linha à esquerda e a outra à direita entrega o sanduíche em volta do
+   escorpião. "Scorpion / Bits." não preenche nada: com o mesmo alinhamento,
+   "Bits." ia parar sozinho no canto, a meia tela de distância do resto.
+
+   Aqui as duas linhas passam a crescer A PARTIR do centro, não das bordas:
+   a de cima termina logo depois do meio, a de baixo começa logo antes.
+   Assim as duas continuam encostando no mascote, seja qual for o tamanho
+   da palavra.
+
+   A classe é trocada pelo JS no exato momento em que as duas linhas estão
+   vazias, entre uma frase e outra — por isso a mudança de alinhamento não
+   aparece como salto. */
+.hero-type.is-curta {
+    --recuo: calc(50% - var(--orb-w) * 0.3);
+}
+
+.hero-type.is-curta .hero-l1 {
+    text-align: right;
+    padding-right: var(--recuo);
+}
+
+.hero-type.is-curta .hero-l3 {
+    text-align: left;
+    padding-left: var(--recuo);
+}
+
 /* -- brilho líquido sob o ponteiro ----------------------------------------
    Uma cópia do texto por cima, pintada com o gradiente da marca, revelada
    só dentro de uma bolha que segue o mouse. A bolha é uma elipse cujos dois
    raios oscilam fora de fase: é isso que dá a leitura de gota, não de disco.
    O JS escreve --gx/--gy (posição, com atraso proposital) e --gw/--gh.
 
-   O halo sai de `text-shadow`, não de `filter: drop-shadow`: filtro criaria
-   uma camada nova redesenhada a cada quadro num texto de 7.6rem. A sombra
-   é pintada a partir do contorno do glifo e a máscara recorta ela junto.
+   Sem `text-shadow` nem `filter`: qualquer halo é pintado a partir do
+   contorno do glifo e escapa para FORA das letras, o que descaracteriza o
+   efeito — o certo é a cor viver só dentro do desenho da fonte. Recorte
+   puro, sem brilho externo.
+
+   `background-size` menor que a linha é o que salva a cor: com o gradiente
+   esticado na largura toda, uma bolha de ~180px enxergava uma fatia
+   estreitíssima dele e saía uma cor chapada, lavada. Ladrilhado a 300px,
+   a bolha sempre contém a rampa inteira. A rampa é simétrica
+   (ciano → violeta → ciano) para a emenda do ladrilho não aparecer.
 
    Só no desktop: em toque não existe ponteiro para seguir. */
 @media (hover: hover) and (pointer: fine) {
@@ -1137,33 +1178,58 @@ p {
         position: absolute;
         inset: 0;
         pointer-events: none;
-        background-image: linear-gradient(104deg,
+        background-image: linear-gradient(96deg,
                 var(--cyan) 0%,
-                var(--blue) 28%,
-                var(--indigo) 60%,
-                var(--violet) 100%);
+                var(--blue) 22%,
+                var(--indigo) 40%,
+                var(--violet) 52%,
+                var(--indigo) 64%,
+                var(--blue) 80%,
+                var(--cyan) 100%);
+        background-size: 300px 100%;
+        background-repeat: repeat;
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         color: transparent;
-        text-shadow: 0 0 28px rgba(108, 132, 255, 0.55);
+        text-shadow: none;
+        /* núcleo sólido até 52%: a queda suave demais deixava a cor
+           semitransparente sobre o branco e devolvia o tom pastel */
         -webkit-mask-image: radial-gradient(ellipse var(--gw, 0px) var(--gh, 0px) at var(--gx, -400px) var(--gy, -400px),
                 #000 0%,
-                rgba(0, 0, 0, 0.62) 52%,
+                #000 52%,
+                rgba(0, 0, 0, 0.5) 76%,
                 transparent 100%);
         mask-image: radial-gradient(ellipse var(--gw, 0px) var(--gh, 0px) at var(--gx, -400px) var(--gy, -400px),
                 #000 0%,
-                rgba(0, 0, 0, 0.62) 52%,
+                #000 52%,
+                rgba(0, 0, 0, 0.5) 76%,
                 transparent 100%);
         opacity: 0;
         transition: opacity 0.32s ease;
     }
 
-    /* a linha de baixo é alinhada à direita, então a largura que o cursor
-       ocupa empurra o texto — a cópia precisa da mesma folga para ficar
-       exatamente por cima */
+    /* A cópia é absoluta com `inset: 0`, então ela cobre a caixa de padding
+       inteira — sem herdar o recuo, o texto dela ficaria deslocado do
+       original justamente na frase curta. */
+    .hero-l1::after,
+    .hero-l3::after {
+        padding: inherit;
+    }
+
+    /* O cursor ocupa ~0.165em no fim da linha. Na linha alinhada ao lado
+       oposto isso empurra o texto, e a cópia precisa da mesma folga para
+       ficar exatamente por cima. Muda de lado junto com o alinhamento. */
     .hero-l3::after {
         padding-right: 0.165em;
+    }
+
+    .hero-type.is-curta .hero-l1::after {
+        padding-right: calc(var(--recuo) + 0.165em);
+    }
+
+    .hero-type.is-curta .hero-l3::after {
+        padding-right: 0;
     }
 
     .hero-type.is-glow .hero-l1::after,
@@ -1196,8 +1262,6 @@ p {
     width: var(--orb-w);
     aspect-ratio: 442 / 588;
     transform: translate(-50%, -50%);
-    translate: var(--px, 0) var(--py, 0);
-    transition: translate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     display: grid;
     place-items: center;
     pointer-events: none;
@@ -1332,21 +1396,35 @@ p {
     animation: hover-y 7s ease-in-out infinite;
 }
 
-/* Mascote animado: WebP animado, 442x588, recortado exatamente como o
-   poster. Por isso o posicionamento aqui é trivial — o .hero-orb tem
-   `aspect-ratio: 442/588`, então `inset: 0` já é a caixa do poster.
+/* Mascote animado: vídeo WebM com alpha.
 
-   (Antes daqui morava uma pilha de constantes de compensação, porque o
-   arquivo vinha em 1917x1078 com 63% de margem transparente. Recortar na
-   origem apagou o problema em vez de corrigi-lo.)
+   O WebP animado que morava aqui era menor (1,1 MB contra 3,8 MB) e tinha
+   a vantagem de tocar no Safari, mas travava o iPhone: `<img>` animado é
+   decodificado quadro a quadro na thread principal, sem aceleração. Vídeo
+   vai para o decodificador, e onde não der, cai no poster.
 
-   `animation: none` porque a flutuação já vem embutida na animação —
-   somar a do CSS daria dois balanços fora de fase. */
+   O quadro veio em 1917x1078 com o logo ocupando só 776x988 — 63% é
+   margem transparente. Como a margem é invisível, compenso ampliando o
+   vídeo até o CONTEÚDO bater com --orb-w: 776/1917 = 40,5%, então a
+   largura precisa ser --orb-w / 0,405 = --orb-w * 2,47.
+
+   Centralização por margem calculada, não por grid nem por transform:
+   o vídeo é mais largo que a célula, e item de grid que transborda o
+   Chrome ancora no início em vez de centralizar; `translate(-50%)` resolve
+   a porcentagem contra a própria caixa, que muda quando os metadados
+   chegam. Metade da largura = --orb-w * 1.235; metade da altura = * 0.6945.
+
+   `animation: none` porque a flutuação já vem embutida no vídeo — somar a
+   do CSS daria dois balanços fora de fase. */
 .hero-mascot--anim {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--orb-w) * 2.47);
+    height: auto;
+    max-width: none;
+    margin-left: calc(var(--orb-w) * -1.235);
+    margin-top: calc(var(--orb-w) * -0.6945);
     animation: none;
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -1366,12 +1444,6 @@ p {
     50% {
         transform: translateY(-14px);
     }
-}
-
-/* --px/--py vêm do parallax de ponteiro; ficam em 0 sem JS */
-[data-float] {
-    translate: var(--px, 0) var(--py, 0);
-    transition: translate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* -- chamadas ligadas ao mascote por fio fino ------------------------------ */
@@ -2916,10 +2988,16 @@ p {
         width: 150%;
     }
 
-    /* empilhado no celular: as linhas voltam a alinhar juntas */
+    /* Empilhado no celular: as linhas voltam a alinhar juntas.
+       O seletor precisa cobrir também o estado da frase curta — ele tem
+       especificidade maior e venceria mesmo estando antes no arquivo. */
     .hero-l1,
-    .hero-l3 {
+    .hero-l3,
+    .hero-type.is-curta .hero-l1,
+    .hero-type.is-curta .hero-l3 {
         text-align: center;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .hero-l3 {

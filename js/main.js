@@ -227,42 +227,85 @@
        começa a baixar depois do load e substitui o poster com um fade.
        Assim ela nunca atrasa a renderização inicial.
 
-       É um WebP animado, e não um vídeo, porque o Safari decodifica VP9
-       mas não implementa canal alpha em WebM — tocaria um retângulo preto
-       no lugar da transparência. WebP animado com alpha ele suporta desde
-       a versão 14, então dá para servir um arquivo só para todo mundo e
-       dispensar a detecção de capacidade que existia aqui.
+       Vídeo, e não WebP animado. O WebP era menor e tocava no Safari, mas
+       travou o iPhone: `<img>` animado é decodificado quadro a quadro na
+       thread principal, competindo com a rolagem. Vídeo vai para o
+       decodificador; onde não der, fica o poster, que é o quadro 0 da
+       própria animação — a home nunca fica sem a logo.
 
-       1,1 MB é caro para um enfeite, então duas portas ficam fechadas:
-       modo de economia de dados e conexão lenta. Em qualquer uma delas
-       fica o poster, que é o quadro 0 da própria animação.
+       Dois filtros, nesta ordem, e o primeiro é o que protege o iPhone:
 
-       `prefers-reduced-motion` NÃO é consultado aqui, por decisão do
-       Milan: a máquina dele reporta `reduce` e a logo parada era o efeito
-       colateral. A animação é a peça central da home, então ela ganha. */
+       1. `canPlayType`: o WebKit do iOS não toca VP9 em WebM e devolve
+          string vazia. Perguntar ANTES de definir o src é o que evita
+          baixar 3,8 MB no celular para depois jogar fora.
+       2. Alpha em canvas: o Safari do macOS DECODIFICA VP9 mas ignora o
+          canal alpha — tocaria um retângulo preto sólido no lugar da
+          transparência, pior que não animar. Isso só dá para saber vendo
+          o primeiro quadro, então aqui o download já aconteceu.
+
+       Some-se a economia de dados e a conexão 2g. É detecção de
+       capacidade real, não sniff de navegador.
+
+       `prefers-reduced-motion` NÃO é consultado, por decisão do Milan: a
+       máquina dele reporta `reduce` e a logo parada era o efeito colateral.
+       A animação é a peça central da home, então ela ganha. */
     {
-        const anim = document.querySelector("img[data-anim]");
-        const poster = document.querySelector("img.hero-mascot:not([data-anim])");
+        const video = document.querySelector("video[data-anim]");
+        const poster = document.querySelector("img.hero-mascot");
         const rede = navigator.connection || {};
         const lenta = /2g/.test(rede.effectiveType || "");
+        const tocaWebm =
+            video && video.canPlayType('video/webm; codecs="vp9"') !== "";
 
-        if (anim && poster && !rede.saveData && !lenta) {
+        const honraAlpha = () => {
+            try {
+                const c = document.createElement("canvas");
+                c.width = 4;
+                c.height = 4;
+                const ctx = c.getContext("2d", { willReadFrequently: true });
+                ctx.clearRect(0, 0, 4, 4);
+                // amostra o canto superior esquerdo, que é transparente
+                ctx.drawImage(video, 0, 0, 60, 60, 0, 0, 4, 4);
+                return ctx.getImageData(0, 0, 1, 1).data[3] < 20;
+            } catch (e) {
+                return false; // canvas sujo ou decode falhou: não arrisca
+            }
+        };
+
+        const desistir = () => {
+            video.removeAttribute("src");
+            video.load(); // aborta o download em andamento
+            video.remove();
+        };
+
+        if (video && poster && tocaWebm && !rede.saveData && !lenta) {
             const iniciar = () => {
-                anim.addEventListener(
-                    "load",
+                video.src = video.dataset.anim;
+                // com preload="none" definir o src não basta: o download só
+                // começa com load() explícito
+                video.preload = "auto";
+                video.load();
+
+                video.addEventListener(
+                    "loadeddata",
                     () => {
-                        anim.classList.add("is-on");
-                        poster.classList.add("is-off");
+                        if (!honraAlpha()) return desistir();
+
+                        video.play().then(() => {
+                            video.classList.add("is-on");
+                            poster.classList.add("is-off");
+                        }, desistir);
                     },
                     { once: true }
                 );
 
-                anim.addEventListener("error", () => anim.remove(), { once: true });
-                anim.src = anim.dataset.anim;
+                video.addEventListener("error", desistir, { once: true });
             };
 
             if (document.readyState === "complete") iniciar();
             else addEventListener("load", iniciar, { once: true });
+        } else if (video) {
+            video.remove(); // não vai tocar: não deixa a caixa vazia no DOM
         }
     }
 
@@ -316,6 +359,13 @@
             let timer = 0;
             let parado = false;
 
+            /* Frase curta ganha um alinhamento próprio, ancorado no centro,
+               senão "Bits." fica sozinho no canto. A troca acontece com as
+               linhas vazias, então não se vê o texto mudar de lugar.
+               `CURTA` marca quais frases usam esse arranjo. */
+            const CURTA = [false, true];
+            const arranjo = () => titulo.classList.toggle("is-curta", CURTA[frase]);
+
             const passo = () => {
                 const [a, b] = FRASES[frase];
                 const total = a.length + b.length;
@@ -340,6 +390,7 @@
                 } else {
                     apagando = false;
                     frase = (frase + 1) % FRASES.length;
+                    arranjo(); // linhas vazias: hora certa de trocar o layout
                     espera = PAUSA_VAZIA;
                 }
 
@@ -349,6 +400,7 @@
             // some com o texto do HTML no mesmo quadro em que o script roda,
             // antes da primeira pintura — não chega a piscar
             n = 0;
+            arranjo();
             passo();
 
             // aba em segundo plano não precisa de timer rodando
@@ -467,37 +519,89 @@
         sync();
     }
 
-    /* ------------------------------------------- parallax no desktop -- */
-    /* O desktop ficava parado demais em comparação ao mobile, onde cada
-       bloco entra com o scroll. Aqui o mascote e o cubo reagem ao mouse.
-       Só transform, um rAF por movimento, e nada disso roda no toque.
-       `prefers-reduced-motion` não desliga mais — ver a nota no bloco do
-       mascote animado. */
-    const canHover = matchMedia("(hover: hover) and (pointer: fine)");
-    const floaters = document.querySelectorAll("[data-float]");
+    /* O parallax de ponteiro (mascote e órbita seguindo o mouse) foi
+       removido em 03/08/2026 a pedido do Milan: perseguir o cursor
+       incomodava mais do que dava profundidade. O que sobrou de reação ao
+       mouse é o brilho líquido no título, que é local e intencional. */
 
-    if (floaters.length && canHover.matches) {
-        let queued = false;
-        let px = 0;
-        let py = 0;
+    /* ------------------------------------------- rolagem suavizada -- */
+    /* A roda do mouse anda em degraus de ~100px e o salto seco brigava
+       com o parallax das camadas do fundo. Aqui o degrau vira alvo e a
+       posição persegue esse alvo por interpolação.
 
-        window.addEventListener(
-            "pointermove",
+       Só roda com mouse de verdade: `deltaMode` diferente de zero (linhas
+       ou páginas) e trackpad, que já entrega rolagem contínua, seguem
+       pelo caminho nativo — suavizar o que já é suave dá arrasto.
+       No toque nem entra. */
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        const LERP = 0.16;
+        const raiz = document.documentElement;
+        let alvo = window.scrollY;
+        let rodando = false;
+        let nosso = -1; // última posição que nós mesmos escrevemos
+
+        const limite = () => raiz.scrollHeight - window.innerHeight;
+
+        const parar = () => {
+            rodando = false;
+            nosso = -1;
+        };
+
+        const passo = () => {
+            const atual = window.scrollY;
+            const delta = alvo - atual;
+
+            if (Math.abs(delta) < 0.6) return parar();
+
+            /* `behavior: instant` é obrigatório: a raiz tem
+               `scroll-behavior: smooth` por causa dos links de âncora, e sem
+               isso cada passo destes viraria uma animação do navegador
+               brigando com a interpolação daqui. */
+            window.scrollTo({ top: atual + delta * LERP, behavior: "instant" });
+            nosso = window.scrollY;
+
+            /* Perto do fim o passo (delta * LERP) fica menor que um pixel
+               do dispositivo e o navegador arredonda de volta: a posição
+               trava, o delta nunca chega no limiar e o rAF gira para
+               sempre. Quando o passo não move nada, fecha na unha. O
+               limiar em pixel puro não resolveria — o ponto onde ele
+               trava depende do DPR da tela. */
+            if (window.scrollY === atual) {
+                window.scrollTo({ top: alvo, behavior: "instant" });
+                nosso = window.scrollY;
+                return parar();
+            }
+
+            requestAnimationFrame(passo);
+        };
+
+        addEventListener(
+            "wheel",
             (e) => {
-                px = e.clientX / window.innerWidth - 0.5;
-                py = e.clientY / window.innerHeight - 0.5;
+                // ctrl+roda é zoom do navegador; deltaMode != 0 é roda em
+                // modo linha/página, que o navegador já trata melhor
+                if (e.ctrlKey || e.deltaMode !== 0) return;
+                // trackpad: muitos eventos pequenos. Roda: degraus grandes.
+                if (Math.abs(e.deltaY) < 45) return;
 
-                if (queued) return;
-                queued = true;
+                e.preventDefault();
+                alvo = Math.max(0, Math.min(limite(), alvo + e.deltaY));
+                if (!rodando) {
+                    rodando = true;
+                    requestAnimationFrame(passo);
+                }
+            },
+            { passive: false }
+        );
 
-                requestAnimationFrame(() => {
-                    queued = false;
-                    floaters.forEach((el) => {
-                        const depth = Number(el.dataset.float) || 18;
-                        el.style.setProperty("--px", `${px * depth}px`);
-                        el.style.setProperty("--py", `${py * depth}px`);
-                    });
-                });
+        // teclado, barra de rolagem, âncora: quem mandou não fomos nós,
+        // então o alvo precisa voltar para onde a página realmente está
+        addEventListener(
+            "scroll",
+            () => {
+                if (!rodando || Math.abs(window.scrollY - nosso) > 2) {
+                    if (!rodando) alvo = window.scrollY;
+                }
             },
             { passive: true }
         );
