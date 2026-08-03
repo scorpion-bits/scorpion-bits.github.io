@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-poster.png">
-    <link rel="stylesheet" href="css/style.css?v=59">
+    <link rel="stylesheet" href="css/style.css?v=61">
     <script>document.documentElement.className += " js";</script>
 </head>
 
@@ -208,16 +208,18 @@
                  mover joga fora o antisserrilhado que a borda já tinha.
                  Não existe atributo para pedir amostragem suave, então:
 
-                 1. `baseFrequency` baixa. Ondas largas (~90-125px) em vez
-                    de ondinhas curtas: pixels vizinhos se deslocam por
-                    valores parecidos e a borda continua contínua. É o que
+                 1. `baseFrequency` baixa (ondas de ~110-200px) e UM octave
+                    só. Cada octave extra soma uma camada de ruído com o
+                    dobro da frequência — é justamente a parte fina que
+                    vira escadinha, e ela não acrescenta nada visível numa
+                    onda desse tamanho. Vizinhos se deslocando por valores
+                    parecidos é o que mantém a borda contínua, e é o que
                     permite subir a intensidade sem virar sopa de pixel.
                  2. Borrão forte no ruído, pelo mesmo motivo — suaviza o
                     campo de deslocamento, não a imagem.
                  3. Um borrão mínimo DEPOIS do deslocamento, que devolve o
-                    antisserrilhado das bordas recém-criadas. 0.45px é
-                    abaixo do que se percebe no texto e é justamente a
-                    escala da escadinha.
+                    antisserrilhado das bordas recém-criadas. Sobe junto
+                    com o `scale`: deslocamento maior cria degraus maiores.
 
                  `primitiveUnits="userSpaceOnUse"` deixa x/y da bolha em px
                  da caixa do botão, que é o que o JS consegue calcular —
@@ -225,13 +227,13 @@
             <filter id="liquido" x="-18%" y="-70%" width="136%" height="240%"
                     color-interpolation-filters="sRGB"
                     primitiveUnits="userSpaceOnUse">
-                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.013"
-                              numOctaves="2" seed="4" result="ruido">
+                <feTurbulence type="fractalNoise" baseFrequency="0.005 0.009"
+                              numOctaves="1" seed="4" result="ruido">
                     <animate attributeName="baseFrequency" dur="6s"
-                             values="0.008 0.013;0.014 0.008;0.008 0.013"
+                             values="0.005 0.009;0.01 0.005;0.005 0.009"
                              repeatCount="indefinite"/>
                 </feTurbulence>
-                <feGaussianBlur in="ruido" stdDeviation="2.6" result="macio"/>
+                <feGaussianBlur in="ruido" stdDeviation="3.4" result="macio"/>
                 <feFlood flood-color="rgb(128,128,128)" result="neutro"/>
                 <feImage id="bolha-liquida" result="bolha"
                          x="-500" y="-500" width="130" height="130"
@@ -239,10 +241,10 @@
                          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130'%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.55' stop-color='%23fff' stop-opacity='.7'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='130' height='130' fill='url(%23g)'/%3E%3C/svg%3E"/>
                 <feComposite in="macio" in2="bolha" operator="in" result="local"/>
                 <feComposite in="local" in2="neutro" operator="over" result="campo"/>
-                <feDisplacementMap in="SourceGraphic" in2="campo" scale="30"
+                <feDisplacementMap in="SourceGraphic" in2="campo" scale="46"
                                    xChannelSelector="R" yChannelSelector="G"
                                    result="torto"/>
-                <feGaussianBlur in="torto" stdDeviation="0.45"/>
+                <feGaussianBlur in="torto" stdDeviation="0.62"/>
             </filter>
         </defs>
     </svg>
@@ -560,7 +562,7 @@
 
                 <div class="course-body">
                     <span class="sec-index">03 / 05 — Educação</span>
-                    <h2 class="sec-title">Contratados pelo SESC<br>para ensinar do zero</h2>
+                    <h2 class="sec-title">Ensinamos game dev<br>do zero no SESC</h2>
                     <p>
                         A Scorpion Bits leva a turma <strong>GameLab</strong> do zero absoluto
                         até um jogo 2D top-down completo em Godot. A maioria dos alunos nunca
@@ -637,7 +639,7 @@
                                 <p class="slide-no"></p>
                                 <h3>Gabriela Moura</h3>
                                 <p class="slide-role">Game Design & Parcerias</p>
-                                <p class="slide-bio">Pensa o jogo antes do código: conceito, regras e o que o jogador descobre pelo caminho. Também é a ponte com quem contrata — foi por um contato dela que fechamos o contrato com o SESC.</p>
+                                <p class="slide-bio">Pensa o jogo antes do código: conceito, regras e o que o jogador descobre pelo caminho. Também é a ponte com quem nos procura — foi por um contato dela que chegamos ao SESC.</p>
                                 <ul class="slide-tags">
                                     <li>Conceito de jogo</li>
                                     <li>Level design</li>
@@ -971,7 +973,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=59" defer></script>
+    <script src="js/main.js?v=61" defer></script>
 </body>
 
 </html>

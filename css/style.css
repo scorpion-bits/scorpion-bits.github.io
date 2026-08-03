@@ -996,7 +996,10 @@ p {
     min-height: calc(100svh - var(--dock-h) - 14px);
     padding-block: clamp(1rem, 3.5vh, 2.25rem);
     text-align: center;
-    --orb-w: clamp(150px, min(26vw, 27vh), 320px);
+    /* 24vh e não 27vh: com o texto passando por trás, cada ponto a mais de
+       mascote come uma letra a mais de "Scorpion" e de "Ideias que". A
+       sobreposição é para ser um detalhe, não um apagador. */
+    --orb-w: clamp(150px, min(26vw, 24vh), 320px);
 }
 
 .hero-mid {
@@ -1120,7 +1123,7 @@ p {
    presa em 13vw dava 178px e empurrava o rodapé do herói 69px abaixo da
    dobra. O `min` com vh é quem segura isso — mesma lógica do --orb-w. */
 .hero-l3 {
-    margin-top: clamp(3.5rem, min(13vw, 14vh), 11.5rem);
+    margin-top: clamp(3.5rem, min(13vw, 15vh), 13rem);
 }
 
 .hero-l1 em,
