@@ -552,50 +552,41 @@
        mouse é o brilho líquido no título, que é local e intencional. */
 
     /* ------------------------------------------- botões líquidos -- */
-    /* Cada botão ganha uma cópia do filtro (`liquido-N`), e não uma cópia
-       compartilhada: com proximidade, dois botões vizinhos ficam ativos ao
-       mesmo tempo, cada um com a sua bolha e a sua intensidade. Filtro
-       único faria um deles roubar o efeito do outro.
+    /* Uma bola persegue o cursor e se funde com a pílula do botão pelo
+       filtro `#goo` (ver index.html). O efeito EXPANDE o botão: a bola
+       empurra a borda para fora, em vez de amassar o que já existe.
 
-       O efeito NASCE POR DISTÂNCIA, não no `:hover`. Ligar no hover fazia
-       o botão saltar de reto para líquido no instante em que o cursor
-       cruzava a borda. Aqui a força cresce de 0 a 1 conforme o ponteiro se
-       aproxima, com `smoothstep` para as duas pontas entrarem macias.
+       Nasce por DISTÂNCIA, não no `:hover`: a força cresce de 0 a 1
+       conforme o ponteiro se aproxima, com `smoothstep` para as duas
+       pontas entrarem macias. No hover o botão saltava de reto para
+       líquido no instante em que o cursor cruzava a borda.
 
-       A bolha respira: o raio oscila, e é isso que dá a leitura de líquido
-       quando o mouse está parado — sem ela a distorção congelaria.
+       O centro da bola é preso a uma faixa em volta do botão. Sem isso,
+       com o cursor a 180px ela apareceria como uma bolinha solta no meio
+       do nada; presa, ela encosta pelo lado de onde o cursor vem e a
+       fusão acontece na borda certa.
 
-       O filtro só é atribuído ao botão enquanto a força é maior que zero.
-       Deixar `filter` sempre ligado prenderia todo botão da página numa
-       camada rasterizada à toa. */
+       A bola respira, e é isso que dá leitura de líquido com o mouse
+       parado — sem a respiração a forma congelaria.
+
+       Só nos botões sólidos: o `--wire` é contorno, e uma bola preenchida
+       fundindo com uma borda vazada não lê como o mesmo material. */
     {
-        const molde = document.getElementById("liquido");
-        const botoes = [...document.querySelectorAll(".btn")];
+        const solidos = [...document.querySelectorAll(".btn--solid")];
 
-        if (molde && botoes.length &&
+        if (solidos.length && document.getElementById("goo") &&
             matchMedia("(hover: hover) and (pointer: fine)").matches) {
-            const RAIO = 210;   // distância em que o efeito começa a nascer
-            const FORCA = 36;   // deslocamento máximo, no centro da bolha
-            const LADO = 130;   // diâmetro de repouso da bolha
+            const RAIO = 200;   // distância em que o efeito começa a nascer
+            const BOLA = 50;    // diâmetro da bola no auge
+            const SOLTA = 10;   // o quanto o centro da bola pode sair da caixa
 
-            const defs = molde.parentElement;
-            const canais = botoes.map((btn, i) => {
-                const f = molde.cloneNode(true);
-                f.id = `liquido-${i}`;
-                // semente própria: dois botões lado a lado não podem
-                // ondular exatamente igual
-                f.querySelector("feTurbulence").setAttribute("seed", 3 + i * 7);
-                defs.append(f);
-                return {
-                    btn,
-                    desl: f.querySelector("feDisplacementMap"),
-                    bolha: f.querySelector("feImage"),
-                    url: `url("#liquido-${i}")`,
-                    fase: i * 1.7,
-                    ligado: false,
-                };
+            const canais = solidos.map((btn, i) => {
+                const camada = document.createElement("span");
+                camada.className = "btn-goo";
+                camada.setAttribute("aria-hidden", "true");
+                btn.prepend(camada);
+                return { btn, camada, fase: i * 1.9, forca: 0 };
             });
-            molde.remove(); // o molde em si nunca é usado
 
             let mx = -9999;
             let my = -9999;
@@ -605,15 +596,15 @@
             const quadro = () => {
                 t += 1 / 60;
 
-                // lê todos os retângulos antes de escrever qualquer coisa,
-                // senão cada escrita força um recálculo de layout
+                // lê todos os retângulos antes de escrever, senão cada
+                // escrita força um recálculo de layout
                 const caixas = canais.map((c) => c.btn.getBoundingClientRect());
-                let algumVivo = false;
+                let vivo = false;
 
                 caixas.forEach((r, i) => {
                     const c = canais[i];
 
-                    // distância do ponteiro até o retângulo (0 se estiver dentro)
+                    // distância do ponteiro até o retângulo (0 se dentro)
                     const dx = Math.max(r.left - mx, 0, mx - r.right);
                     const dy = Math.max(r.top - my, 0, my - r.bottom);
                     const d = Math.hypot(dx, dy);
@@ -621,34 +612,32 @@
                     const forca = bruta * bruta * (3 - 2 * bruta); // smoothstep
 
                     if (forca < 0.01) {
-                        if (c.ligado) {
-                            c.btn.style.filter = "";
-                            c.desl.setAttribute("scale", 0);
-                            c.ligado = false;
+                        if (c.forca !== 0) {
+                            c.forca = 0;
+                            c.btn.style.removeProperty("--f");
+                            c.camada.style.setProperty("--d", "0px");
                         }
                         return;
                     }
 
-                    algumVivo = true;
-                    if (!c.ligado) {
-                        c.btn.style.filter = c.url;
-                        c.ligado = true;
-                    }
+                    vivo = true;
+                    c.forca = forca;
 
-                    // respiração: a bolha incha e murcha fora de fase com
-                    // a pulsação da intensidade, então nunca repete o
-                    // mesmo estado duas vezes seguidas
-                    const lado = LADO * (1 + Math.sin(t * 1.9 + c.fase) * 0.3);
-                    const pulso = 0.78 + Math.sin(t * 1.3 + c.fase * 0.6) * 0.22;
+                    // respiração: diâmetro e fase próprios por botão
+                    const resp = 1 + Math.sin(t * 2.1 + c.fase) * 0.26;
+                    const diam = BOLA * forca * resp;
 
-                    c.desl.setAttribute("scale", (FORCA * forca * pulso).toFixed(1));
-                    c.bolha.setAttribute("width", lado.toFixed(1));
-                    c.bolha.setAttribute("height", lado.toFixed(1));
-                    c.bolha.setAttribute("x", (mx - r.left - lado / 2).toFixed(1));
-                    c.bolha.setAttribute("y", (my - r.top - lado / 2).toFixed(1));
+                    // centro preso a uma faixa em volta do botão
+                    const bx = Math.min(Math.max(mx, r.left - SOLTA), r.right + SOLTA);
+                    const by = Math.min(Math.max(my, r.top - SOLTA), r.bottom + SOLTA);
+
+                    c.btn.style.setProperty("--f", forca.toFixed(3));
+                    c.camada.style.setProperty("--d", `${diam.toFixed(1)}px`);
+                    c.camada.style.setProperty("--bx", `${(bx - r.left).toFixed(1)}px`);
+                    c.camada.style.setProperty("--by", `${(by - r.top).toFixed(1)}px`);
                 });
 
-                raf = algumVivo ? requestAnimationFrame(quadro) : 0;
+                raf = vivo ? requestAnimationFrame(quadro) : 0;
             };
 
             document.addEventListener(

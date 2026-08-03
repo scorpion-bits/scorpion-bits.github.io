@@ -841,10 +841,61 @@ p {
    cursor agora é o filtro líquido, e somar um squash-and-stretch por cima
    dava dois movimentos disputando a mesma leitura. */
 
-/* A distorção líquida não mora mais aqui: quem liga e desliga o `filter`
-   é o JS, por PROXIMIDADE do ponteiro e não por `:hover` — ver o bloco
-   "botões líquidos" em main.js. No `:hover` o botão saltava de reto para
-   líquido no instante em que o cursor cruzava a borda. */
+/* -- botão líquido: a pílula e a bola que se fundem ----------------------
+   A camada é injetada pelo JS só no desktop (ver "botões líquidos" em
+   main.js), e é ela que passa a desenhar o fundo do botão — por isso o
+   botão em si fica transparente quando ganha a camada.
+
+   `::before` é a pílula; `::after` é a bola que persegue o cursor. As
+   duas levam o filtro `#goo` juntas: borradas e com o alfa recontrastado,
+   elas se fundem por uma ponte curva quando chegam perto. O texto fica
+   FORA da camada de propósito — passar tipografia por esse filtro a
+   engorda e derrete.
+
+   A força vem por proximidade, não por `:hover`: no hover o botão saltava
+   de reto para líquido no instante em que o cursor cruzava a borda. */
+.btn-goo {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    filter: url("#goo");
+}
+
+.btn-goo::before,
+.btn-goo::after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(120deg, var(--cyan), var(--blue) 55%, var(--indigo));
+}
+
+.btn-goo::before {
+    inset: 0;
+    border-radius: var(--r-pill);
+}
+
+.btn-goo::after {
+    width: var(--d, 0px);
+    height: var(--d, 0px);
+    left: var(--bx, 50%);
+    top: var(--by, 50%);
+    margin-left: calc(var(--d, 0px) / -2);
+    margin-top: calc(var(--d, 0px) / -2);
+    border-radius: 50%;
+}
+
+/* o fundo sai do botão e passa para a camada; e a bola precisa poder
+   escapar da caixa, senão não existe expansão nenhuma */
+.btn--solid:has(.btn-goo) {
+    background: transparent;
+    overflow: visible;
+}
+
+/* o gradiente ambiente some conforme o líquido nasce — dois materiais
+   diferentes na mesma borda ficavam remendados */
+.btn--solid:has(.btn-goo)::before {
+    opacity: calc(1 - var(--f, 0));
+}
 
 .btn .icon {
     flex: none;
@@ -882,6 +933,12 @@ p {
     filter: blur(11px);
     animation: liquid 7s ease-in-out infinite;
     will-change: transform;
+    /* Este pseudo é 2.8x a caixa do botão (inset -90% nos quatro lados) e
+       dependia do `overflow: hidden` do botão para não vazar. O overflow
+       teve que ser liberado para a bola do líquido poder sair, então ele
+       passa a se recortar sozinho: 32.1428% de 2.8 é exatamente 0.9, que
+       traz a borda de volta para a caixa do botão. */
+    clip-path: inset(32.1428% round 999px);
 }
 
 /* escalas desiguais nos eixos = a mancha "escorre" em vez de só girar */
@@ -1511,7 +1568,10 @@ p {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    /* 12px não davam espaço para a bola do líquido: ela atravessava o vão
+       e aparecia através do botão vazado ao lado, que é quase
+       transparente. O efeito precisa de para onde crescer. */
+    gap: 28px;
     margin-top: clamp(1.75rem, 4vh, 2.75rem);
 }
 
