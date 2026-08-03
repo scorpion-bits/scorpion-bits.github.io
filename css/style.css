@@ -1229,6 +1229,49 @@ p {
     animation: hover-y 7s ease-in-out infinite;
 }
 
+/* Vídeo do mascote.
+   O WebM veio em 1917x1078 com o logo ocupando só 776x988 no meio — 63%
+   do quadro é margem transparente. Como a margem é invisível, compenso
+   ampliando o vídeo até o CONTEÚDO bater com --orb-w: 776/1917 = 40,5%,
+   então a largura do vídeo precisa ser --orb-w / 0,405.
+   Quando o arquivo for reexportado já recortado, estas três linhas somem
+   e o vídeo passa a usar width:100% como qualquer imagem. */
+/* Centralização por grid, não por transform: `translate(-50%,-50%)`
+   resolve a porcentagem contra a própria caixa do elemento, que muda
+   quando os metadados do vídeo chegam — o resultado ficava deslocado.
+   E o .hero-orb já é grid centrado, então basta empilhar na mesma célula.
+   A flutuação também sai daqui: ela já vem embutida na animação. */
+/* Centralização por margem calculada, não por grid nem por transform:
+   o vídeo é mais largo que a célula (o quadro tem 63% de margem
+   transparente), e item de grid que transborda o Chrome ancora no início
+   em vez de centralizar. `translate(-50%)` também falhava, porque resolve
+   contra a própria caixa, que muda quando os metadados chegam.
+   Metade da largura = --orb-w * 1.235; metade da altura = * 0.6945
+   (o quadro é 1917x1078). A flutuação sai daqui: já vem na animação. */
+.hero-mascot--anim {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--orb-w) * 2.47);
+    height: auto;
+    max-width: none;
+    margin-left: calc(var(--orb-w) * -1.235);
+    margin-top: calc(var(--orb-w) * -0.6945);
+    animation: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.hero-mascot--anim.is-on {
+    opacity: 1;
+}
+
+/* o poster sai de cena quando o vídeo assume, sem salto de layout */
+.hero-mascot.is-off {
+    opacity: 0;
+}
+
 @keyframes hover-y {
     50% {
         transform: translateY(-14px);

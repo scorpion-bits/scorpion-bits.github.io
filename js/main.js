@@ -222,6 +222,43 @@
         render();
     }
 
+    /* ------------------------------------------- mascote animado -- */
+    /* O poster estático (48 KB) entra no primeiro paint; o vídeo só começa
+       a baixar depois do load e substitui o poster com um fade. Assim a
+       animação nunca atrasa a renderização inicial.
+       Em modo de economia de dados o vídeo não é baixado. */
+    {
+        const video = document.querySelector("[data-anim]");
+        const poster = document.querySelector("img.hero-mascot");
+        const economia = navigator.connection && navigator.connection.saveData;
+
+        if (video && poster && !economia) {
+            const iniciar = () => {
+                video.src = video.dataset.anim;
+                // com preload="none" definir o src não basta: o download só
+                // começa com load() explícito
+                video.preload = "auto";
+                video.load();
+                video.addEventListener(
+                    "canplay",
+                    () => {
+                        video.play().then(
+                            () => {
+                                video.classList.add("is-on");
+                                poster.classList.add("is-off");
+                            },
+                            () => {}
+                        );
+                    },
+                    { once: true }
+                );
+            };
+
+            if (document.readyState === "complete") iniciar();
+            else addEventListener("load", iniciar, { once: true });
+        }
+    }
+
     /* --------------------------------------- parallax de rolagem -- */
     /* Publica scrollY numa custom property; as camadas do fundo aplicam
        o próprio multiplicador (--par) em CSS. Um listener passivo, uma
