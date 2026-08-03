@@ -552,40 +552,110 @@
        mouse é o brilho líquido no título, que é local e intencional. */
 
     /* ------------------------------------------- botões líquidos -- */
-    /* Uma bola persegue o cursor e se funde com a pílula do botão pelo
-       filtro `#goo` (ver index.html). O efeito EXPANDE o botão: a bola
-       empurra a borda para fora, em vez de amassar o que já existe.
+    /* Gotas passeiam pela borda do botão e se fundem com ele pelo filtro
+       `#goo` (ver index.html). O efeito EXPANDE o botão: a gota empurra a
+       borda para fora, em vez de amassar o que já existe.
 
-       Nasce por DISTÂNCIA, não no `:hover`: a força cresce de 0 a 1
-       conforme o ponteiro se aproxima, com `smoothstep` para as duas
-       pontas entrarem macias. No hover o botão saltava de reto para
-       líquido no instante em que o cursor cruzava a borda.
+       O centro de cada gota fica EM CIMA da borda, nunca solto no ar —
+       metade dela sempre cobre a pílula, então a fusão é garantida. Uma
+       bola única perseguindo o cursor descolava perto dos cantos (a borda
+       arredondada foge, a ponte não fecha) e aparecia como um objeto
+       estranho pousado ao lado do botão antes do cursor chegar.
 
-       O centro da bola é preso a uma faixa em volta do botão. Sem isso,
-       com o cursor a 180px ela apareceria como uma bolinha solta no meio
-       do nada; presa, ela encosta pelo lado de onde o cursor vem e a
-       fusão acontece na borda certa.
+       Nasce por DISTÂNCIA, não no `:hover`, com `smoothstep` nas duas
+       pontas. E cada gota tem ainda o seu próprio peso pela distância até
+       ela: quem está do lado do cursor incha, o resto da volta quase não
+       se mexe. É isso que faz a deformação ser LOCAL em vez de o botão
+       inteiro virar líquido de uma vez.
 
-       A bola respira, e é isso que dá leitura de líquido com o mouse
-       parado — sem a respiração a forma congelaria.
+       As gotas caminham devagar pela borda e respiram, então a forma não
+       congela com o mouse parado.
 
-       Só nos botões sólidos: o `--wire` é contorno, e uma bola preenchida
+       Só nos botões sólidos: o `--wire` é contorno, e uma gota preenchida
        fundindo com uma borda vazada não lê como o mesmo material. */
     {
         const solidos = [...document.querySelectorAll(".btn--solid")];
 
         if (solidos.length && document.getElementById("goo") &&
             matchMedia("(hover: hover) and (pointer: fine)").matches) {
-            const RAIO = 200;   // distância em que o efeito começa a nascer
-            const BOLA = 50;    // diâmetro da bola no auge
-            const SOLTA = 10;   // o quanto o centro da bola pode sair da caixa
+            const RAIO = 130;     // distância em que a superfície acorda
+            const ALCANCE = 120;  // raio de influência do cursor sobre cada gota
+            const GOTAS = 6;      // gotas por botão
+            const GOTA = 30;      // diâmetro base — casa com `--gota` no CSS
+            const SAIDA = 6;      // o quanto a gota escorrega para fora
 
-            const canais = solidos.map((btn, i) => {
+            const suave = (v) => v * v * (3 - 2 * v);
+
+            /* ponto e normal na borda de uma pílula w x h, com u dando a
+               volta em [0,1): reta de cima, arco da direita, reta de
+               baixo, arco da esquerda */
+            const naBorda = (u, w, h) => {
+                const r = h / 2;
+                const reta = Math.max(w - h, 0);
+                const arco = Math.PI * r;
+                let s = (((u % 1) + 1) % 1) * (2 * reta + 2 * arco);
+
+                if (s < reta) return [r + s, 0, 0, -1];
+                s -= reta;
+                if (s < arco) {
+                    const a = s / r - Math.PI / 2;
+                    const cx = Math.cos(a);
+                    const cy = Math.sin(a);
+                    return [r + reta + cx * r, r + cy * r, cx, cy];
+                }
+                s -= arco;
+                if (s < reta) return [r + reta - s, h, 0, 1];
+                s -= reta;
+                const a = s / r + Math.PI / 2;
+                const cx = Math.cos(a);
+                const cy = Math.sin(a);
+                return [r + cx * r, r + cy * r, cx, cy];
+            };
+
+            /* a mesma parada do `linear-gradient(120deg, ...)` da pílula,
+               resolvida em JS: sem isso a emenda da gota aparece nas
+               pontas ciano e índigo do botão */
+            const CIANO = [106, 216, 254];
+            const AZUL = [81, 168, 246];
+            const INDIGO = [91, 107, 245];
+            const EIXO_X = Math.sin((120 * Math.PI) / 180);
+            const EIXO_Y = -Math.cos((120 * Math.PI) / 180);
+
+            const corDoPonto = (x, y, w, h) => {
+                const comp = Math.abs(w * EIXO_X) + Math.abs(h * EIXO_Y);
+                const p = Math.min(Math.max(
+                    ((x - w / 2) * EIXO_X + (y - h / 2) * EIXO_Y) / comp + 0.5,
+                    0), 1);
+                const [de, para, f] = p < 0.55
+                    ? [CIANO, AZUL, p / 0.55]
+                    : [AZUL, INDIGO, (p - 0.55) / 0.45];
+                return `rgb(${Math.round(de[0] + (para[0] - de[0]) * f)},` +
+                    `${Math.round(de[1] + (para[1] - de[1]) * f)},` +
+                    `${Math.round(de[2] + (para[2] - de[2]) * f)})`;
+            };
+
+            const canais = solidos.map((btn) => {
                 const camada = document.createElement("span");
                 camada.className = "btn-goo";
                 camada.setAttribute("aria-hidden", "true");
+
+                const pilula = document.createElement("span");
+                pilula.className = "btn-goo__pilula";
+                const brilho = document.createElement("span");
+                brilho.className = "btn-goo__brilho";
+                pilula.append(brilho);
+                camada.append(pilula);
+
+                const gotas = [];
+                for (let i = 0; i < GOTAS; i += 1) {
+                    const gota = document.createElement("span");
+                    gota.className = "btn-goo__gota";
+                    camada.append(gota);
+                    gotas.push(gota);
+                }
+
                 btn.prepend(camada);
-                return { btn, camada, fase: i * 1.9, forca: 0 };
+                return { btn, gotas, acesa: false };
             });
 
             let mx = -9999;
@@ -608,33 +678,48 @@
                     const dx = Math.max(r.left - mx, 0, mx - r.right);
                     const dy = Math.max(r.top - my, 0, my - r.bottom);
                     const d = Math.hypot(dx, dy);
-                    const bruta = d >= RAIO ? 0 : 1 - d / RAIO;
-                    const forca = bruta * bruta * (3 - 2 * bruta); // smoothstep
+                    const forca = d >= RAIO ? 0 : suave(1 - d / RAIO);
 
                     if (forca < 0.01) {
-                        if (c.forca !== 0) {
-                            c.forca = 0;
-                            c.btn.style.removeProperty("--f");
-                            c.camada.style.setProperty("--d", "0px");
+                        if (c.acesa) {
+                            c.acesa = false;
+                            c.gotas.forEach((g) => { g.style.transform = "scale(0)"; });
                         }
                         return;
                     }
 
                     vivo = true;
-                    c.forca = forca;
+                    c.acesa = true;
 
-                    // respiração: diâmetro e fase próprios por botão
-                    const resp = 1 + Math.sin(t * 2.1 + c.fase) * 0.26;
-                    const diam = BOLA * forca * resp;
+                    const lx = mx - r.left;
+                    const ly = my - r.top;
 
-                    // centro preso a uma faixa em volta do botão
-                    const bx = Math.min(Math.max(mx, r.left - SOLTA), r.right + SOLTA);
-                    const by = Math.min(Math.max(my, r.top - SOLTA), r.bottom + SOLTA);
+                    c.gotas.forEach((g, j) => {
+                        // passeio lento pela borda, cada gota no seu ritmo
+                        const u = j / GOTAS + t * 0.045 +
+                            Math.sin(t * 0.8 + j * 2.399) * 0.022;
+                        const [px, py, nx, ny] = naBorda(u, r.width, r.height);
 
-                    c.btn.style.setProperty("--f", forca.toFixed(3));
-                    c.camada.style.setProperty("--d", `${diam.toFixed(1)}px`);
-                    c.camada.style.setProperty("--bx", `${(bx - r.left).toFixed(1)}px`);
-                    c.camada.style.setProperty("--by", `${(by - r.top).toFixed(1)}px`);
+                        // peso local: só quem está perto do cursor incha
+                        const dist = Math.hypot(lx - px, ly - py);
+                        const perto = dist >= ALCANCE ? 0 : suave(1 - dist / ALCANCE);
+                        const resp = 1 + Math.sin(t * 2.4 + j * 1.7) * 0.22;
+                        const esc = forca * perto * resp;
+
+                        if (esc < 0.02) {
+                            g.style.transform = "scale(0)";
+                            return;
+                        }
+
+                        const fora = SAIDA * forca * perto;
+                        const x = px + nx * fora;
+                        const y = py + ny * fora;
+
+                        g.style.transform =
+                            `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)` +
+                            ` scale(${esc.toFixed(3)})`;
+                        g.style.backgroundColor = corDoPonto(px, py, r.width, r.height);
+                    });
                 });
 
                 raf = vivo ? requestAnimationFrame(quadro) : 0;
