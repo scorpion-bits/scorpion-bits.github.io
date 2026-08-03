@@ -1042,9 +1042,59 @@ p {
     width: 100%;
 }
 
-.hero-type span {
+.hero-type > span {
     display: block;
     position: relative;
+    /* a máquina de escrever esvazia as linhas: sem piso de altura a caixa
+       colapsaria para 0 e o herói inteiro pularia a cada ciclo */
+    min-height: 0.92em;
+}
+
+/* o texto real, para leitor de tela e para o buscador: as duas linhas
+   visíveis são aria-hidden porque o conteúdo delas muda o tempo todo */
+.hero-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Cursor de terminal. Fica dentro de um invólucro inline que abraça só o
+   texto, então acompanha a última letra sem precisar de medição em JS.
+
+   É `inline-block` alinhado pela linha de base, e não `absolute`: a caixa
+   de um inline vazio colapsa para altura 0 e sobe 23px em relação à cheia,
+   então um cursor posicionado contra ela pularia toda vez que a linha
+   esvaziasse. Preso à linha de base, ele fica parado.
+
+   Em troca ele ocupa ~0.165em de largura na linha — o que a cópia do
+   brilho da linha alinhada à direita compensa com padding. */
+.hero-ln::after {
+    content: "";
+    display: inline-block;
+    width: 0.075em;
+    height: 0.72em;
+    margin-left: 0.09em;
+    vertical-align: -0.045em;
+    background: var(--cyan);
+    box-shadow: 0 0 18px rgba(106, 216, 254, 0.65);
+    opacity: 0;
+}
+
+.hero-ln.is-caret::after {
+    opacity: 1;
+    animation: caret-blink 1.06s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+    50% {
+        opacity: 0;
+    }
 }
 
 .hero-l1 {
@@ -1067,6 +1117,59 @@ p {
 .hero-l3 em {
     font-style: normal;
     color: var(--cyan);
+}
+
+/* -- brilho líquido sob o ponteiro ----------------------------------------
+   Uma cópia do texto por cima, pintada com o gradiente da marca, revelada
+   só dentro de uma bolha que segue o mouse. A bolha é uma elipse cujos dois
+   raios oscilam fora de fase: é isso que dá a leitura de gota, não de disco.
+   O JS escreve --gx/--gy (posição, com atraso proposital) e --gw/--gh.
+
+   O halo sai de `text-shadow`, não de `filter: drop-shadow`: filtro criaria
+   uma camada nova redesenhada a cada quadro num texto de 7.6rem. A sombra
+   é pintada a partir do contorno do glifo e a máscara recorta ela junto.
+
+   Só no desktop: em toque não existe ponteiro para seguir. */
+@media (hover: hover) and (pointer: fine) {
+    .hero-l1::after,
+    .hero-l3::after {
+        content: attr(data-text);
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: linear-gradient(104deg,
+                var(--cyan) 0%,
+                var(--blue) 28%,
+                var(--indigo) 60%,
+                var(--violet) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        text-shadow: 0 0 28px rgba(108, 132, 255, 0.55);
+        -webkit-mask-image: radial-gradient(ellipse var(--gw, 0px) var(--gh, 0px) at var(--gx, -400px) var(--gy, -400px),
+                #000 0%,
+                rgba(0, 0, 0, 0.62) 52%,
+                transparent 100%);
+        mask-image: radial-gradient(ellipse var(--gw, 0px) var(--gh, 0px) at var(--gx, -400px) var(--gy, -400px),
+                #000 0%,
+                rgba(0, 0, 0, 0.62) 52%,
+                transparent 100%);
+        opacity: 0;
+        transition: opacity 0.32s ease;
+    }
+
+    /* a linha de baixo é alinhada à direita, então a largura que o cursor
+       ocupa empurra o texto — a cópia precisa da mesma folga para ficar
+       exatamente por cima */
+    .hero-l3::after {
+        padding-right: 0.165em;
+    }
+
+    .hero-type.is-glow .hero-l1::after,
+    .hero-type.is-glow .hero-l3::after {
+        opacity: 1;
+    }
 }
 
 /* -- o mascote, entre as camadas de texto ----------------------------------
@@ -1229,34 +1332,21 @@ p {
     animation: hover-y 7s ease-in-out infinite;
 }
 
-/* Vídeo do mascote.
-   O WebM veio em 1917x1078 com o logo ocupando só 776x988 no meio — 63%
-   do quadro é margem transparente. Como a margem é invisível, compenso
-   ampliando o vídeo até o CONTEÚDO bater com --orb-w: 776/1917 = 40,5%,
-   então a largura do vídeo precisa ser --orb-w / 0,405.
-   Quando o arquivo for reexportado já recortado, estas três linhas somem
-   e o vídeo passa a usar width:100% como qualquer imagem. */
-/* Centralização por grid, não por transform: `translate(-50%,-50%)`
-   resolve a porcentagem contra a própria caixa do elemento, que muda
-   quando os metadados do vídeo chegam — o resultado ficava deslocado.
-   E o .hero-orb já é grid centrado, então basta empilhar na mesma célula.
-   A flutuação também sai daqui: ela já vem embutida na animação. */
-/* Centralização por margem calculada, não por grid nem por transform:
-   o vídeo é mais largo que a célula (o quadro tem 63% de margem
-   transparente), e item de grid que transborda o Chrome ancora no início
-   em vez de centralizar. `translate(-50%)` também falhava, porque resolve
-   contra a própria caixa, que muda quando os metadados chegam.
-   Metade da largura = --orb-w * 1.235; metade da altura = * 0.6945
-   (o quadro é 1917x1078). A flutuação sai daqui: já vem na animação. */
+/* Mascote animado: WebP animado, 442x588, recortado exatamente como o
+   poster. Por isso o posicionamento aqui é trivial — o .hero-orb tem
+   `aspect-ratio: 442/588`, então `inset: 0` já é a caixa do poster.
+
+   (Antes daqui morava uma pilha de constantes de compensação, porque o
+   arquivo vinha em 1917x1078 com 63% de margem transparente. Recortar na
+   origem apagou o problema em vez de corrigi-lo.)
+
+   `animation: none` porque a flutuação já vem embutida na animação —
+   somar a do CSS daria dois balanços fora de fase. */
 .hero-mascot--anim {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: calc(var(--orb-w) * 2.47);
-    height: auto;
-    max-width: none;
-    margin-left: calc(var(--orb-w) * -1.235);
-    margin-top: calc(var(--orb-w) * -0.6945);
+    inset: 0;
+    width: 100%;
+    height: 100%;
     animation: none;
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -1523,7 +1613,8 @@ p {
 
 /* -- entrada da tipografia ------------------------------------------------- */
 /* Cada linha sobe por trás de uma máscara, uma depois da outra. */
-.js .hero-type span {
+.js .hero-l1,
+.js .hero-l3 {
     animation: line-rise 1s var(--ease) both;
 }
 

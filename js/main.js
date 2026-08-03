@@ -223,69 +223,219 @@
     }
 
     /* ------------------------------------------- mascote animado -- */
-    /* O poster estático (48 KB) entra no primeiro paint; o vídeo só começa
-       a baixar depois do load e substitui o poster com um fade. Assim a
-       animação nunca atrasa a renderização inicial.
+    /* O poster estático (48 KB) entra no primeiro paint; a animação só
+       começa a baixar depois do load e substitui o poster com um fade.
+       Assim ela nunca atrasa a renderização inicial.
 
-       O teste de alpha existe por causa do Safari: ele DECODIFICA VP9, mas
-       não implementa canal alpha em WebM. Sem checar, ele tocaria o vídeo
-       com um retângulo preto sólido no lugar da transparência — pior do
-       que simplesmente não animar. Então, no primeiro quadro disponível,
-       desenho o canto do frame num canvas e leio o pixel: se vier opaco,
-       descarto o vídeo e fico com o poster, cortando o download no meio.
-       É detecção de capacidade real, não sniff de navegador. */
+       É um WebP animado, e não um vídeo, porque o Safari decodifica VP9
+       mas não implementa canal alpha em WebM — tocaria um retângulo preto
+       no lugar da transparência. WebP animado com alpha ele suporta desde
+       a versão 14, então dá para servir um arquivo só para todo mundo e
+       dispensar a detecção de capacidade que existia aqui.
+
+       1,1 MB é caro para um enfeite, então três portas ficam fechadas:
+       modo de economia de dados, conexão lenta e quem pediu menos
+       movimento — um WebP animado não tem como pausar depois de carregado,
+       então nesse caso o certo é não baixar. Em qualquer uma delas fica o
+       poster, que é o quadro 0 da própria animação. */
     {
-        const video = document.querySelector("[data-anim]");
-        const poster = document.querySelector("img.hero-mascot");
-        const economia = navigator.connection && navigator.connection.saveData;
+        const anim = document.querySelector("img[data-anim]");
+        const poster = document.querySelector("img.hero-mascot:not([data-anim])");
+        const rede = navigator.connection || {};
+        const lenta = /2g/.test(rede.effectiveType || "");
+        const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        const honraAlpha = () => {
-            try {
-                const c = document.createElement("canvas");
-                c.width = 4;
-                c.height = 4;
-                const ctx = c.getContext("2d", { willReadFrequently: true });
-                ctx.clearRect(0, 0, 4, 4);
-                // amostra o canto superior esquerdo, que é transparente
-                ctx.drawImage(video, 0, 0, 60, 60, 0, 0, 4, 4);
-                return ctx.getImageData(0, 0, 1, 1).data[3] < 20;
-            } catch (e) {
-                return false; // canvas sujo ou decode falhou: não arrisca
-            }
-        };
-
-        const desistir = () => {
-            video.removeAttribute("src");
-            video.load(); // aborta o download em andamento
-            video.remove();
-        };
-
-        if (video && poster && !economia) {
+        if (anim && poster && !rede.saveData && !lenta && !calmo) {
             const iniciar = () => {
-                video.src = video.dataset.anim;
-                // com preload="none" definir o src não basta: o download só
-                // começa com load() explícito
-                video.preload = "auto";
-                video.load();
-
-                video.addEventListener(
-                    "loadeddata",
+                anim.addEventListener(
+                    "load",
                     () => {
-                        if (!honraAlpha()) return desistir();
-
-                        video.play().then(() => {
-                            video.classList.add("is-on");
-                            poster.classList.add("is-off");
-                        }, desistir);
+                        anim.classList.add("is-on");
+                        poster.classList.add("is-off");
                     },
                     { once: true }
                 );
 
-                video.addEventListener("error", desistir, { once: true });
+                anim.addEventListener("error", () => anim.remove(), { once: true });
+                anim.src = anim.dataset.anim;
             };
 
             if (document.readyState === "complete") iniciar();
             else addEventListener("load", iniciar, { once: true });
+        }
+    }
+
+    /* ------------------------------------ título: máquina de escrever -- */
+    /* Escreve, apaga e alterna entre as duas frases, com um cursor de
+       terminal piscando no fim da linha que está sendo digitada.
+
+       O texto de verdade vive num `.hero-sr` invisível: as duas linhas
+       visíveis são `aria-hidden`, senão o leitor de tela anunciaria o
+       título de novo a cada letra.
+
+       Nada disso roda com `prefers-reduced-motion`: é movimento contínuo
+       e sem fim, exatamente o que a preferência pede para desligar. */
+    {
+        const titulo = document.querySelector(".hero-type");
+        const linhas = titulo && [
+            titulo.querySelector(".hero-l1 .hero-ln"),
+            titulo.querySelector(".hero-l3 .hero-ln"),
+        ];
+        const calmo = matchMedia("(prefers-reduced-motion: reduce)");
+
+        const FRASES = [
+            ["Ideias que", "viram jogo."],
+            ["Scorpion", "Bits."],
+        ];
+        const ESCREVE = 46;
+        const APAGA = 24;
+        const PAUSA_CHEIA = 3600;
+        const PAUSA_VAZIA = 480;
+
+        /* o ponto final é ciano, como na marca — montado por nó de texto,
+           sem innerHTML */
+        const pinta = (el, txt) => {
+            el.textContent = "";
+            if (txt.endsWith(".")) {
+                if (txt.length > 1) el.append(txt.slice(0, -1));
+                const em = document.createElement("em");
+                em.textContent = ".";
+                el.append(em);
+            } else if (txt) {
+                el.append(txt);
+            }
+            // a cópia para o brilho líquido lê daqui
+            el.parentElement.dataset.text = txt;
+        };
+
+        if (linhas && linhas[0] && linhas[1] && !calmo.matches) {
+            let frase = 0;
+            let n = 0;
+            let apagando = false;
+            let timer = 0;
+            let parado = false;
+
+            const passo = () => {
+                const [a, b] = FRASES[frase];
+                const total = a.length + b.length;
+
+                pinta(linhas[0], a.slice(0, Math.min(n, a.length)));
+                pinta(linhas[1], b.slice(0, Math.max(0, n - a.length)));
+                linhas[0].classList.toggle("is-caret", n <= a.length);
+                linhas[1].classList.toggle("is-caret", n > a.length);
+
+                let espera;
+                if (!apagando) {
+                    if (n < total) {
+                        n += 1;
+                        espera = ESCREVE + Math.random() * 58; // cadência humana
+                    } else {
+                        apagando = true;
+                        espera = PAUSA_CHEIA;
+                    }
+                } else if (n > 0) {
+                    n -= 1;
+                    espera = APAGA;
+                } else {
+                    apagando = false;
+                    frase = (frase + 1) % FRASES.length;
+                    espera = PAUSA_VAZIA;
+                }
+
+                if (!parado) timer = setTimeout(passo, espera);
+            };
+
+            // some com o texto do HTML no mesmo quadro em que o script roda,
+            // antes da primeira pintura — não chega a piscar
+            n = 0;
+            passo();
+
+            // aba em segundo plano não precisa de timer rodando
+            document.addEventListener("visibilitychange", () => {
+                parado = document.hidden;
+                clearTimeout(timer);
+                if (!parado) passo();
+            });
+        }
+    }
+
+    /* ------------------------------ brilho líquido sob o ponteiro -- */
+    /* Só desktop, e só enquanto o ponteiro está no herói. A bolha persegue
+       o mouse com atraso (interpolação de 14% por quadro) e respira com os
+       dois raios fora de fase — junto, isso lê como gota, não como lanterna.
+       Um único rAF escreve quatro custom properties; o resto é CSS. */
+    {
+        const titulo = document.querySelector(".hero-type");
+        const heroi = document.querySelector(".hero");
+        const alvos = titulo
+            ? [titulo.querySelector(".hero-l1"), titulo.querySelector(".hero-l3")]
+            : [];
+        const podeApontar = matchMedia("(hover: hover) and (pointer: fine)");
+        const calmo = matchMedia("(prefers-reduced-motion: reduce)");
+
+        if (heroi && alvos[0] && alvos[1] && podeApontar.matches && !calmo.matches) {
+            const estado = alvos.map(() => ({ x: 0, y: 0, iniciado: false }));
+            let mx = 0;
+            let my = 0;
+            let t = 0;
+            let raf = 0;
+            let dentro = false;
+            let desligaEm = 0;
+
+            const quadro = () => {
+                t += 1 / 60;
+                // lê todos os retângulos antes de escrever qualquer estilo,
+                // senão cada escrita força um recálculo de layout
+                const caixas = alvos.map((el) => el.getBoundingClientRect());
+                const gw = 158 + Math.sin(t * 1.7) * 30;
+                const gh = 124 + Math.sin(t * 2.35 + 1.1) * 34;
+
+                caixas.forEach((r, i) => {
+                    const st = estado[i];
+                    const ax = mx - r.left;
+                    const ay = my - r.top;
+                    if (!st.iniciado) {
+                        st.x = ax;
+                        st.y = ay;
+                        st.iniciado = true;
+                    } else {
+                        st.x += (ax - st.x) * 0.14;
+                        st.y += (ay - st.y) * 0.14;
+                    }
+                    const el = alvos[i];
+                    el.style.setProperty("--gx", `${st.x.toFixed(1)}px`);
+                    el.style.setProperty("--gy", `${st.y.toFixed(1)}px`);
+                    el.style.setProperty("--gw", `${gw.toFixed(1)}px`);
+                    el.style.setProperty("--gh", `${gh.toFixed(1)}px`);
+                });
+
+                // depois de sair, ainda roda o tempo do fade para a bolha
+                // não congelar no meio da tela
+                if (dentro || performance.now() < desligaEm) raf = requestAnimationFrame(quadro);
+                else raf = 0;
+            };
+
+            heroi.addEventListener(
+                "pointermove",
+                (e) => {
+                    if (e.pointerType !== "mouse") return;
+                    mx = e.clientX;
+                    my = e.clientY;
+                    dentro = true;
+                    titulo.classList.add("is-glow");
+                    if (!raf) raf = requestAnimationFrame(quadro);
+                },
+                { passive: true }
+            );
+
+            heroi.addEventListener("pointerleave", () => {
+                dentro = false;
+                desligaEm = performance.now() + 400;
+                titulo.classList.remove("is-glow");
+                estado.forEach((st) => {
+                    st.iniciado = false;
+                });
+            });
         }
     }
 
