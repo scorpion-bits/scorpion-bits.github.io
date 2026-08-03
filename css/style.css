@@ -841,17 +841,10 @@ p {
    cursor agora é o filtro líquido, e somar um squash-and-stretch por cima
    dava dois movimentos disputando a mesma leitura. */
 
-/* PROTÓTIPO — distorção líquida sob o cursor (ver o filtro em index.html).
-   Só com ponteiro fino: em toque não há hover, e o filtro ficaria preso
-   ligado depois do primeiro toque.
-   Custo: filtro força rasterização e é refeito a cada quadro enquanto o
-   cursor está em cima. Num botão de ~200x46 é área pequena; no título de
-   7,6rem seria outra história. */
-@media (hover: hover) and (pointer: fine) {
-    .btn:hover {
-        filter: url("#liquido");
-    }
-}
+/* A distorção líquida não mora mais aqui: quem liga e desliga o `filter`
+   é o JS, por PROXIMIDADE do ponteiro e não por `:hover` — ver o bloco
+   "botões líquidos" em main.js. No `:hover` o botão saltava de reto para
+   líquido no instante em que o cursor cruzava a borda. */
 
 .btn .icon {
     flex: none;
@@ -912,30 +905,6 @@ p {
     100% {
         transform: rotate(360deg) scale(1.05, 1);
     }
-}
-
-.btn--solid:hover::before {
-    animation-duration: 2.2s;
-    filter: blur(8px);
-}
-
-.btn--solid::after {
-    content: "";
-    position: absolute;
-    inset: 0 auto 0 -60%;
-    width: 42%;
-    background: linear-gradient(
-        100deg,
-        transparent,
-        rgba(255, 255, 255, 0.28),
-        transparent
-    );
-    transform: skewX(-18deg);
-    transition: left 0.8s var(--ease);
-}
-
-.btn--solid:hover::after {
-    left: 125%;
 }
 
 .btn--solid:hover .icon {

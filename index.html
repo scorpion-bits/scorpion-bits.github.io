@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-poster.png">
-    <link rel="stylesheet" href="css/style.css?v=61">
+    <link rel="stylesheet" href="css/style.css?v=63">
     <script>document.documentElement.className += " js";</script>
 </head>
 
@@ -187,64 +187,71 @@
                 <path d="M8 0v4H4v4H0v16h16v-4h4v-4h4V0Zm4 8h4v4h-4v4H8v-4h4Z" />
             </symbol>
 
-            <!-- Distorção líquida do botão sob o cursor.
+            <!-- MOLDE do filtro líquido dos botões. O JS clona um por
+                 botão (ids `liquido-N`) para que dois botões vizinhos
+                 possam estar ativos ao mesmo tempo, cada um com a sua
+                 bolha e a sua intensidade.
 
-                 feTurbulence gera um ruído contínuo; feDisplacementMap usa
-                 os canais R e G desse ruído como deslocamento em x e y,
-                 então a borda do botão ondula em vez de ficar reta. É
-                 distorção de verdade num elemento HTML real, sem WebGL e
-                 sem biblioteca.
+                 feTurbulence gera um campo contínuo; feDisplacementMap usa
+                 os canais R e G dele como deslocamento em x e y, então a
+                 borda do botão ondula em vez de ficar reta. É distorção de
+                 verdade num elemento HTML real, sem WebGL e sem
+                 biblioteca.
 
                  A turbulência é LOCAL: o `feImage` desenha uma bolha
-                 radial que o JS reposiciona no ponteiro, e o `in` recorta
-                 o ruído para dentro dela. Fora da bolha entra o cinza
-                 neutro do feFlood — 128 nos canais R e G é o valor de
-                 "não desloca", então o resto do botão fica intacto. Sem
-                 esse cinza, a área transparente valeria 0 e empurraria o
-                 botão inteiro para um canto.
+                 radial que o JS reposiciona no ponteiro e faz respirar. O
+                 `in` recorta o campo para dentro dela; fora entra o cinza
+                 neutro do feFlood — 128 nos canais R e G é o valor de "não
+                 desloca", então o resto do botão fica intacto. Sem esse
+                 cinza, a área transparente valeria 0 e empurraria o botão
+                 inteiro para um canto.
 
-                 SERRILHADO — três defesas, porque `feDisplacementMap`
-                 amostra por vizinho mais próximo: ele MOVE pixels, e ao
-                 mover joga fora o antisserrilhado que a borda já tinha.
-                 Não existe atributo para pedir amostragem suave, então:
+                 SERRILHADO. `feDisplacementMap` amostra por vizinho mais
+                 próximo: ele MOVE pixels, e ao mover joga fora o
+                 antisserrilhado que a borda já tinha. Não existe atributo
+                 para pedir amostragem suave.
 
-                 1. `baseFrequency` baixa (ondas de ~110-200px) e UM octave
-                    só. Cada octave extra soma uma camada de ruído com o
-                    dobro da frequência — é justamente a parte fina que
-                    vira escadinha, e ela não acrescenta nada visível numa
-                    onda desse tamanho. Vizinhos se deslocando por valores
-                    parecidos é o que mantém a borda contínua, e é o que
-                    permite subir a intensidade sem virar sopa de pixel.
-                 2. Borrão forte no ruído, pelo mesmo motivo — suaviza o
-                    campo de deslocamento, não a imagem.
-                 3. Um borrão mínimo DEPOIS do deslocamento, que devolve o
-                    antisserrilhado das bordas recém-criadas. Sobe junto
-                    com o `scale`: deslocamento maior cria degraus maiores.
+                 A tentativa anterior era disfarçar com um borrão na imagem
+                 depois do deslocamento — e isso só trocou escadinha por
+                 borrão, deixando o botão sujo E mole.
+
+                 O que resolve é atacar o CAMPO, não a imagem: a escadinha
+                 nasce quando pixels vizinhos se deslocam por valores muito
+                 diferentes. Então o campo leva um borrão pesado
+                 (stdDeviation 6), que elimina a variação brusca — e como
+                 borrar também achata o ruído contra o cinza neutro,
+                 matando a força junto, o `feComponentTransfer` reamplifica
+                 o que sobrou em torno de 0.5. Fica um campo suave E forte,
+                 que é o que permite deslocamento grande sem degrau.
+
+                 O `feFuncA` fixa o alfa em 1 no mesmo passo. O alfa do
+                 fractalNoise também é ruído, e ele estava furando a bolha
+                 de forma irregular no `operator="in"` — com alfa cheio, a
+                 máscara passa a ser exatamente o degradê da bolha.
 
                  `primitiveUnits="userSpaceOnUse"` deixa x/y da bolha em px
-                 da caixa do botão, que é o que o JS consegue calcular —
-                 e faz `scale` e `stdDeviation` valerem em px também. -->
-            <filter id="liquido" x="-18%" y="-70%" width="136%" height="240%"
+                 da caixa do botão, que é o que o JS consegue calcular — e
+                 faz `scale` e `stdDeviation` valerem em px também. -->
+            <filter id="liquido" x="-25%" y="-90%" width="150%" height="280%"
                     color-interpolation-filters="sRGB"
                     primitiveUnits="userSpaceOnUse">
-                <feTurbulence type="fractalNoise" baseFrequency="0.005 0.009"
-                              numOctaves="1" seed="4" result="ruido">
-                    <animate attributeName="baseFrequency" dur="6s"
-                             values="0.005 0.009;0.01 0.005;0.005 0.009"
-                             repeatCount="indefinite"/>
-                </feTurbulence>
-                <feGaussianBlur in="ruido" stdDeviation="3.4" result="macio"/>
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.011"
+                              numOctaves="1" seed="4" result="ruido"/>
+                <feGaussianBlur in="ruido" stdDeviation="6" result="macio"/>
+                <feComponentTransfer in="macio" result="campoLocal">
+                    <feFuncR type="linear" slope="3.4" intercept="-1.2"/>
+                    <feFuncG type="linear" slope="3.4" intercept="-1.2"/>
+                    <feFuncA type="linear" slope="0" intercept="1"/>
+                </feComponentTransfer>
                 <feFlood flood-color="rgb(128,128,128)" result="neutro"/>
-                <feImage id="bolha-liquida" result="bolha"
-                         x="-500" y="-500" width="130" height="130"
+                <feImage result="bolha"
+                         x="-900" y="-900" width="130" height="130"
                          preserveAspectRatio="none"
-                         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130'%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.55' stop-color='%23fff' stop-opacity='.7'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='130' height='130' fill='url(%23g)'/%3E%3C/svg%3E"/>
-                <feComposite in="macio" in2="bolha" operator="in" result="local"/>
+                         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130'%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.45' stop-color='%23fff' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='130' height='130' fill='url(%23g)'/%3E%3C/svg%3E"/>
+                <feComposite in="campoLocal" in2="bolha" operator="in" result="local"/>
                 <feComposite in="local" in2="neutro" operator="over" result="campo"/>
-                <feDisplacementMap in="SourceGraphic" in2="campo" scale="46"
-                                   xChannelSelector="R" yChannelSelector="G"
-                                   result="torto"/>
-                <feGaussianBlur in="torto" stdDeviation="0.62"/>
+                <feDisplacementMap in="SourceGraphic" in2="campo" scale="0"
+                                   xChannelSelector="R" yChannelSelector="G"/>
             </filter>
         </defs>
     </svg>
@@ -973,7 +980,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=61" defer></script>
+    <script src="js/main.js?v=63" defer></script>
 </body>
 
 </html>

@@ -551,57 +551,116 @@
        incomodava mais do que dava profundidade. O que sobrou de reação ao
        mouse é o brilho líquido no título, que é local e intencional. */
 
-    /* ------------------------ bolha líquida dos botões segue o mouse -- */
-    /* O filtro é um só, compartilhado: só um botão fica sob o cursor por
-       vez, então basta reposicionar a bolha do `feImage` na coordenada
-       local do botão que estiver em hover. Fora de qualquer botão ela vai
-       para longe e o filtro deixa de deformar.
+    /* ------------------------------------------- botões líquidos -- */
+    /* Cada botão ganha uma cópia do filtro (`liquido-N`), e não uma cópia
+       compartilhada: com proximidade, dois botões vizinhos ficam ativos ao
+       mesmo tempo, cada um com a sua bolha e a sua intensidade. Filtro
+       único faria um deles roubar o efeito do outro.
 
-       `primitiveUnits="userSpaceOnUse"` faz x/y valerem em px da caixa do
-       botão, então é só descontar o retângulo dele do ponteiro.
+       O efeito NASCE POR DISTÂNCIA, não no `:hover`. Ligar no hover fazia
+       o botão saltar de reto para líquido no instante em que o cursor
+       cruzava a borda. Aqui a força cresce de 0 a 1 conforme o ponteiro se
+       aproxima, com `smoothstep` para as duas pontas entrarem macias.
 
-       Uma escrita de atributo por quadro, e só enquanto o cursor está em
-       cima de um botão. */
+       A bolha respira: o raio oscila, e é isso que dá a leitura de líquido
+       quando o mouse está parado — sem ela a distorção congelaria.
+
+       O filtro só é atribuído ao botão enquanto a força é maior que zero.
+       Deixar `filter` sempre ligado prenderia todo botão da página numa
+       camada rasterizada à toa. */
     {
-        const bolha = document.getElementById("bolha-liquida");
-        const LADO = 130;
+        const molde = document.getElementById("liquido");
+        const botoes = [...document.querySelectorAll(".btn")];
 
-        if (bolha && matchMedia("(hover: hover) and (pointer: fine)").matches) {
-            let botao = null;
-            let mx = 0;
-            let my = 0;
+        if (molde && botoes.length &&
+            matchMedia("(hover: hover) and (pointer: fine)").matches) {
+            const RAIO = 210;   // distância em que o efeito começa a nascer
+            const FORCA = 36;   // deslocamento máximo, no centro da bolha
+            const LADO = 130;   // diâmetro de repouso da bolha
+
+            const defs = molde.parentElement;
+            const canais = botoes.map((btn, i) => {
+                const f = molde.cloneNode(true);
+                f.id = `liquido-${i}`;
+                // semente própria: dois botões lado a lado não podem
+                // ondular exatamente igual
+                f.querySelector("feTurbulence").setAttribute("seed", 3 + i * 7);
+                defs.append(f);
+                return {
+                    btn,
+                    desl: f.querySelector("feDisplacementMap"),
+                    bolha: f.querySelector("feImage"),
+                    url: `url("#liquido-${i}")`,
+                    fase: i * 1.7,
+                    ligado: false,
+                };
+            });
+            molde.remove(); // o molde em si nunca é usado
+
+            let mx = -9999;
+            let my = -9999;
+            let t = 0;
             let raf = 0;
 
-            const guardar = () => {
-                raf = 0;
-                if (!botao) return;
-                const r = botao.getBoundingClientRect();
-                bolha.setAttribute("x", (mx - r.left - LADO / 2).toFixed(1));
-                bolha.setAttribute("y", (my - r.top - LADO / 2).toFixed(1));
-            };
+            const quadro = () => {
+                t += 1 / 60;
 
-            const parquear = () => {
-                botao = null;
-                bolha.setAttribute("x", -500);
-                bolha.setAttribute("y", -500);
+                // lê todos os retângulos antes de escrever qualquer coisa,
+                // senão cada escrita força um recálculo de layout
+                const caixas = canais.map((c) => c.btn.getBoundingClientRect());
+                let algumVivo = false;
+
+                caixas.forEach((r, i) => {
+                    const c = canais[i];
+
+                    // distância do ponteiro até o retângulo (0 se estiver dentro)
+                    const dx = Math.max(r.left - mx, 0, mx - r.right);
+                    const dy = Math.max(r.top - my, 0, my - r.bottom);
+                    const d = Math.hypot(dx, dy);
+                    const bruta = d >= RAIO ? 0 : 1 - d / RAIO;
+                    const forca = bruta * bruta * (3 - 2 * bruta); // smoothstep
+
+                    if (forca < 0.01) {
+                        if (c.ligado) {
+                            c.btn.style.filter = "";
+                            c.desl.setAttribute("scale", 0);
+                            c.ligado = false;
+                        }
+                        return;
+                    }
+
+                    algumVivo = true;
+                    if (!c.ligado) {
+                        c.btn.style.filter = c.url;
+                        c.ligado = true;
+                    }
+
+                    // respiração: a bolha incha e murcha fora de fase com
+                    // a pulsação da intensidade, então nunca repete o
+                    // mesmo estado duas vezes seguidas
+                    const lado = LADO * (1 + Math.sin(t * 1.9 + c.fase) * 0.3);
+                    const pulso = 0.78 + Math.sin(t * 1.3 + c.fase * 0.6) * 0.22;
+
+                    c.desl.setAttribute("scale", (FORCA * forca * pulso).toFixed(1));
+                    c.bolha.setAttribute("width", lado.toFixed(1));
+                    c.bolha.setAttribute("height", lado.toFixed(1));
+                    c.bolha.setAttribute("x", (mx - r.left - lado / 2).toFixed(1));
+                    c.bolha.setAttribute("y", (my - r.top - lado / 2).toFixed(1));
+                });
+
+                raf = algumVivo ? requestAnimationFrame(quadro) : 0;
             };
 
             document.addEventListener(
                 "pointermove",
                 (e) => {
                     if (e.pointerType !== "mouse") return;
-                    const alvo = e.target.closest(".btn");
-                    if (!alvo) return botao && parquear();
-
-                    botao = alvo;
                     mx = e.clientX;
                     my = e.clientY;
-                    if (!raf) raf = requestAnimationFrame(guardar);
+                    if (!raf) raf = requestAnimationFrame(quadro);
                 },
                 { passive: true }
             );
-
-            parquear();
         }
     }
 
