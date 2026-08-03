@@ -226,11 +226,39 @@
     /* O poster estático (48 KB) entra no primeiro paint; o vídeo só começa
        a baixar depois do load e substitui o poster com um fade. Assim a
        animação nunca atrasa a renderização inicial.
-       Em modo de economia de dados o vídeo não é baixado. */
+
+       O teste de alpha existe por causa do Safari: ele DECODIFICA VP9, mas
+       não implementa canal alpha em WebM. Sem checar, ele tocaria o vídeo
+       com um retângulo preto sólido no lugar da transparência — pior do
+       que simplesmente não animar. Então, no primeiro quadro disponível,
+       desenho o canto do frame num canvas e leio o pixel: se vier opaco,
+       descarto o vídeo e fico com o poster, cortando o download no meio.
+       É detecção de capacidade real, não sniff de navegador. */
     {
         const video = document.querySelector("[data-anim]");
         const poster = document.querySelector("img.hero-mascot");
         const economia = navigator.connection && navigator.connection.saveData;
+
+        const honraAlpha = () => {
+            try {
+                const c = document.createElement("canvas");
+                c.width = 4;
+                c.height = 4;
+                const ctx = c.getContext("2d", { willReadFrequently: true });
+                ctx.clearRect(0, 0, 4, 4);
+                // amostra o canto superior esquerdo, que é transparente
+                ctx.drawImage(video, 0, 0, 60, 60, 0, 0, 4, 4);
+                return ctx.getImageData(0, 0, 1, 1).data[3] < 20;
+            } catch (e) {
+                return false; // canvas sujo ou decode falhou: não arrisca
+            }
+        };
+
+        const desistir = () => {
+            video.removeAttribute("src");
+            video.load(); // aborta o download em andamento
+            video.remove();
+        };
 
         if (video && poster && !economia) {
             const iniciar = () => {
@@ -239,19 +267,21 @@
                 // começa com load() explícito
                 video.preload = "auto";
                 video.load();
+
                 video.addEventListener(
-                    "canplay",
+                    "loadeddata",
                     () => {
-                        video.play().then(
-                            () => {
-                                video.classList.add("is-on");
-                                poster.classList.add("is-off");
-                            },
-                            () => {}
-                        );
+                        if (!honraAlpha()) return desistir();
+
+                        video.play().then(() => {
+                            video.classList.add("is-on");
+                            poster.classList.add("is-off");
+                        }, desistir);
                     },
                     { once: true }
                 );
+
+                video.addEventListener("error", desistir, { once: true });
             };
 
             if (document.readyState === "complete") iniciar();
