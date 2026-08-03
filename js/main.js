@@ -233,18 +233,32 @@
        decodificador; onde não der, fica o poster, que é o quadro 0 da
        própria animação — a home nunca fica sem a logo.
 
-       Dois filtros, nesta ordem, e o primeiro é o que protege o iPhone:
+       Quem fica de fora, e por quê:
 
        1. `canPlayType`: o WebKit do iOS não toca VP9 em WebM e devolve
           string vazia. Perguntar ANTES de definir o src é o que evita
           baixar 3,8 MB no celular para depois jogar fora.
-       2. Alpha em canvas: o Safari do macOS DECODIFICA VP9 mas ignora o
-          canal alpha — tocaria um retângulo preto sólido no lugar da
-          transparência, pior que não animar. Isso só dá para saber vendo
-          o primeiro quadro, então aqui o download já aconteceu.
+       2. Safari, pelo `navigator.vendor`. Ele DECODIFICA VP9 mas ignora o
+          canal alpha, e mostraria um retângulo preto sólido no lugar da
+          transparência — pior que não animar.
+       3. Economia de dados e conexão 2g.
 
-       Some-se a economia de dados e a conexão 2g. É detecção de
-       capacidade real, não sniff de navegador.
+       O item 2 já foi um teste de capacidade de verdade: desenhava o
+       primeiro quadro num canvas e lia o alpha do canto. Foi removido em
+       03/08/2026 porque dava FALSO NEGATIVO — em máquina com decodificação
+       de vídeo por GPU o `drawImage` devolve o quadro já achatado sobre
+       fundo opaco, então o teste concluía "sem alpha" e descartava o vídeo
+       num navegador que tocaria perfeitamente. Era o motivo do escorpião
+       aparecer parado no Windows do Milan.
+
+       Trocar teste de capacidade por nome de navegador é ruim e eu sei
+       disso. Mas aqui o teste estava quebrando o caso comum para proteger
+       o raro, e não existe API que responda "este vídeo tem alpha
+       respeitado" — então o menos pior é a checagem estreita, com o Safari
+       caindo no poster.
+
+       `data-estado` fica no elemento para dar para inspecionar no DevTools
+       por que a animação não entrou, sem precisar instrumentar de novo.
 
        `prefers-reduced-motion` NÃO é consultado, por decisão do Milan: a
        máquina dele reporta `reduce` e a logo parada era o efeito colateral.
@@ -256,30 +270,25 @@
         const lenta = /2g/.test(rede.effectiveType || "");
         const tocaWebm =
             video && video.canPlayType('video/webm; codecs="vp9"') !== "";
+        // pega Safari (macOS e iOS) sem pegar Chrome/Edge/Firefox
+        const daApple = /Apple/.test(navigator.vendor || "");
 
-        const honraAlpha = () => {
-            try {
-                const c = document.createElement("canvas");
-                c.width = 4;
-                c.height = 4;
-                const ctx = c.getContext("2d", { willReadFrequently: true });
-                ctx.clearRect(0, 0, 4, 4);
-                // amostra o canto superior esquerdo, que é transparente
-                ctx.drawImage(video, 0, 0, 60, 60, 0, 0, 4, 4);
-                return ctx.getImageData(0, 0, 1, 1).data[3] < 20;
-            } catch (e) {
-                return false; // canvas sujo ou decode falhou: não arrisca
-            }
+        const marcar = (estado) => {
+            if (video) video.dataset.estado = estado;
         };
 
-        const desistir = () => {
+        /* O elemento fica no DOM mesmo quando desiste: ele já é invisível
+           (opacity 0, pointer-events none) e assim o `data-estado`
+           continua legível no DevTools. */
+        const desistir = (motivo) => {
+            marcar(motivo || "falhou");
             video.removeAttribute("src");
             video.load(); // aborta o download em andamento
-            video.remove();
         };
 
-        if (video && poster && tocaWebm && !rede.saveData && !lenta) {
+        if (video && poster && tocaWebm && !daApple && !rede.saveData && !lenta) {
             const iniciar = () => {
+                marcar("baixando");
                 video.src = video.dataset.anim;
                 // com preload="none" definir o src não basta: o download só
                 // começa com load() explícito
@@ -289,23 +298,50 @@
                 video.addEventListener(
                     "loadeddata",
                     () => {
-                        if (!honraAlpha()) return desistir();
-
-                        video.play().then(() => {
-                            video.classList.add("is-on");
-                            poster.classList.add("is-off");
-                        }, desistir);
+                        video.play().then(
+                            () => {
+                                marcar("tocando");
+                                video.classList.add("is-on");
+                                poster.classList.add("is-off");
+                            },
+                            () => {
+                                /* Alguns navegadores recusam o autoplay
+                                   mesmo mudo, por configuração do usuário.
+                                   Em vez de jogar o vídeo fora, espera o
+                                   primeiro gesto e tenta de novo — quem
+                                   rolar a página já ganha a animação. */
+                                marcar("aguardando-gesto");
+                                const retentar = () => {
+                                    video.play().then(() => {
+                                        marcar("tocando");
+                                        video.classList.add("is-on");
+                                        poster.classList.add("is-off");
+                                    }, () => {});
+                                };
+                                addEventListener("pointerdown", retentar, { once: true });
+                                addEventListener("scroll", retentar, { once: true, passive: true });
+                                addEventListener("keydown", retentar, { once: true });
+                            }
+                        );
                     },
                     { once: true }
                 );
 
-                video.addEventListener("error", desistir, { once: true });
+                video.addEventListener("error", () => desistir("erro-de-rede"), {
+                    once: true,
+                });
             };
 
             if (document.readyState === "complete") iniciar();
             else addEventListener("load", iniciar, { once: true });
         } else if (video) {
-            video.remove(); // não vai tocar: não deixa a caixa vazia no DOM
+            // não vai tocar: registra o porquê e fica só o poster
+            marcar(
+                !tocaWebm ? "sem-suporte-a-webm"
+                    : daApple ? "safari-sem-alpha-em-webm"
+                        : rede.saveData ? "economia-de-dados"
+                            : "conexao-lenta"
+            );
         }
     }
 
@@ -359,13 +395,6 @@
             let timer = 0;
             let parado = false;
 
-            /* Frase curta ganha um alinhamento próprio, ancorado no centro,
-               senão "Bits." fica sozinho no canto. A troca acontece com as
-               linhas vazias, então não se vê o texto mudar de lugar.
-               `CURTA` marca quais frases usam esse arranjo. */
-            const CURTA = [false, true];
-            const arranjo = () => titulo.classList.toggle("is-curta", CURTA[frase]);
-
             const passo = () => {
                 const [a, b] = FRASES[frase];
                 const total = a.length + b.length;
@@ -390,7 +419,6 @@
                 } else {
                     apagando = false;
                     frase = (frase + 1) % FRASES.length;
-                    arranjo(); // linhas vazias: hora certa de trocar o layout
                     espera = PAUSA_VAZIA;
                 }
 
@@ -400,7 +428,6 @@
             // some com o texto do HTML no mesmo quadro em que o script roda,
             // antes da primeira pintura — não chega a piscar
             n = 0;
-            arranjo();
             passo();
 
             // aba em segundo plano não precisa de timer rodando

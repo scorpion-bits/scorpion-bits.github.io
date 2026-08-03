@@ -828,6 +828,18 @@ p {
     transform: translateY(-2px);
 }
 
+/* PROTÓTIPO — distorção líquida sob o cursor (ver o filtro em index.html).
+   Só com ponteiro fino: em toque não há hover, e o filtro ficaria preso
+   ligado depois do primeiro toque.
+   Custo: filtro força rasterização e é refeito a cada quadro enquanto o
+   cursor está em cima. Num botão de ~200x46 é área pequena; no título de
+   7,6rem seria outra história. */
+@media (hover: hover) and (pointer: fine) {
+    .btn:hover {
+        filter: url("#liquido");
+    }
+}
+
 .btn:active {
     transform: translateY(0);
 }
@@ -1103,63 +1115,41 @@ p {
     }
 }
 
-.hero-l1 {
-    z-index: 1;
-    text-align: left;
-}
+/* -- as duas linhas, centradas --------------------------------------------
+   Já foram alinhadas às bordas (uma à esquerda, outra à direita), que é o
+   arranjo em diagonal. Ele só funciona quando as duas linhas têm larguras
+   parecidas: com "Scorpion" (499px) contra "Bits." (259px), as pontas de
+   fora paravam em lugares completamente diferentes e a página ficava
+   pesada de um lado só. Ancorar pelo lado de dentro não resolve — aí os
+   extremos externos é que ficam tortos.
 
-/* A linha de baixo passa na frente do mascote — a sobreposição sozinha já
-   entrega a profundidade. Tentei `difference` aqui (o "subtract" do CSS) e
-   saiu pior: a mancha escura no cruzamento lê como falha de renderização,
-   e para evitar o laranja o título precisava virar ciano, o que derrubava
-   o contraste contra "Ideias que". Branco limpo ganha. */
+   Não dá para ter simetria nos dois: ou as âncoras internas coincidem, ou
+   as pontas externas coincidem. É a ponta externa que o olho lê como
+   equilíbrio, então as duas linhas ficam centradas, e qualquer par de
+   palavras sai simétrico sozinho.
+
+   Consequência: as duas passam NA FRENTE do mascote (z-index 3). Centrada
+   e por trás, a linha de cima teria justamente o miolo tapado pelo
+   escorpião — "Ideias que" viraria "Ide___ue", e "Scorpion", que é o nome
+   da marca, ficaria ilegível. Na frente, o cubo com os olhos continua
+   aparecendo na folga entre as linhas, que é onde ele estava antes.
+
+   A sombra existe para as letras não sumirem quando cruzam a arte. */
+.hero-l1,
 .hero-l3 {
     z-index: 3;
-    text-align: right;
-    margin-top: clamp(2.5rem, 8vw, 7rem);
+    text-align: center;
     text-shadow: 0 6px 34px rgba(5, 9, 15, 0.55);
 }
 
+.hero-l3 {
+    margin-top: clamp(2.5rem, 8vw, 7rem);
+}
+
+.hero-l1 em,
 .hero-l3 em {
     font-style: normal;
     color: var(--cyan);
-}
-
-/* -- frase curta: linhas ancoradas no mascote ------------------------------
-   "Ideias que / viram jogo." é longa e preenche a largura, então alinhar
-   uma linha à esquerda e a outra à direita entrega o sanduíche em volta do
-   escorpião. "Scorpion / Bits." não preenche nada: com o mesmo alinhamento,
-   "Bits." ia parar sozinho no canto, a meia tela de distância do resto.
-
-   Aqui as duas linhas encostam nas BORDAS DO MASCOTE em vez das bordas da
-   tela: a de cima termina onde ele começa, a de baixo começa onde ele
-   acaba. As palavras ficam ao lado do escorpião, formando um conjunto com
-   ele, e nenhuma letra some atrás — o que importa porque aqui o texto é o
-   nome da marca. A linha de cima passa ATRÁS do mascote (z-index 1), então
-   sobreposição ali comeria justamente o meio de "Scorpion".
-
-   `nowrap` é obrigatório: sem ele, palavra maior que o espaço ao lado do
-   mascote quebraria em duas linhas e a altura do herói pularia. Com ele, o
-   excesso escapa para fora — para o lado vazio da tela, nunca por cima do
-   escorpião.
-
-   A classe é trocada pelo JS no exato momento em que as duas linhas estão
-   vazias, entre uma frase e outra — por isso a mudança de alinhamento não
-   aparece como salto. */
-.hero-type.is-curta {
-    --recuo: calc(50% + var(--orb-w) * 0.3);
-}
-
-.hero-type.is-curta .hero-l1 {
-    text-align: right;
-    padding-right: var(--recuo);
-    white-space: nowrap;
-}
-
-.hero-type.is-curta .hero-l3 {
-    text-align: left;
-    padding-left: var(--recuo);
-    white-space: nowrap;
 }
 
 /* -- brilho líquido sob o ponteiro ----------------------------------------
@@ -1227,27 +1217,15 @@ p {
         transition: opacity 0.32s ease;
     }
 
-    /* A cópia é absoluta com `inset: 0`, então ela cobre a caixa de padding
-       inteira — sem herdar o recuo, o texto dela ficaria deslocado do
-       original justamente na frase curta. */
+    /* O cursor ocupa ~0.165em no fim da linha e entra na conta da
+       centralização, então o texto de verdade fica meio cursor à esquerda
+       do centro. A cópia não tem cursor: sem essa folga à direita ela
+       centraria sozinha e apareceria uma franja colorida deslocada.
+       Encolher a caixa dela pela direita move o centro dela na mesma
+       medida. */
     .hero-l1::after,
     .hero-l3::after {
-        padding: inherit;
-    }
-
-    /* O cursor ocupa ~0.165em no fim da linha. Na linha alinhada ao lado
-       oposto isso empurra o texto, e a cópia precisa da mesma folga para
-       ficar exatamente por cima. Muda de lado junto com o alinhamento. */
-    .hero-l3::after {
         padding-right: 0.165em;
-    }
-
-    .hero-type.is-curta .hero-l1::after {
-        padding-right: calc(var(--recuo) + 0.165em);
-    }
-
-    .hero-type.is-curta .hero-l3::after {
-        padding-right: 0;
     }
 
     .hero-type.is-glow .hero-l1::after,
@@ -3006,18 +2984,7 @@ p {
         width: 150%;
     }
 
-    /* Empilhado no celular: as linhas voltam a alinhar juntas.
-       O seletor precisa cobrir também o estado da frase curta — ele tem
-       especificidade maior e venceria mesmo estando antes no arquivo. */
-    .hero-l1,
-    .hero-l3,
-    .hero-type.is-curta .hero-l1,
-    .hero-type.is-curta .hero-l3 {
-        text-align: center;
-        padding-left: 0;
-        padding-right: 0;
-    }
-
+    /* no celular as duas linhas ficam coladas; o mascote vai para cima */
     .hero-l3 {
         margin-top: 0;
     }

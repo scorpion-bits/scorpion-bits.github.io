@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-poster.png">
-    <link rel="stylesheet" href="css/style.css?v=51">
+    <link rel="stylesheet" href="css/style.css?v=53">
     <script>document.documentElement.className += " js";</script>
 </head>
 
@@ -186,6 +186,27 @@
             <symbol id="i-aseprite" viewBox="0 0 24 24">
                 <path d="M8 0v4H4v4H0v16h16v-4h4v-4h4V0Zm4 8h4v4h-4v4H8v-4h4Z" />
             </symbol>
+
+            <!-- PROTÓTIPO — distorção líquida do botão sob o cursor.
+                 feTurbulence gera um ruído contínuo; feDisplacementMap usa
+                 os canais R e G desse ruído como deslocamento em x e y,
+                 então a borda do botão ondula em vez de ficar reta. Isso é
+                 distorção de verdade num elemento HTML real, sem WebGL e
+                 sem biblioteca.
+                 A animação é SMIL, não JS: quem move o ruído é o próprio
+                 SVG, sem passar pela thread principal a cada quadro.
+                 O filtro só entra no :hover — fora dele não custa nada. -->
+            <filter id="liquido" x="-12%" y="-45%" width="124%" height="190%"
+                    color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.009 0.016"
+                              numOctaves="2" seed="4" result="ruido">
+                    <animate attributeName="baseFrequency" dur="7s"
+                             values="0.009 0.016;0.017 0.009;0.009 0.016"
+                             repeatCount="indefinite"/>
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="ruido" scale="7"
+                                   xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
         </defs>
     </svg>
 
@@ -913,7 +934,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=51" defer></script>
+    <script src="js/main.js?v=53" defer></script>
 </body>
 
 </html>
