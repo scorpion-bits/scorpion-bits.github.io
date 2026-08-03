@@ -895,14 +895,45 @@ p {
    ambiente. A gota só sabe calcular a cor do gradiente de base; se o
    ambiente girasse até a borda, a emenda mudaria de tom sozinha conforme
    a mancha passasse. Assim a borda é sempre a mesma cor que a gota, e o
-   ambiente continua vivo no miolo, que é onde ele aparece. */
-.btn-goo__pilula::after {
-    content: "";
+   ambiente continua vivo no miolo, que é onde ele aparece.
+
+   É um elemento e não um `::after` porque a tinta precisa vir DEPOIS
+   dele: pseudo-elemento é sempre o último da caixa e cobriria a tinta
+   justo na borda, que é onde ela mais importa. */
+.btn-goo__anel {
     position: absolute;
     inset: 0;
     background: linear-gradient(120deg, var(--cyan), var(--blue) 55%, var(--indigo));
     mask-image: radial-gradient(closest-side ellipse at 50% 50%,
         transparent 52%, #000 96%);
+}
+
+/* -- a tinta que escorre onde o cursor passa -----------------------------
+   Quatro manchas moles — verde-azulado, roxo, azul e um miolo branco —
+   perseguindo o cursor com atrasos diferentes. É o atraso desigual que
+   faz a mistura escorrer atrás do ponteiro em vez de andar colada nele.
+
+   Tamanho, cor e queda de alfa de cada mancha são escritos pelo JS a
+   partir de uma tabela só (ver "botões líquidos" em main.js), porque a
+   MESMA conta decide a cor de cada gota da borda. Sem isso a gota que
+   incha embaixo do cursor ficaria com a cor do gradiente base enquanto a
+   pílula ao lado dela estaria coberta de tinta, e a emenda apareceria
+   justo no ponto mais visível do efeito.
+
+   Sem `filter: blur`: a queda suave já vem do próprio radial-gradient, e
+   um blur tornaria a cor da tinta impossível de reproduzir no JS. */
+.btn-goo__tinta {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
+
+.btn-goo__mancha {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    will-change: transform;
 }
 
 /* a cor de cada gota é calculada no JS pelo ponto do gradiente em que ela

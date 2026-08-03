@@ -571,6 +571,12 @@
        As gotas caminham devagar pela borda e respiram, então a forma não
        congela com o mouse parado.
 
+       Junto da forma anda a TINTA: manchas de cor que escorrem atrás do
+       cursor dentro da pílula. A cor de cada gota é calculada com a
+       MESMA conta da tinta, senão a gota inchada embaixo do cursor
+       ficaria com a cor do gradiente base enquanto a pílula ao lado dela
+       estaria coberta de tinta.
+
        Só nos botões sólidos: o `--wire` é contorno, e uma gota preenchida
        fundindo com uma borda vazada não lê como o mesmo material. */
     {
@@ -629,9 +635,70 @@
                 const [de, para, f] = p < 0.55
                     ? [CIANO, AZUL, p / 0.55]
                     : [AZUL, INDIGO, (p - 0.55) / 0.45];
-                return `rgb(${Math.round(de[0] + (para[0] - de[0]) * f)},` +
-                    `${Math.round(de[1] + (para[1] - de[1]) * f)},` +
-                    `${Math.round(de[2] + (para[2] - de[2]) * f)})`;
+                return [
+                    de[0] + (para[0] - de[0]) * f,
+                    de[1] + (para[1] - de[1]) * f,
+                    de[2] + (para[2] - de[2]) * f
+                ];
+            };
+
+            /* A TINTA. Cada mancha persegue o cursor com um atraso
+               próprio — é a diferença entre os atrasos que faz a mistura
+               escorrer atrás do ponteiro em vez de andar colada nele. Do
+               fundo para a frente: a mais lenta e larga embaixo, o miolo
+               branco por cima, rápido.
+
+               Esta tabela é a fonte única. Ela escreve o `background` das
+               manchas E resolve a cor de cada gota da borda, senão a
+               emenda entre gota e pílula aparece justo embaixo do
+               cursor, que é onde o efeito mais chama atenção. */
+            const TINTAS = [
+                { cor: [47, 224, 192], pico: 0.90, tam: 116, segue: 0.10 },
+                { cor: [139, 92, 246], pico: 0.85, tam: 96, segue: 0.15 },
+                { cor: [61, 123, 255], pico: 0.80, tam: 76, segue: 0.22 },
+                { cor: [255, 255, 255], pico: 0.70, tam: 40, segue: 0.40 }
+            ];
+
+            const QUEBRA = 0.45; // parada intermediária da queda de alfa
+
+            /* o mesmo perfil do radial-gradient, ponto a ponto: cheio no
+               centro, metade em QUEBRA, zero na borda */
+            const alfaDaTinta = (tinta, d) => {
+                const raio = tinta.tam / 2;
+                if (d >= raio) return 0;
+                const u = d / raio;
+                return u < QUEBRA
+                    ? tinta.pico * (1 - (u / QUEBRA) * 0.5)
+                    : tinta.pico * 0.5 * (1 - (u - QUEBRA) / (1 - QUEBRA));
+            };
+
+            const rgba = (c, a) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
+
+            /* a cor final de um ponto da borda: gradiente de base com a
+               tinta por cima. Reproduz o que o navegador faz na pílula —
+               as manchas compõem entre si em alfa premultiplicado e a
+               opacidade do grupo entra só no fim, depois de composto,
+               que é como o CSS aplica `opacity` num elemento pai. */
+            const corDaBorda = (x, y, w, h, manchas, o) => {
+                const base = corDoPonto(x, y, w, h);
+                let pr = 0;
+                let pg = 0;
+                let pb = 0;
+                let pa = 0;
+
+                manchas.forEach((m) => {
+                    const a = alfaDaTinta(m.cfg, Math.hypot(x - m.x, y - m.y));
+                    if (a <= 0) return;
+                    pr = m.cfg.cor[0] * a + pr * (1 - a);
+                    pg = m.cfg.cor[1] * a + pg * (1 - a);
+                    pb = m.cfg.cor[2] * a + pb * (1 - a);
+                    pa = a + pa * (1 - a);
+                });
+
+                const k = 1 - pa * o;
+                return `rgb(${Math.round(base[0] * k + pr * o)}, ` +
+                    `${Math.round(base[1] * k + pg * o)}, ` +
+                    `${Math.round(base[2] * k + pb * o)})`;
             };
 
             const canais = solidos.map((btn) => {
@@ -643,7 +710,25 @@
                 pilula.className = "btn-goo__pilula";
                 const brilho = document.createElement("span");
                 brilho.className = "btn-goo__brilho";
-                pilula.append(brilho);
+                const anel = document.createElement("span");
+                anel.className = "btn-goo__anel";
+                const tinta = document.createElement("span");
+                tinta.className = "btn-goo__tinta";
+
+                const manchas = TINTAS.map((t) => {
+                    const m = document.createElement("span");
+                    m.className = "btn-goo__mancha";
+                    m.style.width = `${t.tam}px`;
+                    m.style.height = `${t.tam}px`;
+                    m.style.background = "radial-gradient(closest-side circle, " +
+                        `${rgba(t.cor, t.pico)} 0%, ` +
+                        `${rgba(t.cor, t.pico * 0.5)} ${QUEBRA * 100}%, ` +
+                        `${rgba(t.cor, 0)} 100%)`;
+                    tinta.append(m);
+                    return { el: m, cfg: t, x: 0, y: 0 };
+                });
+
+                pilula.append(brilho, anel, tinta);
                 camada.append(pilula);
 
                 const gotas = [];
@@ -655,7 +740,7 @@
                 }
 
                 btn.prepend(camada);
-                return { btn, gotas, acesa: false };
+                return { btn, gotas, tinta, manchas, acesa: false };
             });
 
             let mx = -9999;
@@ -684,15 +769,38 @@
                         if (c.acesa) {
                             c.acesa = false;
                             c.gotas.forEach((g) => { g.style.transform = "scale(0)"; });
+                            c.tinta.style.opacity = "0";
                         }
                         return;
                     }
 
                     vivo = true;
-                    c.acesa = true;
 
                     const lx = mx - r.left;
                     const ly = my - r.top;
+
+                    // alvo da tinta preso à pílula: com o cursor ainda de
+                    // fora, ela encosta na beirada por onde ele vem
+                    const ax = Math.min(Math.max(lx, 0), r.width);
+                    const ay = Math.min(Math.max(ly, 0), r.height);
+
+                    c.manchas.forEach((m) => {
+                        if (!c.acesa) {
+                            // acordando: sem isso a tinta entra deslizando
+                            // da última posição, que pode ser o outro lado
+                            m.x = ax;
+                            m.y = ay;
+                        } else {
+                            m.x += (ax - m.x) * m.cfg.segue;
+                            m.y += (ay - m.y) * m.cfg.segue;
+                        }
+                        m.el.style.transform =
+                            `translate3d(${m.x.toFixed(1)}px, ${m.y.toFixed(1)}px, 0)` +
+                            ` translate(-50%, -50%)`;
+                    });
+
+                    c.tinta.style.opacity = forca.toFixed(3);
+                    c.acesa = true;
 
                     c.gotas.forEach((g, j) => {
                         // passeio lento pela borda, cada gota no seu ritmo
@@ -718,7 +826,8 @@
                         g.style.transform =
                             `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)` +
                             ` scale(${esc.toFixed(3)})`;
-                        g.style.backgroundColor = corDoPonto(px, py, r.width, r.height);
+                        g.style.backgroundColor =
+                            corDaBorda(px, py, r.width, r.height, c.manchas, forca);
                     });
                 });
 
