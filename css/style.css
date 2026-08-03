@@ -1131,26 +1131,35 @@ p {
    escorpião. "Scorpion / Bits." não preenche nada: com o mesmo alinhamento,
    "Bits." ia parar sozinho no canto, a meia tela de distância do resto.
 
-   Aqui as duas linhas passam a crescer A PARTIR do centro, não das bordas:
-   a de cima termina logo depois do meio, a de baixo começa logo antes.
-   Assim as duas continuam encostando no mascote, seja qual for o tamanho
-   da palavra.
+   Aqui as duas linhas encostam nas BORDAS DO MASCOTE em vez das bordas da
+   tela: a de cima termina onde ele começa, a de baixo começa onde ele
+   acaba. As palavras ficam ao lado do escorpião, formando um conjunto com
+   ele, e nenhuma letra some atrás — o que importa porque aqui o texto é o
+   nome da marca. A linha de cima passa ATRÁS do mascote (z-index 1), então
+   sobreposição ali comeria justamente o meio de "Scorpion".
+
+   `nowrap` é obrigatório: sem ele, palavra maior que o espaço ao lado do
+   mascote quebraria em duas linhas e a altura do herói pularia. Com ele, o
+   excesso escapa para fora — para o lado vazio da tela, nunca por cima do
+   escorpião.
 
    A classe é trocada pelo JS no exato momento em que as duas linhas estão
    vazias, entre uma frase e outra — por isso a mudança de alinhamento não
    aparece como salto. */
 .hero-type.is-curta {
-    --recuo: calc(50% - var(--orb-w) * 0.3);
+    --recuo: calc(50% + var(--orb-w) * 0.3);
 }
 
 .hero-type.is-curta .hero-l1 {
     text-align: right;
     padding-right: var(--recuo);
+    white-space: nowrap;
 }
 
 .hero-type.is-curta .hero-l3 {
     text-align: left;
     padding-left: var(--recuo);
+    white-space: nowrap;
 }
 
 /* -- brilho líquido sob o ponteiro ----------------------------------------
@@ -1205,6 +1214,15 @@ p {
                 #000 52%,
                 rgba(0, 0, 0, 0.5) 76%,
                 transparent 100%);
+        /* `mask-clip` nasce em `border-box`, e a caixa do bloco tem a
+           altura da entrelinha (0.92em) — mas o texto transborda 21px por
+           baixo dela. Resultado: a máscara cortava reto na linha de base e
+           as descidas de j, g, q, p ficavam brancas dentro da bolha.
+           `no-clip` solta esse limite. Onde não houver suporte a
+           declaração cai fora sozinha e volta o corte de antes, que é o
+           pior caso aceitável. */
+        -webkit-mask-clip: no-clip;
+        mask-clip: no-clip;
         opacity: 0;
         transition: opacity 0.32s ease;
     }
