@@ -1954,9 +1954,19 @@ p {
     align-items: center;
 }
 
+/* A vitrine da turma: uma faixa com o logo do GameLab e a legenda, e as
+   duas fotos empilhadas embaixo.
+
+   O logo ficou FORA das fotos. Sobreposto ele caía justo no canto claro
+   de janela da foto da oficina e sumia — e o outro canto de cima é onde
+   está o site projetado na parede, que é o melhor detalhe da imagem e não
+   pode ser tapado. No fundo escuro do card as cores dele aparecem. */
 .course-figure {
+    --pad: clamp(1.1rem, 3vw, 1.7rem);
     position: relative;
-    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: grid;
+    gap: 12px;
+    padding: var(--pad);
     border-radius: var(--r-lg);
     border: 1px solid var(--hair-lit);
     background: linear-gradient(
@@ -1966,6 +1976,89 @@ p {
         ),
         rgba(12, 20, 31, 0.75);
     overflow: hidden;
+}
+
+.lab-topo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 2px;
+}
+
+.lab-logo {
+    flex: none;
+    width: clamp(76px, 22%, 104px);
+    height: auto;
+}
+
+.lab-legenda {
+    margin: 0;
+    line-height: 1.5;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.lab-shot {
+    position: relative;
+    margin: 0;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    border: 1px solid var(--hair-lit);
+}
+
+.lab-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* A foto de grupo tem meio quadro de chão vazio embaixo. Recortada em
+   16:9 e ancorada em cima, sobra a fileira de gente — que é o assunto —
+   e a coluna para de ficar alta demais para o texto ao lado. */
+.lab-shot--turma img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center 26%;
+}
+
+/* -- o selo de turma em andamento ---------------------------------------- */
+.lab-ativo {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 16px;
+    padding: 6px 14px 6px 11px;
+    border: 1px solid rgba(126, 226, 168, 0.32);
+    border-radius: var(--r-pill);
+    background: rgba(126, 226, 168, 0.08);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mint);
+}
+
+.lab-pulso {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--mint);
+    animation: lab-pulso 2.4s ease-out infinite;
+}
+
+@keyframes lab-pulso {
+    0% {
+        box-shadow: 0 0 0 0 rgba(126, 226, 168, 0.5);
+    }
+
+    70%,
+    100% {
+        box-shadow: 0 0 0 10px rgba(126, 226, 168, 0);
+    }
 }
 
 .course-figure::after {
@@ -1982,37 +2075,15 @@ p {
     pointer-events: none;
 }
 
-.course-big {
-    position: relative;
-    font-family: var(--font-display);
-    font-size: clamp(4rem, 11vw, 7.5rem);
-    font-weight: 700;
-    line-height: 0.85;
-    letter-spacing: -0.06em;
-    background: linear-gradient(160deg, var(--cyan), var(--indigo));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.course-big small {
-    display: block;
-    margin-top: 12px;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    -webkit-text-fill-color: var(--text-dim);
-}
-
+/* a régua saiu da vitrine e foi para o corpo, entre o texto e o botão */
 .course-rule {
     position: relative;
     display: grid;
     gap: 12px;
-    margin-top: 26px;
+    margin: 0 0 30px;
     padding-top: 22px;
     border-top: 1px solid var(--hair);
+    max-width: 54ch;
 }
 
 .course-rule li {
