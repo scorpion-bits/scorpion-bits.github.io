@@ -2274,72 +2274,74 @@ p {
 }
 
 .slide {
+    --pad: clamp(1.75rem, 4vw, 3rem);
     flex: 0 0 100%;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     gap: clamp(1.5rem, 4vw, 3.25rem);
-    padding: clamp(1.75rem, 4vw, 3rem);
+    padding: var(--pad);
     user-select: none;
 }
 
-/* -- retrato chanfrado, ecoando a face do cubo ----------------------------- */
-.slide-face {
-    --cut: 26px;
+/* -- o retrato recortado --------------------------------------------------
+   Caixa de tamanho FIXO com a foto encostada embaixo, e não a foto solta:
+   os seis recortes têm proporções diferentes (de 0,49 a 0,77 de largura por
+   altura), então uma imagem só com largura definida mudaria de altura a
+   cada integrante e a coluna de texto ao lado pularia junto. Com a caixa
+   fixa e a altura mandando, todas as cabeças saem do mesmo tamanho.
+
+   A largura da caixa é 0,78 da altura porque essa é a proporção do recorte
+   mais largo — abaixo disso ele encostaria nas beiradas.
+
+   A base sangra para dentro do padding do slide: a foto é cortada na
+   cintura, e deixá-la flutuando no ar denunciaria o recorte. Assim quem
+   corta é a borda do card. */
+.slide-retrato {
+    --h: clamp(210px, 32vw, 330px);
     position: relative;
-    width: clamp(132px, 18vw, 200px);
-    aspect-ratio: 1;
-    flex: none;
-    padding: 2px;
-    clip-path: polygon(
-        var(--cut) 0,
-        100% 0,
-        100% calc(100% - var(--cut)),
-        calc(100% - var(--cut)) 100%,
-        0 100%,
-        0 var(--cut)
-    );
-    background: linear-gradient(
-        150deg,
-        var(--cyan),
-        var(--indigo) 55%,
-        var(--violet)
-    );
-    transition: transform 0.6s var(--ease);
+    width: calc(var(--h) * 0.78);
+    height: var(--h);
+    align-self: end;
+    margin-bottom: calc(var(--pad) * -1);
 }
 
-.slide-face img {
+/* A foto ocupa a caixa inteira e quem preserva a proporção é o
+   `object-fit`. A tentação era `width: auto; height: 100%`, e ela não
+   funciona: a caixa é um item de grid cuja linha implícita é `auto`, então
+   a altura percentual do filho não tem contra o que resolver e vira
+   `auto` — nem com `!important`. */
+.slide-retrato img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    clip-path: inherit;
-    background: var(--ink-800);
+    object-fit: contain;
+    object-position: bottom center;
+    filter: drop-shadow(0 18px 32px rgba(3, 8, 14, 0.55));
     pointer-events: none;
-    transition: transform 0.6s var(--ease);
 }
 
-.slide.is-live .slide-face img {
-    animation: face-in 0.65s var(--ease) both;
+.slide.is-live .slide-retrato img {
+    animation: retrato-entra 0.7s var(--ease) both;
 }
 
-@keyframes face-in {
+@keyframes retrato-entra {
     from {
         opacity: 0;
-        transform: scale(1.08);
+        transform: translateY(16px) scale(0.985);
     }
 }
 
-/* halo atrás do retrato */
-.slide-face::after {
+/* o mesmo halo que ficava atrás do quadrado, agora atrás da pessoa */
+.slide-retrato::after {
     content: "";
     position: absolute;
-    inset: -22%;
+    inset: 4% -20% 18% -20%;
     z-index: -1;
     border-radius: 50%;
     background: radial-gradient(
         circle,
-        rgba(106, 216, 254, 0.28),
-        transparent 66%
+        rgba(106, 216, 254, 0.24),
+        transparent 68%
     );
     pointer-events: none;
 }
@@ -3276,8 +3278,12 @@ p {
         gap: 1.25rem;
     }
 
-    .slide-face {
-        width: clamp(112px, 34vw, 148px);
+    /* empilhado, o retrato fica no meio do card e não tem piso onde pisar:
+       a margem negativa que o faz sangrar no desktop só comeria o vão até
+       o texto */
+    .slide-retrato {
+        --h: clamp(180px, 46vw, 240px);
+        margin-bottom: 0;
     }
 
     .slide-bio {
