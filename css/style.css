@@ -1979,15 +1979,15 @@ p {
 }
 
 .lab-topo {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 2px;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    text-align: center;
 }
 
 .lab-logo {
-    flex: none;
-    width: clamp(76px, 22%, 104px);
+    width: clamp(92px, 30%, 140px);
     height: auto;
 }
 
