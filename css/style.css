@@ -2001,10 +2001,12 @@ p {
     color: var(--text-dim);
 }
 
+/* 20px e não `--r-lg`: fica um pouco menos redondo que o card em volta,
+   que é o que faz um canto dentro do outro parecer concêntrico */
 .lab-shot {
     position: relative;
     margin: 0;
-    border-radius: var(--r-md);
+    border-radius: 20px;
     overflow: hidden;
     border: 1px solid var(--hair-lit);
 }
