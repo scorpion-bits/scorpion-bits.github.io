@@ -754,6 +754,18 @@ p {
     color: var(--text);
 }
 
+/* O menu ganhou um quinto item. Entre a largura em que ele vira hambúrguer
+   (860px) e ~1000px, o botão de contato passou a sair 26px para fora do
+   dock. Apertar o padding dos cinco links devolve 50px, que é folga de
+   sobra — e fica aqui, logo abaixo da regra base, porque uma media query
+   de mesma especificidade só vence se vier depois dela no arquivo. */
+@media (min-width: 861px) and (max-width: 1000px) {
+    .dock-link {
+        padding-inline: 8px;
+        font-size: 0.85rem;
+    }
+}
+
 .dock-link.is-active {
     color: var(--text);
 }
