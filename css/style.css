@@ -2077,8 +2077,9 @@ p {
     pointer-events: none;
 }
 
-/* a régua saiu da vitrine e foi para o corpo, entre o texto e o botão */
-.course-rule {
+/* régua de rótulo e valor: sai da vitrine do curso e serve em
+   qualquer lugar que precise de uma lista de fatos curta */
+.regua {
     position: relative;
     display: grid;
     gap: 12px;
@@ -2088,7 +2089,7 @@ p {
     max-width: 54ch;
 }
 
-.course-rule li {
+.regua li {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -2097,7 +2098,7 @@ p {
     color: var(--text-soft);
 }
 
-.course-rule b {
+.regua b {
     font-family: var(--font-mono);
     font-size: 0.72rem;
     letter-spacing: 0.16em;
@@ -2928,6 +2929,14 @@ p {
     margin-bottom: 18px;
 }
 
+/* usado só na oferta de contato.html: o card de ferramenta é rótulo e
+   fichas, o de serviço precisa de uma linha de contexto no meio */
+.tool-group p {
+    margin: -4px 0 16px;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+}
+
 .tool-list {
     display: flex;
     flex-wrap: wrap;
@@ -2941,6 +2950,17 @@ p {
     background: rgba(106, 216, 254, 0.03);
     font-size: 0.86rem;
     color: var(--text-soft);
+}
+
+/* a nota sobre a formalização: fica visível para quem precisa dela, sem
+   virar aviso — daí o recuo à esquerda em vez de caixa com borda */
+.nota-formal {
+    max-width: 62ch;
+    margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+    padding-left: 16px;
+    border-left: 2px solid var(--hair-lit);
+    font-size: 0.9rem;
+    color: var(--text-dim);
 }
 
 /* grade simples de 3 colunas usada em portfolio.html */
