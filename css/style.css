@@ -2982,11 +2982,28 @@ p {
     gap: clamp(1rem, 2.5vw, 1.5rem);
 }
 
-/* grade de membros usada em sobre.html */
+/* Grade de membros usada em sobre.html, para os quatro integrantes atuais.
+   Tentei `auto-fit` primeiro — e ele piora as coisas aqui: para 4 itens
+   existe sempre uma faixa de largura em que ele resolve para 3 colunas, e a
+   quarta pessoa sobra sozinha numa linha vazia. Medido: acontecia de ~640px
+   a ~920px de viewport, o que cobre tablet em pé (768, 820) e janela
+   dividida num notebook — mais comum que a faixa estreita que o grid fixo
+   de 6/3/2 colunas quebrava antes.
+
+   A saída é pular o 3 de propósito: duas colunas por padrão (2×2, ninguém
+   sobra) e quatro só a partir de onde uma fileira inteira cabe confortável.
+   Com exatamente 4 pessoas, nenhum dos dois estados deixa órfão. Se o time
+   mudar de tamanho de novo, refaça esta conta — ela é para 4, não genérica. */
 .grid--team {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(0.9rem, 2vw, 1.25rem);
+}
+
+@media (min-width: 1000px) {
+    .grid--team {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
 }
 
 .member {
@@ -3116,13 +3133,6 @@ p {
 @media (max-width: 1280px) {
     .hero-rail {
         display: none;
-    }
-}
-
-@media (max-width: 1100px) {
-
-    .grid--team {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
@@ -3334,10 +3344,6 @@ p {
 
     .roster-btn.is-on {
         transform: translateY(-5px) scale(1.12);
-    }
-
-    .grid--team {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .hero-base {
