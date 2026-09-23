@@ -343,6 +343,23 @@
                             : "conexao-lenta"
             );
         }
+
+        /* Pausa a decodificação quando o mascote sai da tela e retoma
+           quando volta. O arquivo é grande (o vídeo em si, não algo que dê
+           para adiar) e decodificar quadro a quadro é o tipo de trabalho
+           contínuo que mais pesa num aparelho fraco — pausar fora da tela
+           é a única redução de custo possível sem tocar no arquivo.
+           `.play()` sem fonte carregada ainda é inofensivo: a promessa só
+           rejeita, e o catch descarta. */
+        if (video && "IntersectionObserver" in window) {
+            new IntersectionObserver(
+                ([entry]) => {
+                    if (entry.isIntersecting) video.play().catch(() => {});
+                    else if (!video.paused) video.pause();
+                },
+                { threshold: 0 }
+            ).observe(video);
+        }
     }
 
     /* ------------------------------------ título: máquina de escrever -- */
@@ -847,88 +864,13 @@
         }
     }
 
-    /* ------------------------------------------- rolagem suavizada -- */
-    /* A roda do mouse anda em degraus de ~100px e o salto seco brigava
-       com o parallax das camadas do fundo. Aqui o degrau vira alvo e a
-       posição persegue esse alvo por interpolação.
-
-       Só roda com mouse de verdade: `deltaMode` diferente de zero (linhas
-       ou páginas) e trackpad, que já entrega rolagem contínua, seguem
-       pelo caminho nativo — suavizar o que já é suave dá arrasto.
-       No toque nem entra. */
-    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
-        const LERP = 0.16;
-        const raiz = document.documentElement;
-        let alvo = window.scrollY;
-        let rodando = false;
-        let nosso = -1; // última posição que nós mesmos escrevemos
-
-        const limite = () => raiz.scrollHeight - window.innerHeight;
-
-        const parar = () => {
-            rodando = false;
-            nosso = -1;
-        };
-
-        const passo = () => {
-            const atual = window.scrollY;
-            const delta = alvo - atual;
-
-            if (Math.abs(delta) < 0.6) return parar();
-
-            /* `behavior: instant` é obrigatório: a raiz tem
-               `scroll-behavior: smooth` por causa dos links de âncora, e sem
-               isso cada passo destes viraria uma animação do navegador
-               brigando com a interpolação daqui. */
-            window.scrollTo({ top: atual + delta * LERP, behavior: "instant" });
-            nosso = window.scrollY;
-
-            /* Perto do fim o passo (delta * LERP) fica menor que um pixel
-               do dispositivo e o navegador arredonda de volta: a posição
-               trava, o delta nunca chega no limiar e o rAF gira para
-               sempre. Quando o passo não move nada, fecha na unha. O
-               limiar em pixel puro não resolveria — o ponto onde ele
-               trava depende do DPR da tela. */
-            if (window.scrollY === atual) {
-                window.scrollTo({ top: alvo, behavior: "instant" });
-                nosso = window.scrollY;
-                return parar();
-            }
-
-            requestAnimationFrame(passo);
-        };
-
-        addEventListener(
-            "wheel",
-            (e) => {
-                // ctrl+roda é zoom do navegador; deltaMode != 0 é roda em
-                // modo linha/página, que o navegador já trata melhor
-                if (e.ctrlKey || e.deltaMode !== 0) return;
-                // trackpad: muitos eventos pequenos. Roda: degraus grandes.
-                if (Math.abs(e.deltaY) < 45) return;
-
-                e.preventDefault();
-                alvo = Math.max(0, Math.min(limite(), alvo + e.deltaY));
-                if (!rodando) {
-                    rodando = true;
-                    requestAnimationFrame(passo);
-                }
-            },
-            { passive: false }
-        );
-
-        // teclado, barra de rolagem, âncora: quem mandou não fomos nós,
-        // então o alvo precisa voltar para onde a página realmente está
-        addEventListener(
-            "scroll",
-            () => {
-                if (!rodando || Math.abs(window.scrollY - nosso) > 2) {
-                    if (!rodando) alvo = window.scrollY;
-                }
-            },
-            { passive: true }
-        );
-    }
+    /* A rolagem suavizada por interpolação (roda do mouse → alvo → rAF com
+       `scrollTo` a cada quadro) foi removida em 23/09/2026 para aliviar o
+       site: era CPU extra a cada rolagem, na interação mais comum da
+       página, em todo desktop com mouse — e o ganho sobre a rolagem nativa
+       do navegador (que já é suave e roda no compositor) era pequeno.
+       `scroll-behavior: smooth` continua para os links de âncora, que é
+       CSS puro e não custa nada por quadro. */
 
     if (!("IntersectionObserver" in window)) return;
 

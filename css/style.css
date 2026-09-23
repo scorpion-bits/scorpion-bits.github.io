@@ -634,40 +634,6 @@ p {
     max-width: 56ch;
 }
 
-/* texto que some no fundo, como na referência do DeFi */
-.fade-out {
-    background: linear-gradient(
-        95deg,
-        var(--text) 25%,
-        rgba(238, 245, 251, 0.32) 92%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.glow-text {
-    background: linear-gradient(
-        100deg,
-        var(--cyan) 0%,
-        #a8dcff 26%,
-        var(--blue) 52%,
-        var(--indigo) 76%,
-        var(--cyan) 100%
-    );
-    background-size: 240% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: slide-hue 11s linear infinite;
-}
-
-@keyframes slide-hue {
-    to {
-        background-position: -240% 0;
-    }
-}
-
 /* ----------------------------------------------------------------- dock -- */
 /* Nav flutuante, descolada da borda — referência 2. */
 .dock {
@@ -1463,12 +1429,6 @@ p {
     }
 }
 
-@keyframes spin-slow {
-    to {
-        rotate: 360deg;
-    }
-}
-
 .hero-mascot {
     position: relative;
     z-index: 1;
@@ -2036,43 +1996,6 @@ p {
     aspect-ratio: 16 / 9;
     object-fit: cover;
     object-position: center 26%;
-}
-
-/* -- o selo de turma em andamento ---------------------------------------- */
-.lab-ativo {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    margin: 0 0 16px;
-    padding: 6px 14px 6px 11px;
-    border: 1px solid rgba(126, 226, 168, 0.32);
-    border-radius: var(--r-pill);
-    background: rgba(126, 226, 168, 0.08);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--mint);
-}
-
-.lab-pulso {
-    flex: none;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--mint);
-    animation: lab-pulso 2.4s ease-out infinite;
-}
-
-@keyframes lab-pulso {
-    0% {
-        box-shadow: 0 0 0 0 rgba(126, 226, 168, 0.5);
-    }
-
-    70%,
-    100% {
-        box-shadow: 0 0 0 10px rgba(126, 226, 168, 0);
-    }
 }
 
 .course-figure::after {
@@ -3410,5 +3333,38 @@ p {
     .member:hover,
     .tool-group:hover {
         transform: none;
+    }
+}
+
+/* -- fundo mais leve em celular/tablet e em janela estreita ---------------
+   Medido antes desta correção: `document.getAnimations()` contava 38
+   animações contínuas rodando ao mesmo tempo só de fundo, na carga inicial
+   da home — sendo 18 delas (6 constelações × 3: a deriva do conjunto e o
+   giro dos dois anéis internos de cada uma) as `.orbit-mini` espalhadas
+   pelas bordas. Nenhuma é cara sozinha, mas a SOMA de camadas sempre
+   ativas, sempre com `will-change: transform`, é o tipo de coisa que
+   aperta a memória de GPU em aparelho fraco e trava a rolagem — em
+   qualquer tela, o navegador tem que manter todas essas camadas prontas
+   para compor, mesmo as que mal aparecem.
+
+   O corte é por `hover: none` (pega touch, que é onde os aparelhos fracos
+   se concentram) OU por largura (pega também janela estreita num desktop
+   potente, onde as constelações já nascem cortadas pela lateral). O anel
+   central perto do mascote fica de fora de propósito: é peça única, é a
+   âncora visual do herói, e apagá-la custaria muito mais em beleza do que
+   economiza em desempenho. */
+@media (max-width: 860px), (hover: none) {
+    .backdrop-cubes {
+        display: none;
+    }
+
+    .backdrop-stars--far {
+        display: none;
+    }
+
+    .backdrop::before,
+    .backdrop-mist {
+        animation: none;
+        will-change: auto;
     }
 }
