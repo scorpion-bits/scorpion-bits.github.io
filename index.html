@@ -24,8 +24,37 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-poster.png">
-    <link rel="stylesheet" href="css/style.css?v=85">
-    <script>document.documentElement.className += " js";</script>
+    <link rel="stylesheet" href="css/style.css?v=87">
+    <script>
+        /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
+           efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
+           (a) decisão guardada por 14 dias pelo detector de lentidão em
+           js/main.js, (b) máquina com 2 núcleos ou 2 GB, (c) economia de
+           dados, (d) ?leve=0|1|2 para forçar — 0 desliga e apaga o guardado. */
+        (function () {
+            var d = document.documentElement, n = 0;
+            d.className += " js";
+            try {
+                var q = /[?&]leve=([012])/.exec(location.search), s = localStorage;
+                if (q) {
+                    d.setAttribute("data-leve-fixo", "");
+                    if (q[1] === "0") s.removeItem("sb-leve");
+                    else s.setItem("sb-leve", q[1] + ":" + Date.now());
+                }
+                var v = s.getItem("sb-leve");
+                if (v) {
+                    var p = v.split(":");
+                    if (Date.now() - p[1] < 12096e5) n = +p[0]; else s.removeItem("sb-leve");
+                }
+                if (!q || q[1] !== "0") {
+                    var c = navigator.connection || {};
+                    if (!n && ((navigator.hardwareConcurrency || 8) <= 2 || (navigator.deviceMemory || 8) <= 2)) n = 2;
+                    if (!n && c.saveData) n = 1;
+                }
+            } catch (e) { }
+            if (n) { d.classList.add("lite"); d.setAttribute("data-leve", n); }
+        })();
+    </script>
 </head>
 
 <body>
@@ -907,7 +936,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=85" defer></script>
+    <script src="js/main.js?v=87" defer></script>
 </body>
 
 </html>

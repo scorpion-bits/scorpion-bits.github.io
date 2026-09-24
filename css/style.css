@@ -3368,3 +3368,72 @@ p {
         will-change: auto;
     }
 }
+
+/* -- modo leve (`html.lite`) -----------------------------------------------
+   Ligado pelo <head> (máquina fraca conhecida, economia de dados, ?leve=N)
+   ou pelo detector de lentidão de js/main.js, que mede quadros reais. O
+   corte por `hover: none`/largura acima protege celular; PC fraco tem tela
+   larga e mouse, então passava batido — este bloco é o que pega ele.
+
+   O que sai, por ordem de custo em GPU/CPU fraca:
+   - `backdrop-filter` no dock e no cluster de rostos: o navegador refaz o
+     borrão por trás a CADA quadro de rolagem. Vira fundo quase opaco.
+   - Todas as camadas de fundo animadas ou de parallax: viram estáticas e
+     menores (`inset: 0` em vez das folgas de 620–780px que existiam só
+     para o parallax percorrer) — menos textura de GPU para manter.
+   - Aneis do herói, faíscas, flutuação, gradiente líquido dos botões.
+   - O grão: camada fixa de tela inteira composta por cima de tudo.
+   O que fica: grade isométrica, uma camada de estrelas, o anel central
+   (parado), a tipografia e o layout — o site continua reconhecível. */
+.lite .grain,
+.lite .backdrop-cubes,
+.lite .backdrop-stars--far,
+.lite .backdrop-mist {
+    display: none;
+}
+
+.lite .backdrop::before {
+    inset: 0;
+    animation: none;
+    will-change: auto;
+}
+
+.lite .backdrop-grid,
+.lite .backdrop-grid--perto,
+.lite .backdrop-stars {
+    inset: 0;
+    translate: none;
+    animation: none;
+    will-change: auto;
+}
+
+.lite .orbit-spin,
+.lite .orbit-static use,
+.lite .hero-mascot,
+.lite .why-core img,
+.lite .hero-cue i,
+.lite .btn--solid::before {
+    animation: none;
+    will-change: auto;
+}
+
+.lite .btn--solid::before {
+    filter: none;
+}
+
+.lite .dock-inner {
+    background: rgba(8, 14, 22, 0.94);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.lite .roster {
+    background: rgba(12, 20, 31, 0.9);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.lite .hero-l1::after,
+.lite .hero-l3::after {
+    display: none;
+}

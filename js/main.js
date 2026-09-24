@@ -4,6 +4,31 @@
 (() => {
     "use strict";
 
+    /* -------------------------------------------------------- modo leve -- */
+    /* Nível 0 = tudo. 1 = sem os efeitos decorativos (ver `.lite` no CSS e
+       os desligamentos registrados abaixo). 2 = também sem o vídeo do
+       mascote, que é o item mais caro do site (VP9 com alfa decodifica dois
+       fluxos, a 1917×1078).
+
+       O nível inicial vem do <head> (guardado, hardware fraco, economia de
+       dados, ?leve=N). Daqui em diante ele só SOBE, medido em quadros reais
+       pelo detector lá embaixo — é a única forma honesta de saber se ESTA
+       máquina aguenta, porque núcleos e memória não dizem se a GPU dá conta
+       de uma camada de 2500px com gradiente. */
+    const raiz = document.documentElement;
+    const nivelLeve = () => Number(raiz.dataset.leve || 0);
+    const aoFicarLeve = []; // desligamentos: cada bloco de efeito registra o seu
+
+    const ficarLeve = (nivel) => {
+        if (nivel <= nivelLeve()) return;
+        raiz.classList.add("lite");
+        raiz.dataset.leve = String(nivel);
+        try {
+            localStorage.setItem("sb-leve", `${nivel}:${Date.now()}`);
+        } catch (e) { /* navegação privada: vale só para esta visita */ }
+        aoFicarLeve.forEach((desliga) => desliga(nivel));
+    };
+
     /* ------------------------------------------------------ menu no dock */
     const toggle = document.querySelector("[data-dock-toggle]");
     const panel = document.getElementById("dock-panel");
@@ -287,7 +312,17 @@
         };
 
         if (video && poster && tocaWebm && !daApple && !rede.saveData && !lenta) {
+            // no nível 2 o vídeo é a primeira coisa a sair: volta o poster,
+            // que é o quadro 0 da própria animação
+            aoFicarLeve.push((nivel) => {
+                if (nivel < 2) return;
+                desistir("modo-leve");
+                video.classList.remove("is-on");
+                poster.classList.remove("is-off");
+            });
+
             const iniciar = () => {
+                if (nivelLeve() >= 2) return marcar("modo-leve");
                 marcar("baixando");
                 video.src = video.dataset.anim;
                 // com preload="none" definir o src não basta: o download só
@@ -469,7 +504,7 @@
             : [];
         const podeApontar = matchMedia("(hover: hover) and (pointer: fine)");
 
-        if (heroi && alvos[0] && alvos[1] && podeApontar.matches) {
+        if (heroi && alvos[0] && alvos[1] && podeApontar.matches && !nivelLeve()) {
             const estado = alvos.map(() => ({ x: 0, y: 0, iniciado: false }));
             let mx = 0;
             let my = 0;
@@ -514,7 +549,7 @@
             heroi.addEventListener(
                 "pointermove",
                 (e) => {
-                    if (e.pointerType !== "mouse") return;
+                    if (e.pointerType !== "mouse" || nivelLeve()) return;
                     mx = e.clientX;
                     my = e.clientY;
                     dentro = true;
@@ -542,18 +577,22 @@
        propriedade separada do `transform` que carrega os loops, então as
        duas compõem sem se sobrescrever. */
     {
-        const root = document.documentElement;
+        /* Gravado no `.backdrop`, não na raiz: propriedade customizada
+           herda, então na raiz cada quadro de rolagem invalidava o estilo
+           do documento INTEIRO — e só o fundo usa. Aqui o recálculo fica
+           restrito às camadas que de fato se movem. */
+        const fundo = document.querySelector(".backdrop");
         let ticking = false;
 
         const sync = () => {
             ticking = false;
-            root.style.setProperty("--sy", `${window.scrollY}px`);
+            if (fundo && !nivelLeve()) fundo.style.setProperty("--sy", `${window.scrollY}px`);
         };
 
         addEventListener(
             "scroll",
             () => {
-                if (ticking) return;
+                if (ticking || nivelLeve()) return;
                 ticking = true;
                 requestAnimationFrame(sync);
             },
@@ -599,7 +638,7 @@
     {
         const solidos = [...document.querySelectorAll(".btn--solid")];
 
-        if (solidos.length && document.getElementById("goo") &&
+        if (solidos.length && document.getElementById("goo") && !nivelLeve() &&
             matchMedia("(hover: hover) and (pointer: fine)").matches) {
             const RAIO = 130;     // distância em que a superfície acorda
             const ALCANCE = 120;  // raio de influência do cursor sobre cada gota
@@ -765,6 +804,14 @@
             let t = 0;
             let raf = 0;
 
+            /* Sem a camada, o `:has(.btn-goo)` deixa de casar e o botão
+               volta sozinho ao visual sólido de sempre. */
+            aoFicarLeve.push(() => {
+                cancelAnimationFrame(raf);
+                raf = 0;
+                canais.forEach((c) => c.btn.querySelector(".btn-goo")?.remove());
+            });
+
             const quadro = () => {
                 t += 1 / 60;
 
@@ -854,7 +901,7 @@
             document.addEventListener(
                 "pointermove",
                 (e) => {
-                    if (e.pointerType !== "mouse") return;
+                    if (e.pointerType !== "mouse" || nivelLeve()) return;
                     mx = e.clientX;
                     my = e.clientY;
                     if (!raf) raf = requestAnimationFrame(quadro);
@@ -871,6 +918,81 @@
        do navegador (que já é suave e roda no compositor) era pequeno.
        `scroll-behavior: smooth` continua para os links de âncora, que é
        CSS puro e não custa nada por quadro. */
+
+    /* ------------------------------------------ detector de lentidão -- */
+    /* Mede o tempo entre quadros reais (rAF) e sobe o nível leve quando a
+       máquina não sustenta ~35 fps. Janelas de 40 quadros, mediana em vez
+       de média (um engasgo de coleta de lixo não decide nada), e são
+       precisas DUAS janelas ruins seguidas para subir um nível — depois de
+       subir, o detector continua e pode subir de novo (o 2 só chega se o
+       1 não bastou, então o mascote animado sobrevive em máquina que dá
+       conta dele sem os enfeites).
+
+       Roda nos 14 s depois do carregamento e durante rajadas de rolagem,
+       que é quando o site de fato aperta. Parado, não custa nada: o laço
+       morre sozinho quando ninguém rola.
+
+       Intervalo > 250 ms é aba em segundo plano ou trava única: descarta a
+       janela em vez de acusar a máquina. `?leve=N` desliga o detector
+       (o `data-leve-fixo` vem do <head>) para dar para testar cada nível. */
+    if (!raiz.hasAttribute("data-leve-fixo")) {
+        const TAM = 40;
+        const LIMITE_MS = 28;
+        let deltas = [];
+        let anterior = 0;
+        let ruins = 0;
+        let rodando = false;
+        let vivoAte = 0;
+
+        const quadro = (agora) => {
+            // aba oculta: o navegador estrangula tudo e o intervalo não diz
+            // nada sobre a máquina
+            if (document.hidden) {
+                deltas = [];
+                anterior = 0;
+            } else if (anterior) {
+                const d = agora - anterior;
+                if (d > 250) deltas = [];
+                else deltas.push(d);
+            }
+            if (!document.hidden) anterior = agora;
+
+            if (deltas.length >= TAM) {
+                const ord = deltas.slice().sort((a, b) => a - b);
+                const mediana = ord[TAM >> 1];
+                deltas = [];
+                if (mediana > LIMITE_MS) {
+                    ruins += 1;
+                    if (ruins >= 2) {
+                        ruins = 0;
+                        ficarLeve(nivelLeve() + 1);
+                    }
+                } else {
+                    ruins = 0;
+                }
+            }
+
+            if (nivelLeve() < 2 && agora < vivoAte) requestAnimationFrame(quadro);
+            else {
+                rodando = false;
+                anterior = 0;
+                deltas = [];
+            }
+        };
+
+        const acordar = (ms) => {
+            vivoAte = Math.max(vivoAte, performance.now() + ms);
+            if (rodando || nivelLeve() >= 2) return;
+            rodando = true;
+            requestAnimationFrame(quadro);
+        };
+
+        addEventListener("scroll", () => acordar(1200), { passive: true });
+
+        const aposCarga = () => setTimeout(() => acordar(14000), 600);
+        if (document.readyState === "complete") aposCarga();
+        else addEventListener("load", aposCarga, { once: true });
+    }
 
     if (!("IntersectionObserver" in window)) return;
 
