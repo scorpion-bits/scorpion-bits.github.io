@@ -2509,6 +2509,26 @@ p {
     transform: translateY(-4px);
 }
 
+/* Faixa larga: ocupa as duas colunas do bloco. Um terceiro card na coluna
+   lateral desequilibrava o arranjo (coluna de ~700px contra o card grande
+   de 380px), então a novidade ganha a linha de cima e o resto fica como era. */
+.work-item--wide {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    flex-wrap: wrap;
+}
+
+.work-item--wide p {
+    margin-bottom: 0;
+}
+
+.work-item--wide .btn {
+    flex: none;
+}
+
 .work-item--lead {
     min-height: clamp(280px, 34vw, 380px);
     display: flex;
@@ -2901,8 +2921,23 @@ p {
 /* grade simples de 3 colunas usada em portfolio.html */
 .status-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+/* Com 4 cards, `auto-fit` cai em 3 colunas numa faixa de larguras e deixa o
+   quarto sozinho na linha de baixo (o mesmo problema da grade da equipe).
+   Duas colunas por padrão, uma no celular, quatro só onde cabe. */
+@media (min-width: 1100px) {
+    .status-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Grade de membros usada em sobre.html, para os quatro integrantes atuais.
