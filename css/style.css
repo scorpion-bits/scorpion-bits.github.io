@@ -2595,6 +2595,227 @@ p {
     background: rgba(125, 148, 170, 0.1);
 }
 
+/* ------------------------------------------------------------ portfólio -- */
+/* A vitrine dos jogos (home e portfolio.html). Os cartões continuam sendo
+   `.work-item`: borda, elevação no hover e o holofote que segue o cursor
+   vêm de lá, e o JS já procura essa classe — nenhum script novo. O que
+   muda é o miolo: uma capa encostada no topo e o texto embaixo.
+
+   As capas são 16:9 e cortadas por `object-fit: cover`, porque a arte de
+   cada jogo tem uma proporção. A pixel art foi ampliada em fator inteiro
+   (2x, 3x, 4x) ANTES de ir para o arquivo: o navegador só reduz, e reduzir
+   a partir de um múltiplo inteiro preserva o traço. Ampliar pixel art por
+   fator quebrado, no CSS, dá degrau desigual. */
+.games {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+/* Três cartões: em duas colunas o terceiro sobraria sozinho na linha de
+   baixo (o mesmo problema da grade da equipe). Então é três ou uma. */
+.games--trio {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.games--stack {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.game {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.game-cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-bottom: 1px solid var(--hair);
+    background: var(--ink-850);
+}
+
+.game-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease);
+}
+
+.game:hover .game-cover img {
+    transform: scale(1.035);
+}
+
+.game-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+/* numa coluna flex a pílula esticaria até a largura inteira do cartão */
+.game-body .pill {
+    align-self: flex-start;
+}
+
+.game-body .tool-list {
+    margin-bottom: 20px;
+}
+
+.game-body .regua {
+    margin-bottom: 22px;
+    padding-top: 18px;
+}
+
+.work-item .game-tagline {
+    color: var(--text-soft);
+    font-style: italic;
+}
+
+/* Os botões descem para o pé do cartão: assim alinham mesmo quando os
+   textos têm tamanhos diferentes. O vão de 24px é de propósito, o botão
+   líquido precisa de para onde crescer (ver `.hero-actions`). */
+.game-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+/* Versão larga (portfolio.html): capa à esquerda, texto à direita. A capa
+   estica até a altura do texto e a imagem a preenche por posição absoluta. */
+.game--feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+}
+
+.game--feature .game-cover {
+    aspect-ratio: auto;
+    min-height: 260px;
+    border-bottom: 0;
+    border-right: 1px solid var(--hair);
+}
+
+.game--feature .game-cover img {
+    position: absolute;
+    inset: 0;
+}
+
+/* Capa de projeto que ainda não tem arte: a malha isométrica do fundo do
+   site, em pequeno, e um aviso honesto. Melhor do que inventar uma imagem
+   de um jogo que ainda não tem cara. */
+.game-cover--conceito {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    background: radial-gradient(
+            70% 90% at 50% 45%,
+            rgba(91, 107, 245, 0.22),
+            transparent 70%
+        ),
+        repeating-linear-gradient(
+            30deg,
+            transparent 0 41px,
+            rgba(106, 216, 254, 0.1) 41px 42px
+        ),
+        repeating-linear-gradient(
+            -30deg,
+            transparent 0 41px,
+            rgba(106, 216, 254, 0.1) 41px 42px
+        ),
+        var(--ink-850);
+}
+
+.game-cover--conceito svg {
+    width: 44px;
+    color: var(--cyan);
+    opacity: 0.75;
+}
+
+.game-cover--conceito span {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* rótulo entre os dois blocos da home ("No forno") */
+.work-label {
+    display: flex;
+    margin: clamp(2.25rem, 5vw, 3.25rem) 0 1.1rem;
+}
+
+/* botões depois da grade; 28px de vão pelo mesmo motivo do `.hero-actions` */
+.work-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px 28px;
+    margin-top: clamp(2rem, 5vw, 3rem);
+}
+
+/* Fileira de números do topo do portfólio. Usa o `.hero-stat` da home; ele
+   vira largura total e centralizado no celular (faz sentido no herói), e
+   aqui os números ficam lado a lado. */
+.facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem clamp(1.75rem, 5vw, 3.5rem);
+    margin-top: clamp(1.75rem, 4vw, 2.5rem);
+    padding-top: 22px;
+    border-top: 1px solid var(--hair);
+}
+
+.facts .hero-stat {
+    width: auto;
+    justify-content: flex-start;
+}
+
+.nota {
+    max-width: 62ch;
+    margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+@media (max-width: 900px) {
+    .games--trio,
+    .game--feature {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .game--feature .game-cover {
+        aspect-ratio: 16 / 9;
+        min-height: 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--hair);
+    }
+
+    .game--feature .game-cover img {
+        position: static;
+    }
+}
+
+@media (max-width: 700px) {
+    .games {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Quatro números numa linha só não cabem no celular e sobravam 2 + 1 + 1.
+   Em duas colunas ficam 2 x 2. */
+@media (max-width: 560px) {
+    .facts--grade {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 /* -------------------------------------------------------------- contato -- */
 .contact {
     position: relative;

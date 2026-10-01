@@ -7,18 +7,18 @@
     <meta name="theme-color" content="#05090f">
     <title>Portfólio — Scorpion Bits</title>
     <meta name="description"
-        content="O estado real de cada frente da Scorpion Bits: curso no SESC no ar, protótipos de jogos indie em produção e lançamentos a caminho do itch.io.">
+        content="Os jogos da Scorpion Bits: Tirania e AstroDash, jogáveis de graça no itch.io, e os projetos em produção. O estado real de cada um.">
     <link rel="canonical" href="https://scorpionbits.com/portfolio.html">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://scorpionbits.com/portfolio.html">
     <meta property="og:title" content="Portfólio — Scorpion Bits">
-    <meta property="og:description" content="Em que a Scorpion Bits está trabalhando agora.">
+    <meta property="og:description" content="Jogos no ar e jogos no forno: o portfólio da Scorpion Bits.">
     <meta property="og:image" content="https://scorpionbits.com/assets/og-cover.png">
     <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" href="assets/favicon.png" type="image/png">
-    <link rel="stylesheet" href="css/style.css?v=89">
+    <link rel="stylesheet" href="css/style.css?v=90">
     <script>
         /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
            efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
@@ -84,6 +84,17 @@
             </symbol>
             <symbol id="i-close" viewBox="0 0 24 24">
                 <path d="m6 6 12 12M18 6 6 18" />
+            </symbol>
+            <symbol id="i-external" viewBox="0 0 24 24">
+                <path d="M14 4h6v6M20 4 11 13" />
+                <path d="M19 14.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4.5" />
+            </symbol>
+            <symbol id="i-mail" viewBox="0 0 24 24">
+                <rect x="3" y="5.5" width="18" height="13" rx="2" />
+                <path d="m4 7 8 5.5L20 7" />
+            </symbol>
+            <symbol id="i-code" viewBox="0 0 24 24">
+                <path d="m9 8-4.5 4L9 16M15 8l4.5 4L15 16" />
             </symbol>
             <!-- Marcas: simple-icons (CC0) e Font Awesome Free (CC BY 4.0). Auto-hospedadas. -->
             <symbol id="i-github" viewBox="0 0 24 24">
@@ -166,69 +177,325 @@
                 </svg>
                 Voltar para a home
             </a>
-            <span class="tag">No forno</span>
-            <h1>Em que estamos trabalhando</h1>
+            <span class="tag">Portfólio</span>
+            <h1>Jogos no ar e jogos no forno</h1>
             <p class="sec-lead">
-                Estúdio novo, portfólio em construção — mas nada aqui é vaporware.
-                Este é o estado real de cada frente:
+                Somos um estúdio novo, mas já temos jogo no ar. Nada aqui é
+                vaporware: este é o estado real de cada projeto, do que dá para
+                jogar hoje ao que ainda é conceito.
             </p>
+
+            <ul class="facts facts--grade" aria-label="Resumo">
+                <li class="hero-stat">
+                    <b>2</b>
+                    <span>jogos no ar</span>
+                </li>
+                <li class="hero-stat">
+                    <b>3</b>
+                    <span>projetos no forno</span>
+                </li>
+                <li class="hero-stat">
+                    <b>4</b>
+                    <span>pessoas no time</span>
+                </li>
+                <li class="hero-stat">
+                    <b>45h</b>
+                    <span>de curso ministradas</span>
+                </li>
+            </ul>
         </section>
 
-        <section class="wrap bay" style="padding-top:0">
-            <div class="status-grid">
-                <article class="work-item">
-                    <span class="pill pill--live">No ar</span>
-                    <h3>Curso SESC · GameLab</h3>
-                    <p>
-                        Os 21 módulos já estão publicados e abertos. As aulas presenciais
-                        começam em agosto de 2026.
-                    </p>
-                    <a class="link-arrow" href="https://learn.scorpionbits.com" target="_blank" rel="noopener">
-                        Acessar o material
-                        <svg class="icon">
-                            <use href="#i-arrow-right" />
-                        </svg>
-                    </a>
+        <!-- =============================================================
+             NO AR — o que dá para jogar hoje
+             ============================================================= -->
+        <section class="wrap bay" id="no-ar" style="padding-top:0">
+            <header class="sec-head reveal">
+                <span class="tag">No ar</span>
+                <h2 class="sec-title">Dá para jogar agora</h2>
+                <p class="sec-lead">Os dois estão no itch.io, de graça.</p>
+            </header>
+
+            <div class="games games--stack reveal stagger">
+                <article class="work-item game game--feature">
+                    <div class="game-cover">
+                        <img src="assets/projetos/tirania.webp" width="1023" height="604"
+                            loading="lazy" decoding="async"
+                            alt="Ilustração de um homem de capa vermelha e gola de pelo, ajoelhado sob um foco de luz e segurando uma coroa.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--live">No ar</span>
+                        <h3>Tirania</h3>
+                        <p class="game-tagline">
+                            “Quando a coroa foge com a vida do povo, resta a uma mulher
+                            trazer a justiça.”
+                        </p>
+                        <p>
+                            Um reino abandonado às traças. A nobreza trancou os portões e
+                            fugiu levando toda a comida e os poços de água. Como Aurora,
+                            você vasculha as ruelas esquecidas, resgata provisões e sobe
+                            ao trono para enfrentar o rei num duelo decisivo.
+                        </p>
+                        <ul class="regua">
+                            <li><b>Gênero</b> Ação 2D</li>
+                            <li><b>Visual</b> Pixel art</li>
+                            <li><b>Plataformas</b> Web, Windows e Linux</li>
+                            <li><b>Preço</b> Gratuito</li>
+                            <li><b>Origem</b> Feito no GameLab, SESC Araraquara</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="btn btn--solid" href="https://scorpionbits.itch.io/tirania" target="_blank" rel="noopener">
+                                Jogar no itch.io
+                                <svg class="icon">
+                                    <use href="#i-external" />
+                                </svg>
+                            </a>
+                            <a class="link-arrow" href="https://github.com/scorpion-bits/gamelab-sesc" target="_blank" rel="noopener">
+                                Código no GitHub
+                                <svg class="icon">
+                                    <use href="#i-arrow-right" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
                 </article>
 
-                <article class="work-item">
-                    <span class="pill pill--live">Jogável</span>
-                    <h3>Tirania</h3>
-                    <p>
-                        Jogo feito durante o GameLab, no SESC Araraquara. A build para
-                        Linux está disponível para download.
-                    </p>
-                    <a class="link-arrow" href="https://drive.google.com/file/d/1IG8eJofwd4ZCsYLjQtpbr1ycD_V4sOXn/view?usp=sharing" target="_blank" rel="noopener">
-                        Baixar a build
-                        <svg class="icon">
-                            <use href="#i-arrow-right" />
-                        </svg>
-                    </a>
+                <article class="work-item game game--feature">
+                    <div class="game-cover">
+                        <img src="assets/projetos/astrodash.webp" width="1440" height="810"
+                            loading="lazy" decoding="async"
+                            alt="Tela de título do AstroDash, em pixel art: o nome do jogo cruzando um céu estrelado entre dois meteoros.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--live">No ar</span>
+                        <h3>AstroDash</h3>
+                        <p>
+                            Gameplay direto e rápido, baseado em navegar e desviar de
+                            meteoros e outros obstáculos.
+                        </p>
+                        <p>
+                            No forno: o Modo História. Você é um gari espacial diante de
+                            uma invasão alienígena que polui a galáxia, com fases e um
+                            chefe a cada três.
+                        </p>
+                        <ul class="regua">
+                            <li><b>Visual</b> Pixel art</li>
+                            <li><b>Engine</b> Godot</li>
+                            <li><b>Preço</b> Gratuito</li>
+                            <li><b>Próximo</b> Modo História</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="btn btn--solid" href="https://scorpionbits.itch.io/astrodash" target="_blank" rel="noopener">
+                                Jogar no itch.io
+                                <svg class="icon">
+                                    <use href="#i-external" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- =============================================================
+             NO FORNO — o que está em produção, com o estágio real
+             ============================================================= -->
+        <section class="wrap bay" id="no-forno" style="padding-top:0">
+            <header class="sec-head reveal">
+                <span class="tag">No forno</span>
+                <h2 class="sec-title">O que vem a seguir</h2>
+                <p class="sec-lead">
+                    Três projetos em produção, cada um com o estágio que tem de
+                    verdade.
+                </p>
+            </header>
+
+            <div class="games games--trio reveal stagger">
+                <article class="work-item game">
+                    <div class="game-cover">
+                        <img src="assets/projetos/tower-defence.webp" width="960" height="540"
+                            loading="lazy" decoding="async"
+                            alt="Árvore de habilidades do Tower Defence: oito ícones de torres em círculo, cercados por nós vazios.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--wip">Em desenvolvimento</span>
+                        <h3>Tower Defence</h3>
+                        <p>
+                            Defesa de torres em que você fabrica as próprias torres. O
+                            projeto reúne árvore de habilidades, crafting, loja e
+                            inventário, com oito tipos de torre configurados.
+                        </p>
+                        <ul class="tool-list">
+                            <li>Godot</li>
+                            <li>Crafting</li>
+                            <li>Árvore de habilidades</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="link-arrow" href="https://github.com/scorpion-bits/TowerDefence" target="_blank" rel="noopener">
+                                Código no GitHub
+                                <svg class="icon">
+                                    <use href="#i-arrow-right" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
                 </article>
 
-                <article class="work-item">
-                    <span class="pill pill--wip">Em produção</span>
-                    <h3>Nossos primeiros protótipos</h3>
-                    <p>
-                        Jogos indie curtos, focados em mecânicas polidas e direção de arte
-                        única. Ainda em prototipagem interna.
-                    </p>
+                <article class="work-item game">
+                    <div class="game-cover game-cover--conceito">
+                        <svg viewBox="-11 -11 22 22" aria-hidden="true" focusable="false">
+                            <path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5"
+                                fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round" />
+                        </svg>
+                        <span>Sem arte final ainda</span>
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--wip">Pré-produção</span>
+                        <h3>Sitis</h3>
+                        <p>
+                            Ação top-down em pixel art. Presa numa dungeon onde a água é
+                            escassa, Iris luta para chegar à superfície com poderes que
+                            gastam a própria hidratação: uma única barra faz de vida e de
+                            energia. Design, bestiário e arquitetura já estão
+                            documentados; a arte final ainda vem.
+                        </p>
+                        <ul class="tool-list">
+                            <li>Godot</li>
+                            <li>Top-down</li>
+                            <li>Pixel art</li>
+                        </ul>
+                    </div>
                 </article>
 
-                <article class="work-item">
-                    <span class="pill pill--next">Em breve</span>
-                    <h3>Página no itch.io</h3>
-                    <p>
-                        É por lá que os lançamentos vão sair. Vale seguir para não perder
-                        o primeiro build público.
-                    </p>
-                    <a class="link-arrow" href="https://scorpionbits.itch.io/" target="_blank" rel="noopener">
-                        Seguir no itch.io
+                <article class="work-item game">
+                    <div class="game-cover">
+                        <img src="assets/projetos/noir.webp" width="1172" height="660"
+                            loading="lazy" decoding="async"
+                            alt="Pixel art de um detetive de cabelo claro em seu escritório, com mapa da cidade, relógio, lâmpada de mesa e telefone.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--wip">Pré-produção</span>
+                        <h3>Projeto noir</h3>
+                        <p>
+                            Jogo de investigação com estética noir, em pixel art. O
+                            personagem principal, com animações de parado e de caminhada,
+                            e o cenário do escritório já estão desenhados. Investigação,
+                            diálogo e decisões ainda estão em planejamento, e o nome
+                            também.
+                        </p>
+                        <ul class="tool-list">
+                            <li>Godot</li>
+                            <li>Investigação</li>
+                            <li>Noir</li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- =============================================================
+             ENSINO — a prova de entrega mais forte do estúdio hoje
+             ============================================================= -->
+        <section class="wrap bay" id="ensino" style="padding-top:0">
+            <header class="sec-head reveal">
+                <span class="tag">Ensino</span>
+                <h2 class="sec-title">GameLab no SESC Araraquara</h2>
+                <p class="sec-lead">
+                    Organizamos e ministramos a primeira turma, de 4 de agosto a 22
+                    de setembro de 2026, com plano de ensino e material próprios.
+                </p>
+            </header>
+
+            <div class="reveal">
+                <ul class="facts" style="margin-top:0" aria-label="Números do GameLab">
+                    <li class="hero-stat">
+                        <b>45h</b>
+                        <span>em 15 aulas de 3h</span>
+                    </li>
+                    <li class="hero-stat">
+                        <b>17</b>
+                        <span>alunos simultâneos</span>
+                    </li>
+                    <li class="hero-stat">
+                        <b>13/13</b>
+                        <span>respondentes fariam outra edição</span>
+                    </li>
+                </ul>
+
+                <p class="nota" style="margin-top:1.5rem">
+                    A pesquisa de satisfação teve 13 respostas entre os 17 alunos. O
+                    pedido mais comum foi mais tempo de curso.
+                </p>
+
+                <div class="work-cta" style="margin-top:0">
+                    <a class="btn btn--solid" href="https://learn.scorpionbits.com" target="_blank" rel="noopener">
+                        Abrir o material
                         <svg class="icon">
-                            <use href="#i-arrow-right" />
+                            <use href="#i-external" />
                         </svg>
                     </a>
-                </article>
+                    <a class="btn btn--wire" href="index.html#curso">Ver o curso</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============================================================
+             CONTATO
+             ============================================================= -->
+        <section class="wrap bay" id="contato" style="padding-top:0">
+            <div class="contact reveal">
+                <div>
+                    <span class="sec-index">Próximo passo</span>
+                    <h2>Vamos conversar</h2>
+                    <p>
+                        Publicadora, instituição de ensino, agência ou parceiro:
+                        conta o que você procura e a gente volta com um plano.
+                    </p>
+
+                    <a class="email-link" href="mailto:scorpionbits.contato@gmail.com">
+                        <svg class="icon icon--lg">
+                            <use href="#i-mail" />
+                        </svg>
+                        scorpionbits.contato@gmail.com
+                    </a>
+                </div>
+
+                <ul class="social-list">
+                    <li>
+                        <a class="social-link" href="contato.html#servicos">
+                            <svg class="icon">
+                                <use href="#i-code" />
+                            </svg>
+                            O que fazemos
+                            <svg class="icon go">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-link" data-brand="itch" href="https://scorpionbits.itch.io/" target="_blank"
+                            rel="noopener">
+                            <svg class="icon icon--brand">
+                                <use href="#i-itch" />
+                            </svg>
+                            itch.io
+                            <svg class="icon go">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-link" data-brand="github" href="https://github.com/scorpion-bits"
+                            target="_blank" rel="noopener">
+                            <svg class="icon icon--brand">
+                                <use href="#i-github" />
+                            </svg>
+                            GitHub
+                            <svg class="icon go">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </section>
     </main>
@@ -242,7 +509,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=89" defer></script>
+    <script src="js/main.js?v=90" defer></script>
 </body>
 
 </html>
