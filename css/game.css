@@ -1,0 +1,630 @@
+/* ==========================================================================
+   Rabo de Cubos — tela cheia do jogo.
+   Carregado sob demanda por main.js (junto com o Pixi e o game.js), então
+   herda os tokens (:root) e os botões (.btn) de style.css.
+   ========================================================================== */
+
+.sbg {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow: hidden;
+    overscroll-behavior: contain;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+.sbg [hidden] {
+    display: none !important;
+}
+
+/* -- fundo -------------------------------------------------------------- */
+.sbg-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 75% 65% at 50% 46%, #133453 0%, #0a1829 48%, #05090f 100%);
+}
+
+/* a mesma grade fina do fundo do site, só que isométrica: duas famílias de
+   linhas a ±30°, que é a inclinação do chão do jogo */
+.sbg-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.9;
+    background:
+        repeating-linear-gradient(30deg, var(--grid-line) 0 1px, transparent 1px 64px),
+        repeating-linear-gradient(-30deg, var(--grid-line) 0 1px, transparent 1px 64px);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 20%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 20%, transparent 78%);
+}
+
+.sbg-stage {
+    position: absolute;
+    inset: 0;
+    touch-action: none;
+}
+
+.sbg-stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+/* -- anel de luz da abertura ---------------------------------------------- */
+.sbg-ring {
+    position: fixed;
+    z-index: 1001;
+    border-radius: 50%;
+    border: 3px solid var(--cyan);
+    box-shadow:
+        0 0 46px 8px rgba(106, 216, 254, 0.5),
+        inset 0 0 70px 6px rgba(106, 216, 254, 0.22);
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* -- clarão (morte, abertura de recorde) ------------------------------- */
+.sbg-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5), rgba(106, 216, 254, 0.2) 60%, transparent 90%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sbg-flash.is-on {
+    animation: sbg-flash 0.5s ease-out;
+}
+
+@keyframes sbg-flash {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* -- HUD ---------------------------------------------------------------- */
+.sbg-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(14px, 3vw, 30px);
+    padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+    pointer-events: none;
+}
+
+.sbg.is-hud .sbg-hud {
+    opacity: 1;
+    transform: none;
+}
+
+.sbg-hud > * {
+    pointer-events: auto;
+}
+
+.sbg-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 54px;
+}
+
+.sbg-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.sbg-stat b {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    transform-origin: left center;
+}
+
+.sbg-stat b.is-bump {
+    animation: sbg-bump 0.28s var(--ease);
+}
+
+.sbg-stat--best b {
+    color: var(--amber);
+}
+
+@keyframes sbg-bump {
+    40% {
+        transform: scale(1.22);
+        color: var(--cyan);
+    }
+}
+
+.sbg-combo {
+    position: relative;
+    align-self: center;
+    padding: 6px 12px 9px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hair-lit);
+    background: rgba(106, 216, 254, 0.1);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--cyan);
+    overflow: hidden;
+    animation: sbg-pop 0.3s var(--ease);
+}
+
+.sbg-combo i {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: calc(var(--p, 1) * 100%);
+    background: var(--cyan);
+}
+
+@keyframes sbg-pop {
+    from {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+}
+
+.sbg-tools {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.sbg-tool {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--hair-lit);
+    background: rgba(8, 14, 22, 0.6);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s var(--ease);
+}
+
+.sbg-tool svg {
+    width: 19px;
+    height: 19px;
+}
+
+.sbg-tool:hover,
+.sbg-tool:focus-visible {
+    background: rgba(106, 216, 254, 0.16);
+    border-color: var(--cyan);
+    color: var(--text);
+}
+
+.sbg-tool:active {
+    transform: scale(0.92);
+}
+
+.sbg-tool:focus-visible,
+.sbg-foot a:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+}
+
+/* -- efeitos ativos (power-ups) --------------------------------------------
+   Uma pílula por efeito, na cor do projeto/integrante dono do cubo, com a
+   barrinha de tempo restante embaixo. Fica sob o placar, à esquerda. */
+.sbg-buffs {
+    position: absolute;
+    top: calc(max(12px, env(safe-area-inset-top)) + 62px);
+    left: max(16px, env(safe-area-inset-left));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.sbg-buff {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 13px 8px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c);
+    background: rgba(8, 14, 22, 0.78);
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    animation: sbg-pop 0.3s var(--ease);
+}
+
+.sbg-buff i {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--c);
+    box-shadow: 0 0 10px var(--c);
+    rotate: 45deg;
+}
+
+.sbg-buff b {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: calc(var(--p, 1) * 100%);
+    background: var(--c);
+}
+
+/* -- dica e aviso, colados no pé da tela ---------------------------------- */
+.sbg-hint,
+.sbg-toast {
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+    margin: 0;
+    padding: 9px 16px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hair-lit);
+    background: rgba(8, 14, 22, 0.78);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    text-align: center;
+    white-space: nowrap;
+    max-width: calc(100vw - 24px);
+}
+
+.sbg-hint {
+    bottom: max(22px, env(safe-area-inset-bottom));
+    animation: sbg-breath 1.8s ease-in-out infinite;
+}
+
+@keyframes sbg-breath {
+    50% {
+        border-color: var(--cyan);
+        color: var(--text);
+    }
+}
+
+.sbg-toast {
+    bottom: max(70px, calc(env(safe-area-inset-bottom) + 56px));
+    border-color: var(--amber);
+    color: var(--amber);
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.3s, transform 0.4s var(--ease);
+    pointer-events: none;
+}
+
+.sbg-toast.is-on {
+    opacity: 1;
+    transform: none;
+}
+
+/* -- painéis ------------------------------------------------------------- */
+.sbg-panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(94vw, 520px);
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    translate: -50% -50%;
+    padding: clamp(22px, 4vw, 34px) clamp(18px, 4vw, 34px) clamp(18px, 3vw, 26px);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--hair-lit);
+    background: rgba(8, 14, 22, 0.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    text-align: center;
+    touch-action: pan-y;
+    animation: sbg-panel-in 0.5s var(--ease) both;
+}
+
+.sbg-panel--sm {
+    width: min(94vw, 360px);
+}
+
+@keyframes sbg-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+}
+
+.sbg-kicker {
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cyan);
+}
+
+.sbg-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 1.4rem + 3.4vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.sbg-title em {
+    font-style: normal;
+    color: var(--cyan);
+}
+
+.sbg-title--sm {
+    font-size: clamp(1.7rem, 1.3rem + 2vw, 2.4rem);
+}
+
+.sbg-title small {
+    font-size: 0.45em;
+    letter-spacing: 0;
+    font-weight: 600;
+    color: var(--text-dim);
+}
+
+.sbg-lead {
+    margin: 12px auto 0;
+    max-width: 38ch;
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    text-wrap: balance;
+}
+
+.sbg-howto {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--hair);
+    display: grid;
+    gap: 10px;
+    font-size: 0.86rem;
+    color: var(--text-soft);
+}
+
+.sbg kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 27px;
+    height: 27px;
+    padding: 0 6px;
+    margin: 0 2px;
+    border-radius: 7px;
+    border: 1px solid var(--hair-lit);
+    border-bottom-width: 3px;
+    background: rgba(106, 216, 254, 0.08);
+    font: 600 0.76rem var(--font-mono);
+    color: var(--text);
+}
+
+.sbg-actions {
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sbg-foot {
+    margin: 16px 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+}
+
+.sbg-foot--links {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sbg-foot a {
+    color: var(--text-dim);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+}
+
+.sbg-foot a:hover {
+    color: var(--cyan);
+}
+
+/* teclado só onde há teclado, toque só onde há toque */
+@media (pointer: coarse) {
+    .sbg-keys {
+        display: none !important;
+    }
+}
+
+@media (pointer: fine) {
+    .sbg-touch {
+        display: none !important;
+    }
+}
+
+/* -- coleção de cubos --------------------------------------------------- */
+.sbg-colecao-h {
+    margin: 18px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hair);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.sbg-colecao {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px 4px;
+}
+
+.sbg-slot {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 2px 5px;
+    border-radius: var(--r-sm);
+    text-align: center;
+    color: var(--text-faint);
+    text-decoration: none;
+}
+
+.sbg-slot svg {
+    width: 30px;
+    height: 35px;
+    opacity: 0.55;
+}
+
+.sbg-slot em {
+    margin-top: 1px;
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+}
+
+.sbg-slot b {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    line-height: 1.15;
+    font-weight: 700;
+    text-wrap: balance;
+}
+
+.sbg-slot small {
+    font-size: 0.58rem;
+    line-height: 1.2;
+    color: var(--text-faint);
+    text-wrap: balance;
+}
+
+.sbg-slot.is-on {
+    color: var(--text);
+}
+
+.sbg-slot.is-on svg {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(106, 216, 254, 0.35));
+}
+
+.sbg-slot.is-on small {
+    color: var(--text-dim);
+}
+
+.sbg-slot.is-new svg {
+    animation: sbg-novo 1s var(--ease) 0.3s both;
+}
+
+@keyframes sbg-novo {
+    0% {
+        transform: scale(0.4) rotate(-12deg);
+    }
+    60% {
+        transform: scale(1.35) rotate(4deg);
+    }
+    100% {
+        transform: none;
+    }
+}
+
+/* -- telas baixas (celular deitado) --------------------------------------- */
+@media (max-height: 560px) {
+    .sbg-panel {
+        padding-top: 16px;
+        padding-bottom: 14px;
+    }
+
+    .sbg-lead,
+    .sbg-howto {
+        display: none;
+    }
+
+    .sbg-actions {
+        margin-top: 14px;
+    }
+
+    .sbg-slot small,
+    .sbg-slot em {
+        display: none;
+    }
+
+    .sbg-colecao-h {
+        margin-top: 12px;
+        padding-top: 10px;
+    }
+
+    .sbg-foot {
+        margin-top: 10px;
+    }
+
+    .sbg-title {
+        font-size: 1.9rem;
+    }
+}
+
+/* -- modo leve: sem desfoque nem grade ---------------------------------- */
+.sbg--lite .sbg-panel {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(8, 14, 22, 0.95);
+}
+
+.sbg--lite .sbg-bg::before {
+    display: none;
+}
+
+.sbg--lite .sbg-hint {
+    animation: none;
+}
+
+/* A home congela as animações CSS enquanto o jogo cobre a tela: órbita,
+   fundo e flutuação do mascote não precisam rodar por trás de um overlay
+   opaco. (As do próprio jogo são Web Animations e não são afetadas.) */
+.sbg-open body > :not(.sbg):not(.sbg-ring) *,
+.sbg-open body > :not(.sbg):not(.sbg-ring) *::before,
+.sbg-open body > :not(.sbg):not(.sbg-ring) *::after {
+    animation-play-state: paused !important;
+}

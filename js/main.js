@@ -397,6 +397,131 @@
         }
     }
 
+    /* ------------------------------ jogo escondido no escorpião -- */
+    /* Clicar no escorpião abre o "Rabo de Cubos", um snake isométrico em
+       PixiJS que usa a logo e os cubos da marca.
+
+       O jogo inteiro (Pixi 840 KB, game.js, game.css) fica FORA da página:
+       só começa a baixar quando o ponteiro chega perto do escorpião (hover,
+       foco ou primeiro toque) e, no pior caso, durante a animação do clique.
+       Economia de dados: não adianta nada, só baixa no clique.
+
+       O AudioContext nasce AQUI, dentro do gesto do clique: o Safari só deixa
+       o som tocar se o contexto for criado/retomado num gesto, e o game.js
+       só chega depois do download. */
+    {
+        const botao = document.querySelector("[data-game-open]");
+        const orbe = botao && botao.closest(".hero-orb");
+        const rotulo = botao && botao.querySelector(".hero-play-chip span");
+
+        if (botao && orbe) {
+            let carga = null;
+            let aberto = false;
+
+            const script = (src) =>
+                new Promise((ok, falha) => {
+                    const s = document.createElement("script");
+                    s.src = src;
+                    s.onload = ok;
+                    s.onerror = () => falha(new Error(src));
+                    document.head.appendChild(s);
+                });
+
+            const carregar = () => {
+                if (window.ScorpionGame) return Promise.resolve();
+                if (carga) return carga;
+                const css = document.createElement("link");
+                css.rel = "stylesheet";
+                css.href = "css/game.css?v=1";
+                document.head.appendChild(css);
+                const estilo = new Promise((ok) => {
+                    css.onload = ok;
+                    css.onerror = ok; // sem o CSS o jogo fica feio, mas abre
+                });
+                carga = Promise.all([
+                    estilo,
+                    script("assets/vendor/pixi.min.js?v=8.22.0").then(() => script("js/game.js?v=1")),
+                ]).then(() => {}, (e) => {
+                    carga = null; // deixa tentar de novo no próximo clique
+                    throw e;
+                });
+                return carga;
+            };
+
+            // aquece o download antes do clique, mas nunca com economia de dados
+            const rede = navigator.connection || {};
+            if (!rede.saveData && !/2g/.test(rede.effectiveType || "")) {
+                ["pointerenter", "focus", "touchstart"].forEach((ev) =>
+                    botao.addEventListener(ev, () => carregar().catch(() => {}), {
+                        once: true,
+                        passive: true,
+                    })
+                );
+            }
+
+            const origem = () => {
+                const r = orbe.getBoundingClientRect();
+                return { x: r.left + r.width / 2, y: r.top + r.height * 0.52 };
+            };
+
+            const desistir = (msg) => {
+                orbe.classList.remove("is-launching");
+                aberto = false;
+                if (rotulo) {
+                    rotulo.textContent = msg;
+                    setTimeout(() => { rotulo.textContent = "jogar"; }, 3500);
+                }
+            };
+
+            botao.addEventListener("click", async () => {
+                if (aberto) return;
+                aberto = true;
+
+                let audio = null;
+                try {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    if (AC) {
+                        audio = new AC();
+                        if (audio.resume) audio.resume().catch(() => {});
+                    }
+                } catch (e) { /* sem som, o jogo segue */ }
+
+                orbe.classList.add("is-launching");
+                const agachar = new Promise((ok) => setTimeout(ok, 380));
+                try {
+                    await Promise.all([carregar(), agachar]);
+                } catch (e) {
+                    return desistir("sem conexão");
+                }
+
+                const video = document.querySelector("video[data-anim]");
+                const tocava = !!video && !video.paused;
+                if (tocava) video.pause(); // não decodifica por trás da tela cheia
+                raiz.classList.add("sbg-open");
+
+                window.ScorpionGame.open({
+                    origin: origem(),
+                    getOrigin: origem,
+                    lite: nivelLeve() > 0,
+                    audioCtx: audio,
+                    onClose: () => {
+                        raiz.classList.remove("sbg-open");
+                        orbe.classList.remove("is-launching");
+                        aberto = false;
+                        if (tocava) video.play().catch(() => {});
+                        botao.focus({ preventScroll: true });
+                    },
+                }).catch(() => {
+                    // WebGL indisponível: o próprio jogo já se desmontou
+                    if (rotulo) {
+                        rotulo.textContent = "indisponível";
+                        setTimeout(() => { rotulo.textContent = "jogar"; }, 3500);
+                    }
+                });
+            });
+        }
+    }
+
     /* ------------------------------------ título: máquina de escrever -- */
     /* Escreve, apaga e alterna entre as duas frases, com um cursor de
        terminal piscando no fim da linha que está sendo digitada.
@@ -947,7 +1072,10 @@
         const quadro = (agora) => {
             // aba oculta: o navegador estrangula tudo e o intervalo não diz
             // nada sobre a máquina
-            if (document.hidden) {
+            if (document.hidden || raiz.classList.contains("sbg-open")) {
+                // o jogo em tela cheia tem custo próprio: não é a home que
+                // está lenta, então não conta (senão abrir o jogo logo após
+                // o carregamento ligaria o modo leve do site inteiro)
                 deltas = [];
                 anterior = 0;
             } else if (anterior) {
@@ -955,7 +1083,7 @@
                 if (d > 250) deltas = [];
                 else deltas.push(d);
             }
-            if (!document.hidden) anterior = agora;
+            if (!document.hidden && !raiz.classList.contains("sbg-open")) anterior = agora;
 
             if (deltas.length >= TAM) {
                 const ord = deltas.slice().sort((a, b) => a - b);

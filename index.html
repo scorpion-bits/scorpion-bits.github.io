@@ -24,7 +24,7 @@
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/grotesk-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
     <link rel="preload" as="image" href="assets/logo-poster.png">
-    <link rel="stylesheet" href="css/style.css?v=90">
+    <link rel="stylesheet" href="css/style.css?v=91">
     <script>
         /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
            efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
@@ -411,6 +411,10 @@
                     alt="Mascote da Scorpion Bits: um escorpião montado com cubos isométricos">
                 <video class="hero-mascot hero-mascot--anim" data-anim="assets/logo-anim.webm"
                     width="320" height="426" muted loop playsinline preload="none" aria-hidden="true"></video>
+                <button type="button" class="hero-play" data-game-open aria-haspopup="dialog"
+                    aria-label="Jogar Rabo de Cubos, um jogo escondido no escorpião">
+                    <span class="hero-play-chip" aria-hidden="true"><i></i><span>jogar</span></span>
+                </button>
             </div>
 
             <p class="hero-note hero-note--l">
@@ -1009,7 +1013,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js?v=90" defer></script>
+    <script src="js/main.js?v=91" defer></script>
 </body>
 
 </html>
