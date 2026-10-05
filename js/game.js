@@ -548,39 +548,6 @@
                 const Rr = [0, d - h, w, -h, w, 0, 0, d];
                 const tr = { width: lw, color: o.linha || LINHA, join: "round" };
 
-                if (o.pernas) {
-                    /* Patas como as da logo: nascem BAIXO no corpo, abrem para o
-                       lado e descem em diagonal até o chão. Cada uma é um cristal
-                       de duas faces (a de cima clara, a de baixo escura) que alarga
-                       no "joelho" e afina na ponta. Ficam atrás do cubo, então só
-                       a parte que sai por baixo e pelos lados aparece.
-                       Pontos [x em múltiplos de w, y em px]: base (escondida
-                       dentro do corpo) e ponta; o x é espelhado para o outro lado. */
-                    const patas = [
-                        { b: [-0.6, -0.3 * h], t: [-1.72, 0.5 * d], g: 0.3 }, //   traseira: mais aberta
-                        { b: [-0.5, -0.06 * h], t: [-1.46, 1.2 * d], g: 0.32 }, //  do meio
-                        { b: [-0.26, 0.3 * d], t: [-0.98, 1.62 * d], g: 0.3 }, //   da frente: mais vertical
-                    ];
-                    const cristal = (lado, pt) => {
-                        const bx = pt.b[0] * w * -lado, by = pt.b[1];
-                        const tx = pt.t[0] * w * -lado, ty = pt.t[1];
-                        const mx = bx + (tx - bx) * 0.5, my = by + (ty - by) * 0.5;
-                        const len = Math.hypot(tx - bx, ty - by);
-                        let nx = -(ty - by) / len, ny = (tx - bx) / len;
-                        if (ny > 0) { nx = -nx; ny = -ny; } // n aponta para cima
-                        const lg = pt.g * len;
-                        const alto = [mx + nx * lg, my + ny * lg]; // joelho de cima
-                        const baixo = [mx - nx * lg * 0.95, my - ny * lg * 0.95]; // joelho de baixo
-                        const claro = lado < 0 ? "#86dcff" : "#58b6ee";
-                        const escuro = lado < 0 ? "#3c9bd8" : "#2d72ab";
-                        const st = { ...tr, width: lw * 0.72 };
-                        g.poly([bx, by, alto[0], alto[1], tx, ty]).fill(claro).stroke(st);
-                        g.poly([bx, by, tx, ty, baixo[0], baixo[1]]).fill(escuro).stroke(st);
-                    };
-                    // as do fundo (traseira) primeiro, para a da frente ficar por cima
-                    [-1, 1].forEach((lado) => patas.forEach((pt) => cristal(lado, pt)));
-                }
-
                 const dentroL = o.rosto === "L", dentroR = o.rosto === "R";
                 g.poly(L).fill(dentroL ? "#1a3957" : o.left).stroke(tr);
                 g.poly(Rr).fill(dentroR ? "#1a3957" : o.right).stroke(tr);
@@ -594,10 +561,8 @@
                 if (dentroR) carinha(g, noFace([0, d - h], [w, -d], [0, h]), lw);
                 if (dentroL) carinha(g, noFace([-w, -h], [w, d], [0, h]), lw);
 
-                const bx = o.pernas ? w * 1.9 : w;
-                const by = o.pernas ? d * 1.9 : d;
                 const pad = lw + 3;
-                return new Rectangle(-bx - pad, -d - h - pad, 2 * (bx + pad), d + h + by + 2 * pad);
+                return new Rectangle(-w - pad, -d - h - pad, 2 * (w + pad), 2 * d + h + 2 * pad);
             };
 
             const cubo = (o) => {
@@ -608,8 +573,8 @@
 
             const T = {
                 cabeca: {
-                    R: cubo({ k: 0.9, h: CH * 1.04, top: "#8fd8ff", left: "#5fd0ff", right: "#2f8ccc", rosto: "R", pernas: true }),
-                    L: cubo({ k: 0.9, h: CH * 1.04, top: "#8fd8ff", left: "#5fd0ff", right: "#2f8ccc", rosto: "L", pernas: true }),
+                    R: cubo({ k: 0.9, h: CH * 1.04, top: "#8fd8ff", left: "#5fd0ff", right: "#2f8ccc", rosto: "R" }),
+                    L: cubo({ k: 0.9, h: CH * 1.04, top: "#8fd8ff", left: "#5fd0ff", right: "#2f8ccc", rosto: "L" }),
                 },
                 cauda: Array.from({ length: PASSOS_RAMPA }, (_, i) => cubo({ k: K, h: CH, ...rampa(i / (PASSOS_RAMPA - 1)) })),
                 bit: cubo({ k: 0.5, h: CH * 0.5, top: "#ffe3ad", left: "#ffc46b", right: "#e0963a", lw: 2.4 }),
