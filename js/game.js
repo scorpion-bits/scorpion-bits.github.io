@@ -549,22 +549,36 @@
                 const tr = { width: lw, color: o.linha || LINHA, join: "round" };
 
                 if (o.pernas) {
-                    // cristais das patas: ficam ATRÁS do corpo, saindo pelos lados.
-                    // x em múltiplos de w (espelhado para o outro lado), y em px
+                    /* Patas como as da logo: nascem BAIXO no corpo, abrem para o
+                       lado e descem em diagonal até o chão. Cada uma é um cristal
+                       de duas faces (a de cima clara, a de baixo escura) que alarga
+                       no "joelho" e afina na ponta. Ficam atrás do cubo, então só
+                       a parte que sai por baixo e pelos lados aparece.
+                       Pontos [x em múltiplos de w, y em px]: base (escondida
+                       dentro do corpo) e ponta; o x é espelhado para o outro lado. */
                     const patas = [
-                        // traseira (a mais alta), do meio e da frente: cada uma é um
-                        // cristal que afina até a ponta, como as patas da logo
-                        [[-0.85, -0.6 * h], [-1.4, -0.3 * h], [-1.78, 0.4 * d], [-1.2, 0.02 * d], [-0.8, -0.12 * h]],
-                        [[-0.7, -0.12 * h], [-1.3, 0.1 * d], [-1.55, 1.2 * d], [-1.0, 0.72 * d], [-0.55, 0.25 * d]],
-                        [[-0.36, 0.4 * d], [-0.82, 0.78 * d], [-0.95, 1.65 * d], [-0.5, 1.2 * d], [-0.1, 0.8 * d]],
+                        { b: [-0.6, -0.3 * h], t: [-1.72, 0.5 * d], g: 0.3 }, //   traseira: mais aberta
+                        { b: [-0.5, -0.06 * h], t: [-1.46, 1.2 * d], g: 0.32 }, //  do meio
+                        { b: [-0.26, 0.3 * d], t: [-0.98, 1.62 * d], g: 0.3 }, //   da frente: mais vertical
                     ];
-                    [-1, 1].forEach((lado) =>
-                        patas.forEach((p) => {
-                            const pts = [];
-                            p.forEach(([x, y]) => pts.push(x * w * -lado, y));
-                            g.poly(pts).fill(lado < 0 ? "#49b8f2" : "#3585c2").stroke({ ...tr, width: lw * 0.85 });
-                        })
-                    );
+                    const cristal = (lado, pt) => {
+                        const bx = pt.b[0] * w * -lado, by = pt.b[1];
+                        const tx = pt.t[0] * w * -lado, ty = pt.t[1];
+                        const mx = bx + (tx - bx) * 0.5, my = by + (ty - by) * 0.5;
+                        const len = Math.hypot(tx - bx, ty - by);
+                        let nx = -(ty - by) / len, ny = (tx - bx) / len;
+                        if (ny > 0) { nx = -nx; ny = -ny; } // n aponta para cima
+                        const lg = pt.g * len;
+                        const alto = [mx + nx * lg, my + ny * lg]; // joelho de cima
+                        const baixo = [mx - nx * lg * 0.95, my - ny * lg * 0.95]; // joelho de baixo
+                        const claro = lado < 0 ? "#86dcff" : "#58b6ee";
+                        const escuro = lado < 0 ? "#3c9bd8" : "#2d72ab";
+                        const st = { ...tr, width: lw * 0.72 };
+                        g.poly([bx, by, alto[0], alto[1], tx, ty]).fill(claro).stroke(st);
+                        g.poly([bx, by, tx, ty, baixo[0], baixo[1]]).fill(escuro).stroke(st);
+                    };
+                    // as do fundo (traseira) primeiro, para a da frente ficar por cima
+                    [-1, 1].forEach((lado) => patas.forEach((pt) => cristal(lado, pt)));
                 }
 
                 const dentroL = o.rosto === "L", dentroR = o.rosto === "R";
@@ -581,7 +595,7 @@
                 if (dentroL) carinha(g, noFace([-w, -h], [w, d], [0, h]), lw);
 
                 const bx = o.pernas ? w * 1.9 : w;
-                const by = o.pernas ? d * 1.75 : d;
+                const by = o.pernas ? d * 1.9 : d;
                 const pad = lw + 3;
                 return new Rectangle(-bx - pad, -d - h - pad, 2 * (bx + pad), d + h + by + 2 * pad);
             };
