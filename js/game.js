@@ -100,20 +100,25 @@
         try { localStorage.setItem(CHAVE, JSON.stringify(d)); } catch (e) { /* privado */ }
     };
 
-    /* A coleção: cubos-troféu que o estúdio "esconde" no jogo. Cada um se
-       destrava com o total de bits comidos (somando todas as partidas), e
-       leva de volta à seção correspondente do site. */
+    /* Os power-ups: cada projeto e cada integrante do estúdio "mora" num cubo
+       colorido que a cobra pode pegar. Destravam com o total de bits comidos
+       (somando todas as partidas) e passam a aparecer no tabuleiro: um a cada
+       4 bits, sorteado entre os já destravados. O poder tem a ver com o dono:
+       a coroa de Tirania, o compasso do Thales (música), o dash do AstroDash...
+       `dur` em ms; sem `dur` o efeito é instantâneo. */
     const COLECAO = [
-        { id: "tirania", rotulo: "Tirania", sub: "Jogo no ar", at: 5, cor: "#ff8f7a", href: "#projetos" },
-        { id: "thales", rotulo: "Thales", sub: "Música e sound design", at: 12, cor: "#7ee2a8", href: "#equipe" },
-        { id: "astrodash", rotulo: "AstroDash", sub: "Jogo no ar", at: 20, cor: "#ffc46b", href: "#projetos" },
-        { id: "christian", rotulo: "Christian", sub: "Arte e animação", at: 30, cor: "#b394ff", href: "#equipe" },
-        { id: "tower", rotulo: "Tower Defence", sub: "No forno", at: 42, cor: "#6ad8fe", href: "#projetos" },
-        { id: "giovane", rotulo: "Giovane", sub: "Programação e gameplay", at: 56, cor: "#51a8f6", href: "#equipe" },
-        { id: "sitis", rotulo: "Sitis", sub: "Pré-produção", at: 72, cor: "#7ee2d6", href: "#projetos" },
-        { id: "milan", rotulo: "Milan", sub: "Programação e sistemas", at: 90, cor: "#8fa2ff", href: "#equipe" },
-        { id: "noir", rotulo: "Projeto noir", sub: "Pré-produção", at: 110, cor: "#c9d6e2", href: "#projetos" },
+        { id: "tirania", rotulo: "Tirania", at: 5, cor: "#ff5f6d", poder: { id: "coroa", nome: "Coroa", desc: "pontos ×2", dur: 10000 } },
+        { id: "thales", rotulo: "Thales", at: 12, cor: "#5fe3a1", poder: { id: "compasso", nome: "Compasso", desc: "câmera lenta", dur: 8000 } },
+        { id: "astrodash", rotulo: "AstroDash", at: 20, cor: "#ff6ad5", poder: { id: "turbo", nome: "Turbo", desc: "rápido, pontos ×3", dur: 6000 } },
+        { id: "christian", rotulo: "Christian", at: 30, cor: "#a78bfa", poder: { id: "borracha", nome: "Borracha", desc: "encolhe o rabo" } },
+        { id: "tower", rotulo: "Tower Defence", at: 42, cor: "#ff8a3d", poder: { id: "escudo", nome: "Escudo", desc: "aguenta 1 batida", dur: 20000 } },
+        { id: "giovane", rotulo: "Giovane", at: 56, cor: "#b6e35a", poder: { id: "ima", nome: "Ímã", desc: "puxa os bits", dur: 10000 } },
+        { id: "sitis", rotulo: "Sitis", at: 72, cor: "#2dd4bf", poder: { id: "gota", nome: "Gota", desc: "combo não expira", dur: 10000 } },
+        { id: "milan", rotulo: "Milan", at: 90, cor: "#f9a8d4", poder: { id: "upgrade", nome: "Upgrade", desc: "+100 pontos" } },
+        { id: "noir", rotulo: "Projeto noir", at: 110, cor: "#dfe7ef", poder: { id: "sombra", nome: "Sombra", desc: "atravessa o rabo", dur: 6000 } },
     ];
+    const PU_VIDA = 10000; // quanto tempo o cubo fica no tabuleiro antes de sumir
+    const PU_A_CADA = 4; //   um power-up a cada tantos bits
 
     const cuboSVG = (cor, aceso) => {
         const c = aceso ? cor : "#34495d";
@@ -255,6 +260,19 @@
                 tom(f * 2, f * 2, 0.1, { tipo: "sine", vol: 0.13, atraso: 0.045 });
                 tom(f * 3, f * 3, 0.07, { tipo: "sine", vol: 0.05, atraso: 0.09 });
             },
+            surgir() { tom(700, 1500, 0.16, { tipo: "sine", vol: 0.1 }); },
+            poder() {
+                [0, 4, 7, 12, 16].forEach((st, i) =>
+                    tom(440 * Math.pow(2, st / 12), 440 * Math.pow(2, st / 12), 0.14, { tipo: "square", vol: 0.1, lp: 3400, atraso: i * 0.045 })
+                );
+                tom(1760, 1760, 0.3, { tipo: "sine", vol: 0.1, atraso: 0.22 });
+            },
+            escudo() {
+                tom(900, 300, 0.25, { tipo: "triangle", vol: 0.25 });
+                tom(1800, 600, 0.18, { tipo: "sine", vol: 0.1 });
+                sopro(0.15, { f0: 3000, f1: 500, vol: 0.18 });
+            },
+            fimEfeito() { tom(520, 300, 0.12, { tipo: "triangle", vol: 0.1 }); },
             desbloquear() {
                 [0, 4, 7, 12].forEach((s, i) =>
                     tom(523 * Math.pow(2, s / 12), 523 * Math.pow(2, s / 12), 0.22, { tipo: "triangle", vol: 0.2, atraso: i * 0.085 })
@@ -312,6 +330,8 @@
             </div>
         </header>
 
+        <div class="sbg-buffs" data-buffs aria-hidden="true"></div>
+
         <p class="sbg-hint" data-hint hidden>
             <span class="sbg-keys">Use as setas ou WASD</span><span class="sbg-touch">Deslize ou toque nos lados</span> para começar
         </p>
@@ -325,6 +345,7 @@
                 <li class="sbg-keys"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> ou <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></li>
                 <li class="sbg-touch">Deslize, ou toque na esquerda / direita da tela para virar</li>
                 <li>Bits em sequência valem mais: mantenha o combo</li>
+                <li>Comendo bits você destrava <b>power-ups</b>: cada cubo colorido vem de um projeto ou de alguém do time</li>
             </ul>
             <div class="sbg-actions">
                 <button type="button" class="btn btn--solid btn--lg" data-act="jogar">Jogar</button>
@@ -344,7 +365,7 @@
             <p class="sbg-kicker" data-fim-kicker>Fim de jogo</p>
             <h2 id="sbg-t3" class="sbg-title sbg-title--sm"><span data-fim-pontos>0</span> <small>pontos</small></h2>
             <p class="sbg-lead" data-fim-info></p>
-            <p class="sbg-colecao-h">Cubos do estúdio <span data-colecao-n></span></p>
+            <p class="sbg-colecao-h">Power-ups do estúdio <span data-colecao-n></span></p>
             <ul class="sbg-colecao" data-colecao></ul>
             <div class="sbg-actions">
                 <button type="button" class="btn btn--solid btn--lg" data-act="again">Jogar de novo</button>
@@ -400,6 +421,7 @@
         const elDica = $("[data-hint]");
         const elAviso = $("[data-toast]");
         const elFlash = $("[data-flash]");
+        const elBuffs = $("[data-buffs]");
         const painel = {
             pronto: $('[data-panel="pronto"]'),
             pausa: $('[data-panel="pausa"]'),
@@ -583,6 +605,15 @@
                 miniCiano: cubo({ k: 0.24, h: CH * 0.24, top: "#9bdcff", left: "#5fd0ff", right: "#2f8ccc", lw: 1.4, brilho: false }),
             };
 
+            // um cubo por power-up, na cor do projeto/integrante, maiorzinho que o bit
+            T.poderes = {};
+            COLECAO.forEach((c) => {
+                T.poderes[c.id] = cubo({
+                    k: 0.64, h: CH * 0.64, lw: 2.6,
+                    top: mixCor(c.cor, "#ffffff", 0.5), left: c.cor, right: mixCor(c.cor, "#000000", 0.38),
+                });
+            });
+
             const ladrilho = (cor, lado) => {
                 const g = new Graphics();
                 const w = TW / 2 - 1.4, d = TH / 2 - 0.8, p = 9;
@@ -607,14 +638,15 @@
                 return Texture.from(c);
             };
             T.sombra = radial(64, [[0, "rgba(0,0,0,.62)"], [0.55, "rgba(0,0,0,.28)"], [1, "rgba(0,0,0,0)"]]);
-            T.brilho = radial(128, [[0, "rgba(255,196,107,.85)"], [0.35, "rgba(255,196,107,.26)"], [1, "rgba(255,196,107,0)"]]);
-            T.aura = radial(128, [[0, "rgba(106,216,254,.5)"], [0.4, "rgba(106,216,254,.14)"], [1, "rgba(106,216,254,0)"]]);
+            // brilho e anel são brancos e ganham a cor de quem os usa (bit âmbar, power-up da cor dele)
+            T.brilho = radial(128, [[0, "rgba(255,255,255,.85)"], [0.35, "rgba(255,255,255,.26)"], [1, "rgba(255,255,255,0)"]]);
+            T.aura = radial(128, [[0, "rgba(255,255,255,.6)"], [0.4, "rgba(255,255,255,.18)"], [1, "rgba(255,255,255,0)"]]);
 
             // anel que pulsa no chão embaixo do bit
             {
                 const g = new Graphics();
                 const w = TW * 0.5, d = TH * 0.5;
-                g.poly([0, -d, w, 0, 0, d, -w, 0]).stroke({ width: 2.2, color: "#ffc46b", join: "round" });
+                g.poly([0, -d, w, 0, 0, d, -w, 0]).stroke({ width: 2.2, color: "#ffffff", join: "round" });
                 T.anel = gerar(g, new Rectangle(-w - 4, -d - 4, 2 * w + 8, 2 * d + 8));
             }
 
@@ -644,6 +676,13 @@
             entidades.sortableChildren = true;
             mundo.addChild(chao, sombras, entidades, fx);
             app.stage.addChild(fundo, mundo);
+
+            // aura que acompanha a cabeça enquanto há um efeito ativo, na cor do mais recente
+            const aura = new Sprite(T.aura);
+            aura.anchor.set(0.5);
+            aura.blendMode = "add";
+            aura.visible = false;
+            if (!lite) fx.addChild(aura);
 
             const centro = (T0, x, y) => {
                 const s = spr(T0);
@@ -704,6 +743,9 @@
             let zoom = 0;
             let morte = null;
             let novosRun = [];
+            let pu = null; //     o power-up que está no tabuleiro (no máximo um)
+            const buffs = {}; //  efeitos ativos: id -> { ms, dur, c }
+            const chips = {};
             let baseEsc = 1, baseX = 0, baseY = 0;
             const COMBO_JANELA = 3000;
 
@@ -731,25 +773,130 @@
                 const livres = [];
                 for (let gx = 0; gx < N; gx++) {
                     for (let gy = 0; gy < N; gy++) {
-                        if (!cobra.some((c) => c.gx === gx && c.gy === gy)) livres.push([gx, gy]);
+                        if (cobra.some((c) => c.gx === gx && c.gy === gy)) continue;
+                        if (pu && pu.gx === gx && pu.gy === gy) continue;
+                        livres.push([gx, gy]);
                     }
                 }
                 if (!livres.length) { bit = null; return; }
                 const [gx, gy] = livres[Math.floor(Math.random() * livres.length)];
                 if (!bit) {
                     bit = {
-                        gx, gy, nasc: tempo,
+                        gx, gy, dx: gx, dy: gy, nasc: tempo,
                         s: spr(T.bit, entidades),
                         brilho: new Sprite(T.brilho),
                         anel: spr(T.anel, sombras),
                     };
                     bit.brilho.anchor.set(0.5);
                     bit.brilho.blendMode = "add";
+                    bit.brilho.tint = 0xffc46b;
+                    bit.anel.tint = 0xffc46b;
                     if (lite) bit.brilho.visible = false;
                     fx.addChild(bit.brilho);
                 } else {
-                    bit.gx = gx; bit.gy = gy; bit.nasc = tempo;
+                    bit.gx = gx; bit.gy = gy; bit.dx = gx; bit.dy = gy; bit.nasc = tempo;
                 }
+            };
+
+            /* ----------------------------------------- power-ups --- */
+            const recalcPasso = () => {
+                const novo = Math.max(86, 172 - bitsRun * 2.4) * (buffs.compasso ? 1.6 : 1) * (buffs.turbo ? 0.62 : 1);
+                if (passoMs) acum *= novo / passoMs; // sem salto visual no meio de um passo
+                passoMs = novo;
+            };
+
+            const chipLigar = (c) => {
+                let e = chips[c.poder.id];
+                if (!e) {
+                    e = document.createElement("div");
+                    e.className = "sbg-buff";
+                    e.style.setProperty("--c", c.cor);
+                    e.innerHTML = `<i></i><span>${c.poder.nome}</span><b></b>`;
+                    elBuffs.appendChild(e);
+                    chips[c.poder.id] = e;
+                }
+                e.style.setProperty("--p", "1");
+            };
+            const chipDesligar = (id) => {
+                if (chips[id]) { chips[id].remove(); delete chips[id]; }
+            };
+            const limparEfeitos = () => {
+                Object.keys(buffs).forEach((id) => { delete buffs[id]; chipDesligar(id); });
+            };
+
+            const removerPu = () => {
+                if (!pu) return;
+                pu.s.destroy(); pu.anel.destroy(); pu.brilho.destroy();
+                if (pu.feixe) pu.feixe.destroy();
+                pu = null;
+            };
+
+            const spawnPu = (escolhido) => {
+                if (pu) return;
+                const pool = COLECAO.filter((c) => dados.unlocked.includes(c.id));
+                if (!pool.length) return;
+                const c = escolhido || pool[Math.floor(Math.random() * pool.length)];
+                const livres = [];
+                for (let gx = 0; gx < N; gx++) {
+                    for (let gy = 0; gy < N; gy++) {
+                        if (cobra.some((s) => s.gx === gx && s.gy === gy)) continue;
+                        if (bit && bit.gx === gx && bit.gy === gy) continue;
+                        livres.push([gx, gy]);
+                    }
+                }
+                if (!livres.length) return;
+                const [gx, gy] = livres[Math.floor(Math.random() * livres.length)];
+                pu = {
+                    c, gx, gy, nasc: tempo, vida: PU_VIDA,
+                    s: spr(T.poderes[c.id], entidades),
+                    anel: spr(T.anel, sombras),
+                    brilho: new Sprite(T.brilho),
+                };
+                pu.brilho.anchor.set(0.5);
+                pu.brilho.blendMode = "add";
+                pu.brilho.tint = hex(c.cor);
+                pu.anel.tint = hex(c.cor);
+                if (lite) pu.brilho.visible = false;
+                fx.addChild(pu.brilho);
+                if (!lite) {
+                    // coluna de luz: de longe já se vê que não é um bit comum
+                    pu.feixe = new Sprite(T.aura);
+                    pu.feixe.anchor.set(0.5, 1);
+                    pu.feixe.blendMode = "add";
+                    pu.feixe.tint = hex(c.cor);
+                    fx.addChild(pu.feixe);
+                }
+                som.surgir();
+            };
+
+            const pegarPu = () => {
+                const c = pu.c, pd = c.poder;
+                const p = proj(pu.gx, pu.gy);
+                estourar(p.x, p.y - CH * 0.5, 14, T.miniCiano, 1.3);
+                flutuar(pd.nome, p.x, p.y - CH * 1.8, c.cor);
+                removerPu();
+                som.poder();
+                abalar(5);
+                zoom = Math.max(zoom, 0.035);
+                avisar(`${pd.nome}: ${pd.desc}`, 2400);
+
+                if (pd.id === "borracha") {
+                    // tira até 4 cubos da ponta, mas nunca deixa menos que a cabeça + 2
+                    const tirar = Math.min(4, cobra.length - 3);
+                    for (let i = 0; i < tirar; i++) {
+                        const sg = cobra.pop();
+                        const q = proj(sg.gx, sg.gy);
+                        estourar(q.x, q.y - CH * 0.4, 5, T.miniCiano, 1);
+                        sg.s.destroy(); sg.sh.destroy();
+                    }
+                } else if (pd.id === "upgrade") {
+                    setPontos(pontos + 100);
+                    flutuar("+100", p.x, p.y - CH * 2.6, "#ffe3ad");
+                } else {
+                    buffs[pd.id] = { ms: pd.dur, dur: pd.dur, c };
+                    chipLigar(c);
+                }
+                recalcPasso();
             };
 
             const resetar = () => {
@@ -769,6 +916,8 @@
                 pulsoComer = 0;
                 elPontos.textContent = "0";
                 elCombo.hidden = true;
+                removerPu();
+                limparEfeitos();
                 if (bit) { bit.nasc = tempo; }
                 spawnBit();
             };
@@ -840,9 +989,10 @@
                         dados.unlocked.push(c.id);
                         novosRun.push(c.id);
                         som.desbloquear();
-                        avisar(`Cubo desbloqueado: ${c.rotulo}`, 3200);
+                        avisar(`Power-up desbloqueado: ${c.poder.nome} (${c.rotulo})`, 3400);
                         const p = proj(cobra[0].gx, cobra[0].gy);
                         flutuar(c.rotulo, p.x, p.y - 130, c.cor);
+                        spawnPu(c); // já aparece no tabuleiro para estrear
                     }
                 });
             };
@@ -852,10 +1002,10 @@
                 combo = comboMs > 0 ? combo + 1 : 1;
                 comboMs = COMBO_JANELA;
                 const mult = Math.min(combo, 6);
-                const ganho = 10 * mult;
+                const ganho = 10 * mult * (buffs.coroa ? 2 : 1) * (buffs.turbo ? 3 : 1);
                 bitsRun += 1;
                 dados.bits += 1;
-                passoMs = Math.max(86, 172 - bitsRun * 2.4);
+                recalcPasso();
                 setPontos(pontos + ganho);
                 pintarCombo();
                 som.comer(combo);
@@ -864,9 +1014,10 @@
                 const p = proj(bit.gx, bit.gy);
                 estourar(p.x, p.y - CH * 0.4, 9, combo > 2 ? T.miniCiano : T.miniAmbar, 1);
                 flutuar("+" + ganho, p.x, p.y - CH * 1.6, mult > 3 ? "#9bdcff" : "#ffe3ad");
+                spawnBit();
+                if (bitsRun % PU_A_CADA === 0) spawnPu();
                 checarDesbloqueios();
                 gravarDados(dados);
-                spawnBit();
             };
 
             const crescer = (gx, gy) => {
@@ -884,6 +1035,8 @@
                 elCombo.hidden = true;
                 combo = 0;
                 comboMs = 0;
+                removerPu();
+                limparEfeitos();
                 gravarDados(dados);
             };
 
@@ -906,10 +1059,10 @@
                     const novo = novosRun.includes(c.id);
                     const falta = Math.max(0, c.at - dados.bits);
                     return on
-                        ? `<li><a class="sbg-slot is-on${novo ? " is-new" : ""}" href="${c.href}" data-ir>${cuboSVG(c.cor, true)}<b>${c.rotulo}</b><small>${c.sub}</small></a></li>`
-                        : `<li><span class="sbg-slot">${cuboSVG(c.cor, false)}<b>???</b><small>faltam ${falta} ${falta === 1 ? "bit" : "bits"}</small></span></li>`;
+                        ? `<li class="sbg-slot is-on${novo ? " is-new" : ""}">${cuboSVG(c.cor, true)}<b>${c.poder.nome}</b><small>${c.poder.desc}</small><em>${c.rotulo}</em></li>`
+                        : `<li class="sbg-slot">${cuboSVG(c.cor, false)}<b>???</b><small>faltam ${falta} ${falta === 1 ? "bit" : "bits"}</small></li>`;
                 }).join("");
-                if (n === tot) $("[data-fim-info]").textContent += " · coleção completa!";
+                if (n === tot) $("[data-fim-info]").textContent += " · todos os power-ups!";
 
                 if (recorde) som.recorde();
                 som.fimDeJogo();
@@ -917,27 +1070,71 @@
                 foco(painel.fim.querySelector('[data-act="again"]'));
             };
 
+            const dentro = (x, y) => x >= 0 && y >= 0 && x < N && y < N;
+            const bateNoCorpo = (x, y, ate) => {
+                for (let i = 0; i < ate; i++) if (cobra[i].gx === x && cobra[i].gy === y) return true;
+                return false;
+            };
+
             const passo = () => {
                 if (fila.length) dirIdx = fila.shift();
-                const d = DIRS[dirIdx];
+                let d = DIRS[dirIdx];
                 const cab = cobra[0];
-                const nx = cab.gx + d.x, ny = cab.gy + d.y;
-                const comer = bit && nx === bit.gx && ny === bit.gy;
-                if (nx < 0 || ny < 0 || nx >= N || ny >= N) return morrer("parede", nx, ny);
+                let nx = cab.gx + d.x, ny = cab.gy + d.y;
+                let comer = bit && nx === bit.gx && ny === bit.gy;
                 // a ponta da cauda sai do lugar quando a cobra não cresce, então pode ser pisada
-                const limite = comer ? cobra.length : cobra.length - 1;
-                for (let i = 0; i < limite; i++) {
-                    if (cobra[i].gx === nx && cobra[i].gy === ny) return morrer("corpo", nx, ny);
+                const limite = () => (comer ? cobra.length : cobra.length - 1);
+                let batida = !dentro(nx, ny) ? "parede" : !buffs.sombra && bateNoCorpo(nx, ny, limite()) ? "corpo" : null;
+
+                if (batida && buffs.escudo) {
+                    // o escudo gasta a batida e desvia para o primeiro lado livre
+                    for (const delta of [3, 1]) {
+                        const di = (dirIdx + delta) % 4, dd = DIRS[di];
+                        const tx = cab.gx + dd.x, ty = cab.gy + dd.y;
+                        if (dentro(tx, ty) && (buffs.sombra || !bateNoCorpo(tx, ty, cobra.length - 1))) {
+                            dirIdx = di; d = dd; nx = tx; ny = ty;
+                            comer = bit && nx === bit.gx && ny === bit.gy;
+                            batida = null;
+                            break;
+                        }
+                    }
+                    if (!batida) {
+                        delete buffs.escudo;
+                        chipDesligar("escudo");
+                        som.escudo();
+                        abalar(8);
+                        flash();
+                        avisar("Escudo salvou você!", 1800);
+                        const q = proj(cab.gx, cab.gy);
+                        estourar(q.x, q.y - CH * 0.5, 12, T.miniCiano, 1.2);
+                    }
                 }
+                if (batida) return morrer(batida, nx, ny);
+
                 const ponta = cobra[cobra.length - 1];
                 const cx = ponta.gx, cy = ponta.gy;
                 for (let i = cobra.length - 1; i > 0; i--) {
-                    const s = cobra[i], p = cobra[i - 1];
-                    s.pgx = s.gx; s.pgy = s.gy; s.gx = p.gx; s.gy = p.gy;
+                    const sg = cobra[i], pr = cobra[i - 1];
+                    sg.pgx = sg.gx; sg.pgy = sg.gy; sg.gx = pr.gx; sg.gy = pr.gy;
                 }
                 cab.pgx = cab.gx; cab.pgy = cab.gy; cab.gx = nx; cab.gy = ny;
                 cab.s.texture = T.cabeca[faceDe(dirIdx)].tex;
                 if (comer) { crescer(cx, cy); comerBit(); }
+                if (pu && nx === pu.gx && ny === pu.gy) pegarPu();
+
+                if (buffs.ima && bit) {
+                    // puxa o bit, até 2 casas por passo, para a casa à frente da cabeça
+                    const ax = clamp(nx + d.x, 0, N - 1), ay = clamp(ny + d.y, 0, N - 1);
+                    for (let k = 0; k < 2; k++) {
+                        const ddx = ax - bit.gx, ddy = ay - bit.gy;
+                        if (Math.abs(ddx) + Math.abs(ddy) > 7 || (!ddx && !ddy)) break;
+                        const mx = Math.abs(ddx) >= Math.abs(ddy) ? Math.sign(ddx) : 0;
+                        const my = mx ? 0 : Math.sign(ddy);
+                        const tx = bit.gx + mx, ty = bit.gy + my;
+                        if (cobra.some((sg) => sg.gx === tx && sg.gy === ty) || (pu && pu.gx === tx && pu.gy === ty)) break;
+                        bit.gx = tx; bit.gy = ty;
+                    }
+                }
             };
 
             const comecar = (dir) => {
@@ -1136,9 +1333,28 @@
                 } else if (estado === "jogando") {
                     acum += dt;
                     if (comboMs > 0) {
-                        comboMs -= dt;
+                        if (!buffs.gota) comboMs -= dt; // "Gota": a janela do combo não corre
                         if (comboMs <= 0) { combo = 0; pintarCombo(); }
                         elCombo.style.setProperty("--p", clamp(comboMs / COMBO_JANELA, 0, 1).toFixed(3));
+                    }
+                    Object.keys(buffs).forEach((id) => {
+                        const b = buffs[id];
+                        b.ms -= dt;
+                        if (chips[id]) chips[id].style.setProperty("--p", clamp(b.ms / b.dur, 0, 1).toFixed(3));
+                        if (b.ms <= 0) {
+                            delete buffs[id];
+                            chipDesligar(id);
+                            som.fimEfeito();
+                            recalcPasso();
+                        }
+                    });
+                    if (pu) {
+                        pu.vida -= dt;
+                        if (pu.vida <= 0) {
+                            const q = proj(pu.gx, pu.gy);
+                            estourar(q.x, q.y - CH * 0.4, 6, T.miniAmbar, 0.7);
+                            removerPu();
+                        }
                     }
                     let guarda = 0;
                     while (estado === "jogando" && acum >= passoMs && guarda++ < 4) {
@@ -1267,6 +1483,7 @@
                     const nasc = clamp((tempo - c.nasc) / 240, 0, 1);
                     const crescendo = nasc < 1 ? easeOutBack(nasc) : 1;
 
+                    if (buffs.sombra) alfa *= i === 0 ? 0.85 : 0.5;
                     c.s.position.set(x, y - alt);
                     c.s.scale.set(sx * crescendo, sy * crescendo);
                     c.s.alpha = alfa;
@@ -1278,13 +1495,17 @@
                 });
 
                 if (bit) {
-                    const p = proj(bit.gx, bit.gy);
+                    // o ímã arrasta o bit casa a casa: a posição desenhada vai atrás da lógica
+                    const suave = Math.min(1, dt / 70);
+                    bit.dx += (bit.gx - bit.dx) * suave;
+                    bit.dy += (bit.gy - bit.dy) * suave;
+                    const p = proj(bit.dx, bit.dy);
                     const k = clamp((tempo - bit.nasc - (noIntro ? 0 : 0)) / 320, 0, 1);
                     const surgir = noIntro ? clamp((intro.t - 1300) / 400, 0, 1) : easeOutBack(k);
                     const boia = 4 + Math.sin(tempo / 260 + bit.gx) * 3;
                     bit.s.position.set(p.x, p.y - CH * 0.22 - boia);
                     bit.s.scale.set(surgir);
-                    bit.s.zIndex = bit.gx + bit.gy + 0.03;
+                    bit.s.zIndex = bit.dx + bit.dy + 0.03;
                     bit.brilho.position.set(p.x, p.y - CH * 0.4 - boia);
                     bit.brilho.scale.set(0.95 + 0.2 * Math.sin(tempo / 300) * surgir);
                     bit.brilho.alpha = surgir * (0.7 + 0.3 * Math.sin(tempo / 300));
@@ -1292,6 +1513,44 @@
                     bit.anel.position.set(p.x, p.y);
                     bit.anel.scale.set((0.6 + pul * 0.7) * surgir);
                     bit.anel.alpha = (1 - pul) * 0.75 * surgir;
+                }
+
+                if (pu) {
+                    const p = proj(pu.gx, pu.gy);
+                    const k = clamp((tempo - pu.nasc) / 380, 0, 1);
+                    const surgir = easeOutBack(k);
+                    // nos últimos 3 s pisca, avisando que vai sumir
+                    const pisca = pu.vida < 3000 ? (Math.sin(tempo / 70) > 0 ? 1 : 0.25) : 1;
+                    const boia = 7 + Math.sin(tempo / 300) * 4;
+                    pu.s.position.set(p.x, p.y - CH * 0.32 - boia);
+                    pu.s.scale.set(surgir);
+                    pu.s.alpha = pisca;
+                    pu.s.zIndex = pu.gx + pu.gy + 0.04;
+                    pu.brilho.position.set(p.x, p.y - CH * 0.55 - boia);
+                    pu.brilho.scale.set((1.25 + 0.25 * Math.sin(tempo / 240)) * surgir);
+                    pu.brilho.alpha = surgir * pisca * 0.85;
+                    if (pu.feixe) {
+                        pu.feixe.position.set(p.x, p.y);
+                        pu.feixe.scale.set(0.6 * surgir, 2.3 * surgir);
+                        pu.feixe.alpha = surgir * pisca * 0.7;
+                    }
+                    const pul = (tempo % 900) / 900;
+                    pu.anel.position.set(p.x, p.y);
+                    pu.anel.scale.set((0.7 + pul * 0.9) * surgir);
+                    pu.anel.alpha = (1 - pul) * pisca;
+                }
+
+                // aura na cabeça, na cor do efeito mais recente
+                const ids = Object.keys(buffs);
+                if (!lite && ids.length && cobra[0] && cobra[0].s.visible) {
+                    const ult = buffs[ids[ids.length - 1]];
+                    aura.visible = true;
+                    aura.tint = hex(ult.c.cor);
+                    aura.position.set(cobra[0].s.x, cobra[0].s.y - CH * 0.3);
+                    aura.scale.set(1.3 + 0.12 * Math.sin(tempo / 180));
+                    aura.alpha = ult.ms < 1800 && Math.sin(tempo / 60) > 0 ? 0.3 : 0.85;
+                } else {
+                    aura.visible = false;
                 }
             };
 
@@ -1313,6 +1572,9 @@
                     get passoMs() { return passoMs; },
                     get fps() { return app.ticker.FPS; },
                     get app() { return app; },
+                    get pu() { return pu && { id: pu.c.id, gx: pu.gx, gy: pu.gy }; },
+                    get buffs() { return Object.keys(buffs); },
+                    forcarPu: (id) => spawnPu(COLECAO.find((c) => c.id === id)),
                     dados,
                 });
             }

@@ -226,10 +226,58 @@
 }
 
 .sbg-tool:focus-visible,
-.sbg-slot:focus-visible,
 .sbg-foot a:focus-visible {
     outline: 2px solid var(--cyan);
     outline-offset: 3px;
+}
+
+/* -- efeitos ativos (power-ups) --------------------------------------------
+   Uma pílula por efeito, na cor do projeto/integrante dono do cubo, com a
+   barrinha de tempo restante embaixo. Fica sob o placar, à esquerda. */
+.sbg-buffs {
+    position: absolute;
+    top: calc(max(12px, env(safe-area-inset-top)) + 62px);
+    left: max(16px, env(safe-area-inset-left));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.sbg-buff {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 13px 8px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c);
+    background: rgba(8, 14, 22, 0.78);
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    animation: sbg-pop 0.3s var(--ease);
+}
+
+.sbg-buff i {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--c);
+    box-shadow: 0 0 10px var(--c);
+    rotate: 45deg;
+}
+
+.sbg-buff b {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: calc(var(--p, 1) * 100%);
+    background: var(--c);
 }
 
 /* -- dica e aviso, colados no pé da tela ---------------------------------- */
@@ -450,6 +498,7 @@
 }
 
 .sbg-slot {
+    list-style: none;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -459,13 +508,22 @@
     text-align: center;
     color: var(--text-faint);
     text-decoration: none;
-    transition: background-color 0.2s, transform 0.25s var(--ease);
 }
 
 .sbg-slot svg {
     width: 30px;
     height: 35px;
     opacity: 0.55;
+}
+
+.sbg-slot em {
+    margin-top: 1px;
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
 }
 
 .sbg-slot b {
@@ -494,11 +552,6 @@
 
 .sbg-slot.is-on small {
     color: var(--text-dim);
-}
-
-a.sbg-slot:hover {
-    background: rgba(106, 216, 254, 0.1);
-    transform: translateY(-2px);
 }
 
 .sbg-slot.is-new svg {
@@ -533,7 +586,8 @@ a.sbg-slot:hover {
         margin-top: 14px;
     }
 
-    .sbg-slot small {
+    .sbg-slot small,
+    .sbg-slot em {
         display: none;
     }
 
