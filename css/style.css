@@ -1481,6 +1481,110 @@ p {
     opacity: 0;
 }
 
+/* -- o escorpião é o botão do jogo escondido (Rabo de Cubos) ---------------
+   O orbe inteiro é `pointer-events: none` para a órbita e o vídeo nunca
+   roubarem clique; só este botão, por cima do mascote, volta a aceitar. */
+.hero-play {
+    position: absolute;
+    inset: 2% 6% 0;
+    z-index: 3;
+    padding: 0;
+    border: 0;
+    border-radius: 32px;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hero-play:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 4px;
+}
+
+.hero-play-chip {
+    position: absolute;
+    left: 50%;
+    bottom: -14px;
+    translate: -50% 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px 6px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--hair-lit);
+    background: rgba(8, 14, 22, 0.78);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    white-space: nowrap;
+    opacity: 0;
+    animation: chip-in 0.9s var(--ease) 2.6s forwards;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+}
+
+.hero-play-chip i {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4.5px 0 4.5px 7px;
+    border-color: transparent transparent transparent currentColor;
+}
+
+@keyframes chip-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.hero-orb:has(.hero-play:hover) .hero-mascot,
+.hero-orb:has(.hero-play:focus-visible) .hero-mascot {
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.65))
+        drop-shadow(0 0 26px rgba(106, 216, 254, 0.55));
+}
+
+.hero-play:hover .hero-play-chip,
+.hero-play:focus-visible .hero-play-chip {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    color: var(--ink-950);
+}
+
+/* clique: agacha, estica e pisca antes de a tela do jogo abrir */
+.hero-orb.is-launching .hero-mascot {
+    animation: play-squash 0.6s var(--ease) both;
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.65))
+        drop-shadow(0 0 44px rgba(106, 216, 254, 0.95));
+}
+
+.hero-orb.is-launching .hero-play-chip {
+    opacity: 0;
+    animation: none;
+}
+
+@keyframes play-squash {
+    0% {
+        transform: scale(1);
+    }
+    28% {
+        transform: scale(1.1, 0.86) translateY(8px);
+    }
+    62% {
+        transform: scale(0.94, 1.1) translateY(-14px);
+    }
+    100% {
+        transform: scale(1.06);
+    }
+}
+
 @keyframes hover-y {
     50% {
         transform: translateY(-14px);
