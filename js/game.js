@@ -915,6 +915,7 @@
                 novosRun = [];
                 pulsoComer = 0;
                 elPontos.textContent = "0";
+                elRecorde.textContent = dados.best;
                 elCombo.hidden = true;
                 removerPu();
                 limparEfeitos();
@@ -971,6 +972,8 @@
             const setPontos = (v) => {
                 pontos = v;
                 elPontos.textContent = v;
+                // o recorde acompanha o placar ao vivo (só é gravado no fim da partida)
+                if (v > dados.best) elRecorde.textContent = v;
                 elPontos.classList.remove("is-bump");
                 void elPontos.offsetWidth;
                 elPontos.classList.add("is-bump");
@@ -1574,6 +1577,7 @@
                     get app() { return app; },
                     get pu() { return pu && { id: pu.c.id, gx: pu.gx, gy: pu.gy }; },
                     get buffs() { return Object.keys(buffs); },
+                    get combo() { return combo; },
                     forcarPu: (id) => spawnPu(COLECAO.find((c) => c.id === id)),
                     dados,
                 });
