@@ -190,7 +190,7 @@
         <section class="wrap bay" id="no-ar" style="padding-top:0">
             <header class="sec-head reveal">
                 <span class="tag">No ar</span>
-                <h2 class="sec-title">Dá para jogar agora</h2>
+                <h2 class="sec-title">Escolha um e jogue</h2>
             </header>
 
             <div class="games games--stack reveal stagger">
@@ -224,59 +224,40 @@
                         </div>
                     </div>
                 </article>
+
+                <article class="work-item game game--feature">
+                    <div class="game-cover">
+                        <img src="assets/projetos/rabo-de-cubos.webp" width="1440" height="810"
+                            loading="lazy" decoding="async"
+                            alt="Tabuleiro isométrico do Rabo de Cubos: uma cauda de cubos azuis cresce perto de um cubo amarelo brilhante.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--live">No ar</span>
+                        <h3>Rabo de Cubos</h3>
+                        <p>
+                            Um jogo da cobrinha em visual isométrico. Você é o escorpião da
+                            Scorpion Bits: coma os bits e cada um vira um cubo na sua
+                            cauda. Não bata nas paredes nem em você mesmo.
+                        </p>
+                        <ul class="regua">
+                            <li><b>Gênero</b> Arcade / snake</li>
+                            <li><b>Controles</b> Setas do teclado ou deslizar no celular</li>
+                            <li><b>Plataformas</b> Navegador (computador e celular)</li>
+                            <li><b>Preço</b> Gratuito</li>
+                        </ul>
+                        <div class="game-actions">
+                            <button type="button" class="btn btn--solid" data-rabo-open aria-haspopup="dialog">
+                                Jogar agora
+                                <svg class="icon">
+                                    <use href="#i-arrow-right" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
             </div>
         </section>
 
-        <section class="wrap bay" id="em-breve" style="padding-top:0">
-            <header class="sec-head reveal">
-                <span class="tag">Em breve</span>
-                <h2 class="sec-title">O que vem a seguir</h2>
-                <p class="sec-lead">
-                    Ideias na fila para esta página. Ainda não dá para jogar: o
-                    estágio abaixo é o real.
-                </p>
-            </header>
-
-            <div class="games games--trio reveal stagger">
-                <article class="work-item game">
-                    <div class="game-cover game-cover--conceito">
-                        <svg viewBox="-11 -11 22 22" aria-hidden="true" focusable="false">
-                            <path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5"
-                                fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round" />
-                        </svg>
-                        <span>Sem arte final ainda</span>
-                    </div>
-                    <div class="game-body">
-                        <span class="pill pill--next">Ideia</span>
-                        <h3>Cubodle</h3>
-                        <p>
-                            Um jogo diário de adivinhação: descubra o cubo do dia pelas
-                            pistas de cada palpite. Um desafio novo por dia, igual para
-                            todos.
-                        </p>
-                    </div>
-                </article>
-
-                <article class="work-item game">
-                    <div class="game-cover game-cover--conceito">
-                        <svg viewBox="-11 -11 22 22" aria-hidden="true" focusable="false">
-                            <path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5"
-                                fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round" />
-                        </svg>
-                        <span>Sem arte final ainda</span>
-                    </div>
-                    <div class="game-body">
-                        <span class="pill pill--next">Ideia</span>
-                        <h3>Cubo Stack</h3>
-                        <p>
-                            Empilhe cubos isométricos com um toque e monte a torre mais
-                            alta. Partidas curtas, feito para o celular.
-                        </p>
-                    </div>
-                </article>
-
-            </div>
-        </section>
     </main>
 
     <footer class="site-footer">
@@ -289,6 +270,71 @@
     </footer>
 
     <script src="js/main.js?v=90" defer></script>
+    <script>
+        /* Rabo de Cubos: o mesmo jogo escondido no escorpião da home. O Pixi e o
+           jogo só são baixados quando alguém clica em "Jogar agora". */
+        (function () {
+            var botao = document.querySelector("[data-rabo-open]");
+            if (!botao) return;
+            var raiz = document.documentElement, carga = null, aberto = false;
+
+            function script(src) {
+                return new Promise(function (ok, falha) {
+                    var s = document.createElement("script");
+                    s.src = src; s.onload = ok;
+                    s.onerror = function () { falha(new Error(src)); };
+                    document.head.appendChild(s);
+                });
+            }
+            function carregar() {
+                if (window.ScorpionGame) return Promise.resolve();
+                if (carga) return carga;
+                var css = document.createElement("link");
+                css.rel = "stylesheet"; css.href = "css/game.css?v=1";
+                document.head.appendChild(css);
+                var estilo = new Promise(function (ok) { css.onload = ok; css.onerror = ok; });
+                carga = Promise.all([estilo, script("assets/vendor/pixi.min.js?v=8.22.0").then(function () { return script("js/game.js?v=1"); })])
+                    .then(function () {}, function (e) { carga = null; throw e; });
+                return carga;
+            }
+            function origem() {
+                var r = botao.getBoundingClientRect();
+                return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+            }
+            var rotulo = botao.firstChild;
+            function aviso(msg) {
+                aberto = false;
+                botao.firstChild.nodeValue = msg + " ";
+                setTimeout(function () { botao.firstChild.nodeValue = "Jogar agora "; }, 3500);
+            }
+
+            botao.addEventListener("click", function () {
+                if (aberto) return;
+                aberto = true;
+                var audio = null;
+                try {
+                    var AC = window.AudioContext || window.webkitAudioContext;
+                    if (AC) { audio = new AC(); if (audio.resume) audio.resume().catch(function () {}); }
+                } catch (e) {}
+                carregar().then(function () {
+                    raiz.classList.add("sbg-open");
+                    var fraco = (navigator.hardwareConcurrency || 4) <= 2 || (navigator.deviceMemory || 4) <= 2;
+                    return window.ScorpionGame.open({
+                        origin: origem(), getOrigin: origem, lite: fraco, audioCtx: audio,
+                        onClose: function () {
+                            raiz.classList.remove("sbg-open");
+                            aberto = false;
+                            botao.focus({ preventScroll: true });
+                        }
+                    });
+                }).catch(function () {
+                    raiz.classList.remove("sbg-open");
+                    aviso("Indisponível");
+                });
+            });
+        })();
+    </script>
+
 </body>
 
 </html>
