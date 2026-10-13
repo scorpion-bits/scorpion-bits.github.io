@@ -1,6 +1,6 @@
-// Gerado por scripts/pwa-plugin.mjs — não edite. Versão ec6b7c46ce.
-const CACHE = 'loja-ec6b7c46ce';
-const ARQUIVOS = ["./","./assets/icones-32-CVIZnIZZ.png","./assets/icones-64-DqgNsHgp.png","./assets/index-Cea6-wC4.js","./icons/apple-touch-icon.png","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./index.html","./manifest.webmanifest","../assets/vendor/pixi.min.js?v=8.22.0","../assets/fonts/grotesk-latin.woff2","../assets/fonts/inter-latin.woff2","../assets/logo-glyph.png","../assets/favicon.png"];
+// Gerado por scripts/pwa-plugin.mjs — não edite. Versão 87f7bc9d20.
+const CACHE = 'loja-87f7bc9d20';
+const ARQUIVOS = ["./","./assets/icones-32-CVIZnIZZ.png","./assets/icones-64-DqgNsHgp.png","./assets/index-DEykRK7f.js","./assets/retratos-C-XM_UwE.png","./icons/apple-touch-icon.png","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./index.html","./manifest.webmanifest","../assets/vendor/pixi.min.js?v=8.22.0","../assets/fonts/grotesk-latin.woff2","../assets/fonts/inter-latin.woff2","../assets/logo-glyph.png","../assets/favicon.png"];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
