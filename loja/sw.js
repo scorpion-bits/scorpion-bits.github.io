@@ -1,6 +1,6 @@
-// Gerado por scripts/pwa-plugin.mjs — não edite. Versão 959806c05a.
-const CACHE = 'loja-959806c05a';
-const ARQUIVOS = ["./","./assets/icones-32-CVIZnIZZ.png","./assets/icones-64-DqgNsHgp.png","./assets/index-B4ChQJeK.js","./assets/retratos-C-XM_UwE.png","./assets/taverna-ao-entardecer-BLhTD2TL.ogg","./icons/apple-touch-icon.png","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./index.html","./manifest.webmanifest","../assets/vendor/pixi.min.js?v=8.22.0","../assets/fonts/grotesk-latin.woff2","../assets/fonts/inter-latin.woff2","../assets/logo-glyph.png","../assets/favicon.png"];
+// Gerado por scripts/pwa-plugin.mjs — não edite. Versão a985c95bc4.
+const CACHE = 'loja-a985c95bc4';
+const ARQUIVOS = ["./","./assets/icones-32-CVIZnIZZ.png","./assets/icones-64-DqgNsHgp.png","./assets/index-qR9kKs5I.js","./assets/retratos-C-XM_UwE.png","./assets/taverna-ao-entardecer-C9JiG4QF.mp3","./icons/apple-touch-icon.png","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./index.html","./manifest.webmanifest","../assets/vendor/pixi.min.js?v=8.22.0","../assets/fonts/grotesk-latin.woff2","../assets/fonts/inter-latin.woff2","../assets/logo-glyph.png","../assets/favicon.png"];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
