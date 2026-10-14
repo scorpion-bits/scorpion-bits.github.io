@@ -1,6 +1,6 @@
-// Gerado por scripts/pwa-plugin.mjs — não edite. Versão 1f1981e314.
-const CACHE = 'loja-1f1981e314';
-const ARQUIVOS = ["./","./assets/index-BvpNRhA8.js","./assets/itens-CYXa7utg.png","./assets/mapa-BLtqpVeY.png","./assets/retratos-Db8eypHk.png","./assets/taverna-ao-entardecer-C9JiG4QF.mp3","./icons/apple-touch-icon.png","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./index.html","./manifest.webmanifest","../assets/vendor/pixi.min.js?v=8.22.0","../assets/fonts/grotesk-latin.woff2","../assets/fonts/inter-latin.woff2","../assets/logo-glyph.png","../assets/favicon.png"];
+// Gerado por scripts/pwa-plugin.mjs — não edite. Versão b07c5d943c.
+const CACHE = 'loja-b07c5d943c';
+const ARQUIVOS = ["./","./assets/index-DNn7Crcz.js","./assets/itens-CYXa7utg.png","./assets/mapa-BLtqpVeY.png","./assets/retratos-Db8eypHk.png","./assets/taverna-ao-entardecer-C9JiG4QF.mp3","./icons/apple-touch-icon.png","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./index.html","./manifest.webmanifest","../assets/vendor/pixi.min.js?v=8.22.0","../assets/fonts/grotesk-latin.woff2","../assets/fonts/inter-latin.woff2","../assets/logo-glyph.png","../assets/favicon.png"];
 
 // cache: 'reload' pula o cache HTTP do navegador (a página tem max-age de minutos): sem isso o service worker novo podia guardar
 // o index.html velho e o app ficava preso na versão antiga
