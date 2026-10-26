@@ -2152,6 +2152,38 @@ p {
     max-width: 54ch;
 }
 
+/* Rótulo de grupo da seção de cursos ("Agenda", "Já aconteceram"): a
+   mesma voz mono da legenda do card, com um fio que corre até a borda. */
+.cursos-grupo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
+    font-family: var(--font-mono);
+    font-size: var(--s--1);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+}
+
+.cursos-grupo::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--hair);
+}
+
+/* um curso e o rótulo do grupo seguinte não podem encostar */
+.course + .cursos-grupo {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+}
+
+/* o título da seção é o h2; cada curso ganha o seu h3 */
+.curso-titulo {
+    font-size: var(--s-2);
+    margin-bottom: 14px;
+}
+
 /* ----------------------------------------------------------------- time -- */
 /* Cluster de avatares sobrepostos + palco arrastável. */
 .crew {
