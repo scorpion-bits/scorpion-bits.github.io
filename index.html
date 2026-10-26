@@ -265,7 +265,7 @@
             <div class="dock-panel" id="dock-panel">
                 <nav class="dock-nav" aria-label="Principal">
                     <a class="dock-link" href="#estudio">Estúdio</a>
-                    <a class="dock-link" href="#curso">Curso</a>
+                    <a class="dock-link" href="#curso">Cursos</a>
                     <a class="dock-link" href="#equipe">Equipe</a>
                     <a class="dock-link" href="#projetos">Projetos</a>
                     <a class="dock-link" href="jogos.html">Jogos</a>
@@ -425,13 +425,13 @@
 
             <p class="hero-note hero-note--r">
                 <i></i>
-                <span><b>Curso GameLab</b>game dev no SESC</span>
+                <span><b>Cursos</b>game dev do zero</span>
             </p>
             </div>
 
             <div class="hero-actions">
                 <a class="btn btn--solid btn--lg" href="#curso">
-                    Ver o curso SESC
+                    Ver os cursos
                     <svg class="icon">
                         <use href="#i-arrow-right" />
                     </svg>
@@ -552,55 +552,108 @@
         </section>
 
         <!-- =============================================================
-             CURSO SESC
+             CURSOS — o próximo (ou em andamento) em cima, os concluídos embaixo
              ============================================================= -->
         <section class="wrap bay" id="curso">
+            <header class="sec-head reveal" style="max-width:56ch">
+                <span class="sec-index">03 / 05 — Educação</span>
+                <h2 class="sec-title">Ensinamos game dev<br>do zero</h2>
+                <p class="sec-lead">
+                    Cursos e oficinas presenciais para quem nunca programou, com
+                    material escrito por nós. Godot do primeiro nó ao jogo pronto.
+                </p>
+            </header>
+
+            <p class="cursos-grupo reveal">Agenda</p>
+
             <div class="course reveal">
                 <div class="course-figure">
                     <div class="lab-topo">
-                        <img class="lab-logo" src="assets/game-lab-logo.png" width="917" height="817"
-                            loading="lazy" decoding="async" alt="Logo do GameLab">
-                        <p class="lab-legenda">Primeiro encontro · SESC Araraquara</p>
+                        <p class="lab-legenda">Semana da Informática · IFSP Araraquara</p>
                     </div>
 
                     <figure class="lab-shot">
-                        <img src="assets/game-lab-oficina.jpg" width="1200" height="900"
+                        <img src="assets/astrodash-capa.webp" width="1280" height="720"
                             loading="lazy" decoding="async"
-                            alt="Turma do GameLab sentada em roda no SESC Araraquara, com o site da Scorpion Bits projetado na parede ao fundo.">
-                    </figure>
-
-                    <figure class="lab-shot lab-shot--turma">
-                        <img src="assets/game-lab-turma.jpg" width="1200" height="900"
-                            loading="lazy" decoding="async"
-                            alt="Foto de grupo da turma do GameLab no fim do primeiro encontro.">
+                            alt="Tela inicial do AstroDash em pixel art: o título ASTRODASH entre dois asteroides, com os botões Play e Quit sobre um céu estrelado.">
                     </figure>
                 </div>
 
                 <div class="course-body">
-                    <span class="sec-index">03 / 05 — Educação</span>
-                    <h2 class="sec-title">Ensinamos game dev<br>do zero no SESC</h2>
+                    <!-- O status muda sozinho pela data (js/main.js): em breve,
+                         acontecendo agora ou concluído. -->
+                    <span class="pill pill--wip" data-curso-inicio="2026-10-26" data-curso-fim="2026-10-27"
+                        data-curso-datas="26 e 27/10">Em breve · 26 e 27/10</span>
+                    <h3 class="curso-titulo">Mini curso AstroDash</h3>
                     <p>
-                        A primeira turma do <strong>GameLab</strong> foi concluída em 22
-                        de setembro. Foram 15 encontros presenciais, do zero absoluto até
-                        um jogo 2D top-down completo em Godot. A maioria dos alunos nunca
-                        tinha programado antes — o material foi escrito do começo, por
-                        nós, pensando exatamente nisso, e está público e aberto.
+                        Oficina de <strong>Desenvolvimento de Jogos</strong> na Semana da
+                        Informática do IFSP Araraquara. Em duas aulas a turma cria do zero,
+                        em Godot, um jogo de sobrevivência no espaço: asteroides vindo de
+                        todas as direções e uma nave que precisa desviar o máximo de tempo
+                        possível. Os slides e todos os códigos estão abertos.
                     </p>
 
                     <ul class="regua">
-                        <li><b>Turma</b> GameLab · SESC Araraquara</li>
-                        <li><b>Encontros</b> 15, presenciais</li>
-                        <li><b>Engine</b> Godot · GDScript</li>
-                        <li><b>Material</b> 21 módulos publicados</li>
+                        <li><b>Local</b> IFSP Araraquara · Lab. de Informática</li>
+                        <li><b>Datas</b> 26 e 27 de outubro</li>
+                        <li><b>Manhã</b> 10h–11h20</li>
+                        <li><b>Tarde</b> 16h30–17h50</li>
+                        <li><b>Engine</b> Godot 4.7 · GDScript</li>
                     </ul>
 
-                    <a class="btn btn--solid" href="https://learn.scorpionbits.com" target="_blank" rel="noopener">
-                        Abrir o material
-                        <svg class="icon">
-                            <use href="#i-external" />
-                        </svg>
-                    </a>
+                    <div class="curso-acoes">
+                        <!-- some sozinho depois do último dia do curso (js/main.js) -->
+                        <a class="btn btn--solid" href="https://arq.ifsp.edu.br/semanadainformatica/"
+                            target="_blank" rel="noopener" data-curso-inscricao>
+                            Fazer inscrição
+                            <svg class="icon">
+                                <use href="#i-external" />
+                            </svg>
+                        </a>
+                        <a class="btn btn--wire" href="https://scorpionbits.com/mini-curso-astrodash/slides/#1"
+                            target="_blank" rel="noopener">
+                            Abrir o material
+                            <svg class="icon">
+                                <use href="#i-external" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
+            </div>
+
+            <p class="cursos-grupo reveal">Já aconteceram</p>
+
+            <div class="cursos-feitos reveal">
+                <article class="curso-card">
+                    <img class="curso-card-foto" src="assets/game-lab-turma.jpg" width="1200" height="900"
+                        loading="lazy" decoding="async"
+                        alt="Foto de grupo da turma do GameLab no fim do primeiro encontro, no SESC Araraquara.">
+                    <div>
+                        <span class="pill pill--next">Concluído · 22 set</span>
+                        <h3 class="curso-card-titulo">GameLab no SESC</h3>
+                        <p>
+                            15 encontros presenciais, do zero absoluto até um jogo 2D
+                            top-down completo em Godot.
+                        </p>
+                        <ul class="curso-card-meta">
+                            <li>SESC Araraquara</li>
+                            <li>15 encontros</li>
+                            <li>Godot</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="curso-card curso-card--convite">
+                    <div>
+                        <span class="pill pill--wip">Em breve</span>
+                        <h3 class="curso-card-titulo">Próximos cursos</h3>
+                        <p>
+                            Quer levar uma oficina de game dev para a sua escola, empresa ou
+                            evento? A gente monta o material do zero.
+                        </p>
+                        <a class="btn btn--wire" href="contato.html">Falar com a gente</a>
+                    </div>
+                </article>
             </div>
         </section>
 
@@ -1019,12 +1072,12 @@
                 </div>
 
                 <div class="footer-col">
-                    <h4>Curso</h4>
+                    <h4>Cursos</h4>
                     <ul>
-                        <li><a href="#curso">Curso no SESC</a></li>
+                        <li><a href="#curso">Cursos e oficinas</a></li>
                         <li>
-                            <a href="https://learn.scorpionbits.com" target="_blank" rel="noopener">Material das
-                                aulas</a>
+                            <a href="https://scorpionbits.com/mini-curso-astrodash/slides/#1" target="_blank"
+                                rel="noopener">Material do AstroDash</a>
                         </li>
                     </ul>
                 </div>

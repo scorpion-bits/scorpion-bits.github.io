@@ -1122,6 +1122,40 @@
         else addEventListener("load", aposCarga, { once: true });
     }
 
+    /* ------------------------------------------- status dos cursos -- */
+    /* A etiqueta de cada curso agendado se atualiza pela data de hoje, então
+       o site não fica dizendo "em breve" depois que o curso já passou. As
+       datas vêm do HTML (data-curso-inicio / data-curso-fim, AAAA-MM-DD). */
+    document.querySelectorAll("[data-curso-inicio]").forEach((pill) => {
+        const hoje = new Date();
+        const dia = (iso) => {
+            const [a, m, d] = iso.split("-").map(Number);
+            return new Date(a, m - 1, d);
+        };
+        const inicio = dia(pill.dataset.cursoInicio);
+        const fim = dia(pill.dataset.cursoFim);
+        fim.setDate(fim.getDate() + 1); // o último dia conta inteiro
+
+        let classe = "pill--wip";
+        let texto = "Em breve · " + pill.dataset.cursoDatas;
+        if (hoje >= fim) {
+            classe = "pill--next";
+            texto = "Concluído · " + pill.dataset.cursoDatas;
+        } else if (hoje >= inicio) {
+            classe = "pill--live";
+            texto = "Acontecendo agora";
+        }
+        pill.classList.remove("pill--wip", "pill--live", "pill--next");
+        pill.classList.add(classe);
+        pill.textContent = texto;
+
+        // inscrição não faz sentido depois que o curso acabou
+        if (hoje >= fim) {
+            const curso = pill.closest(".course");
+            curso?.querySelectorAll("[data-curso-inscricao]").forEach((b) => b.remove());
+        }
+    });
+
     if (!("IntersectionObserver" in window)) return;
 
     /* --------------------------------------------- entrada das seções -- */
