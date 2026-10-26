@@ -2178,6 +2178,13 @@ p {
     margin-top: clamp(3.5rem, 8vw, 5.5rem);
 }
 
+/* botões do curso da agenda (inscrição + material) lado a lado */
+.curso-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
 /* o título da seção é o h2; cada curso ganha o seu h3 */
 .curso-titulo {
     font-size: var(--s-2);

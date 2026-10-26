@@ -1148,6 +1148,12 @@
         pill.classList.remove("pill--wip", "pill--live", "pill--next");
         pill.classList.add(classe);
         pill.textContent = texto;
+
+        // inscrição não faz sentido depois que o curso acabou
+        if (hoje >= fim) {
+            const curso = pill.closest(".course");
+            curso?.querySelectorAll("[data-curso-inscricao]").forEach((b) => b.remove());
+        }
     });
 
     if (!("IntersectionObserver" in window)) return;
