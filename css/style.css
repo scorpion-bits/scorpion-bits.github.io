@@ -3730,20 +3730,8 @@ a.hero-play {
     text-underline-offset: 3px;
 }
 
-/* marcador de conteúdo que falta: tracejado âmbar, impossível de confundir
-   com texto final */
-.service-cases li.falta,
-.falta {
-    border: 1px dashed rgba(255, 196, 107, 0.5);
-    background: rgba(255, 196, 107, 0.05);
-    color: var(--amber);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-}
-
-p.falta {
-    padding: 12px 14px;
-    border-radius: var(--r-sm);
+.service-inclui {
+    margin-bottom: 24px;
 }
 
 .service-actions {
@@ -3752,37 +3740,6 @@ p.falta {
     align-items: center;
     gap: 14px 24px;
     margin-top: auto;
-}
-
-/* case em destaque (Colectal): texto de um lado, espaços de imagem do outro */
-.case {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: clamp(1.25rem, 3.5vw, 3rem);
-    align-items: start;
-}
-
-.work-item.case h3 {
-    font-size: var(--s-2);
-}
-
-.work-item.case p {
-    color: var(--text-soft);
-}
-
-.case-shots {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.case-shots .game-cover {
-    border: 1px solid var(--hair);
-    border-radius: var(--r-sm);
-}
-
-.case-shots .game-cover:first-child {
-    grid-column: 1 / -1;
 }
 
 /* -- como funciona: quatro passos numerados ------------------------------- */
@@ -4120,7 +4077,6 @@ button.btn[disabled] {
     }
 
     .service,
-    .case,
     .form-shell {
         grid-template-columns: 1fr;
     }

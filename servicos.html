@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" href="assets/favicon.png" type="image/png">
-    <link rel="stylesheet" href="css/style.css?v=93">
+    <link rel="stylesheet" href="css/style.css?v=94">
     <script>
         /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
            efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
@@ -220,12 +220,10 @@
              escolhido: solicitar.html?servico=<chave>. As chaves são as mesmas
              do <select> do formulário: jogos, arte, gamificacao, oficinas,
              cursos-online.
-             Itens com class="falta" são marcadores para preencher: troque o
-             texto e tire a classe.
              ============================================================= -->
         <section class="wrap bay" id="servicos" style="padding-top:0">
             <header class="sec-head reveal">
-                <span class="sec-index">01 / 03 — O que fazemos</span>
+                <span class="sec-index">01 / 02 — O que fazemos</span>
                 <h2 class="sec-title">Cinco formas de trabalhar junto</h2>
             </header>
 
@@ -277,9 +275,13 @@
                         </p>
                     </div>
                     <div class="service-side">
-                        <span class="service-label">Exemplos</span>
-                        <ul class="service-cases">
-                            <li><b>Case Colectal</b> · arte isométrica para o jogo de um parceiro. <a href="#case-colectal">Ver o case</a></li>
+                        <span class="service-label">O que fazemos</span>
+                        <ul class="tool-list service-inclui">
+                            <li>Pixel art</li>
+                            <li>Arte 2D</li>
+                            <li>Arte isométrica</li>
+                            <li>Animação</li>
+                            <li>Áudio</li>
                         </ul>
                         <div class="service-actions">
                             <a class="btn btn--solid" href="solicitar.html?servico=arte">
@@ -308,11 +310,11 @@
                         </p>
                     </div>
                     <div class="service-side">
-                        <span class="service-label">Cases</span>
-                        <ul class="service-cases">
-                            <!-- [CASE] troque o texto abaixo por um case real e remova class="falta" -->
-                            <li class="falta">[CASE] Nome do cliente, o que foi feito e o resultado.</li>
-                            <li class="falta">[DEPOIMENTO] Frase do cliente, com nome e cargo.</li>
+                        <span class="service-label">Para que serve</span>
+                        <ul class="tool-list service-inclui">
+                            <li>Treinamento</li>
+                            <li>Lançamento de produto</li>
+                            <li>Engajamento</li>
                         </ul>
                         <div class="service-actions">
                             <a class="btn btn--solid" href="solicitar.html?servico=gamificacao">
@@ -396,69 +398,11 @@
         </section>
 
         <!-- =============================================================
-             CASE COLECTAL — EDITAR AQUI.
-             ATENÇÃO: só publicar imagens depois da confirmação do cliente.
-
-             Texto: troque os parágrafos com class="falta" pelo texto final e
-             remova a classe.
-
-             Imagens: salve em assets/cases/ (WebP, 16:9, ~1280px de largura)
-             e troque cada bloco <div class="game-cover game-cover--conceito">
-             inteiro por:
-
-               <div class="game-cover">
-                   <img src="assets/cases/colectal-1.webp" width="1280" height="720"
-                        loading="lazy" decoding="async" alt="Descreva a imagem">
-               </div>
-             ============================================================= -->
-        <section class="wrap bay" id="case-colectal" style="padding-top:0">
-            <header class="sec-head reveal">
-                <span class="sec-index">02 / 03 — Case</span>
-                <h2 class="sec-title">Colectal: arte isométrica<br>para o jogo de um parceiro</h2>
-            </header>
-
-            <article class="work-item case reveal">
-                <div>
-                    <span class="pill pill--next">Arte para jogos</span>
-                    <h3>Colectal</h3>
-                    <p>Criamos a arte isométrica para o jogo de um parceiro.</p>
-                    <p class="falta">[CASE] O desafio: o que o parceiro precisava.</p>
-                    <p class="falta">[CASE] O que entregamos: peças, quantidade e prazo.</p>
-                    <p class="falta">[DEPOIMENTO] Frase do cliente, com nome e cargo.</p>
-                </div>
-
-                <div class="case-shots">
-                    <div class="game-cover game-cover--conceito">
-                        <svg viewBox="-11 -11 22 22" aria-hidden="true" focusable="false">
-                            <path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5"
-                                fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round" />
-                        </svg>
-                        <span>Imagem 1 · aguardando o cliente</span>
-                    </div>
-                    <div class="game-cover game-cover--conceito">
-                        <svg viewBox="-11 -11 22 22" aria-hidden="true" focusable="false">
-                            <path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5"
-                                fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round" />
-                        </svg>
-                        <span>Imagem 2</span>
-                    </div>
-                    <div class="game-cover game-cover--conceito">
-                        <svg viewBox="-11 -11 22 22" aria-hidden="true" focusable="false">
-                            <path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5"
-                                fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round" />
-                        </svg>
-                        <span>Imagem 3</span>
-                    </div>
-                </div>
-            </article>
-        </section>
-
-        <!-- =============================================================
              COMO FUNCIONA
              ============================================================= -->
         <section class="wrap bay" id="como-funciona" style="padding-top:0">
             <header class="sec-head reveal">
-                <span class="sec-index">03 / 03 — Como funciona</span>
+                <span class="sec-index">02 / 02 — Como funciona</span>
                 <h2 class="sec-title">Da ideia à entrega,<br>em quatro passos</h2>
             </header>
 
