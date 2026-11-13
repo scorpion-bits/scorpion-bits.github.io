@@ -5,20 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#05090f">
-    <title>Portfólio — Scorpion Bits</title>
+    <title>Portfólio — ScorpionBits</title>
     <meta name="description"
-        content="Os jogos da Scorpion Bits: Tirania e AstroDash, jogáveis de graça no itch.io, e os projetos em produção. O estado real de cada um.">
+        content="Os jogos da ScorpionBits: Tirania e AstroDash, jogáveis de graça no itch.io, e os projetos em produção. O estado real de cada um.">
     <link rel="canonical" href="https://scorpionbits.com/portfolio.html">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://scorpionbits.com/portfolio.html">
-    <meta property="og:title" content="Portfólio — Scorpion Bits">
-    <meta property="og:description" content="Jogos no ar e jogos no forno: o portfólio da Scorpion Bits.">
+    <meta property="og:title" content="Portfólio — ScorpionBits">
+    <meta property="og:description" content="Jogos no ar e jogos no forno: o portfólio da ScorpionBits.">
     <meta property="og:image" content="https://scorpionbits.com/assets/og-cover.png">
+    <meta property="og:site_name" content="ScorpionBits">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ScorpionBits: estúdio que cria jogos e ensina a criar jogos">
     <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" href="assets/favicon.png" type="image/png">
-    <link rel="stylesheet" href="css/style.css?v=92">
+    <link rel="stylesheet" href="css/style.css?v=93">
     <script>
         /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
            efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
@@ -118,17 +123,16 @@
         <div class="dock-inner">
             <a href="index.html" class="dock-brand">
                 <img src="assets/logo-glyph.png" width="25" height="31" alt="">
-                Scorpion<em>Bits</em>
+                <span>Scorpion<em>Bits</em></span>
             </a>
 
             <div class="dock-panel" id="dock-panel">
                 <nav class="dock-nav" aria-label="Principal">
-                    <a class="dock-link" href="index.html#estudio">Estúdio</a>
-                    <a class="dock-link" href="index.html#curso">Cursos</a>
-                    <a class="dock-link" href="index.html#equipe">Equipe</a>
-                    <a class="dock-link" href="index.html#projetos">Projetos</a>
                     <a class="dock-link" href="jogos.html">Jogos</a>
+                    <a class="dock-link" href="servicos.html">Serviços</a>
+                    <a class="dock-link" href="index.html#curso">Cursos</a>
                     <a class="dock-link" href="sobre.html">Sobre</a>
+                    <a class="dock-link" href="contato.html">Contato</a>
                 </nav>
 
                 <div class="dock-social">
@@ -158,7 +162,7 @@
                     </a>
                 </div>
 
-                <a class="btn btn--solid btn--sm dock-cta" href="https://learn.scorpionbits.com/cursos/astrodash?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=menu">Curso AstroDash</a>
+                <a class="btn btn--solid btn--sm dock-cta" href="solicitar.html">Solicitar serviço</a>
             </div>
 
             <button class="dock-toggle" data-dock-toggle aria-label="Abrir menu" aria-expanded="false"
@@ -499,7 +503,7 @@
 
                 <ul class="social-list">
                     <li>
-                        <a class="social-link" href="contato.html#servicos">
+                        <a class="social-link" href="servicos.html">
                             <svg class="icon">
                                 <use href="#i-code" />
                             </svg>
@@ -540,14 +544,66 @@
 
     <footer class="site-footer">
         <div class="wrap">
-            <div class="footer-bottom" style="border-top:0;padding-top:0">
-                <p>© 2026 Scorpion Bits. Todos os direitos reservados.</p>
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <a href="index.html" class="dock-brand" style="margin-right:0">
+                        <img src="assets/logo-glyph.png" width="25" height="31" alt="" loading="lazy">
+                        <span>Scorpion<em>Bits</em></span>
+                    </a>
+                    <p>
+                        Estúdio que cria jogos e ensina a criar jogos.
+                        Feito no Brasil, em Godot.
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Jogar</h4>
+                    <ul>
+                        <li><a href="jogos.html">Todos os jogos</a></li>
+                        <li><a href="jogo/">Jogar Idle Bits</a></li>
+                        <li><a href="loja/">Jogar Loja do Aventureiro</a></li>
+                        <li><a href="portfolio.html">Portfólio completo</a></li>
+                        <li><a href="https://scorpionbits.itch.io/" target="_blank" rel="noopener">itch.io</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contratar</h4>
+                    <ul>
+                        <li><a href="servicos.html">Serviços</a></li>
+                        <li><a href="solicitar.html">Solicitar serviço</a></li>
+                        <li><a href="sobre.html">Sobre nós</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Aprender</h4>
+                    <ul>
+                        <li><a href="https://learn.scorpionbits.com/cursos?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=rodape">ScorpionBits Learn</a></li>
+                        <li><a href="https://learn.scorpionbits.com/cursos/astrodash?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=rodape">Curso online AstroDash</a></li>
+                        <li><a href="index.html#curso">Cursos e oficinas</a></li>
+                        <li>
+                            <a href="https://scorpionbits.com/mini-curso-astrodash/slides/#1" target="_blank"
+                                rel="noopener">Material do AstroDash</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 ScorpionBits. Todos os direitos reservados.</p>
+                <ul class="footer-redes">
+                    <li><a href="https://github.com/scorpion-bits" target="_blank" rel="noopener">GitHub</a></li>
+                    <li><a href="https://instagram.com/scorpionbits_" target="_blank" rel="noopener">Instagram</a></li>
+                    <li><a href="https://www.linkedin.com/company/scorpionbits" target="_blank" rel="noopener">LinkedIn</a></li>
+                </ul>
                 <p><a href="mailto:scorpionbits.contato@gmail.com">scorpionbits.contato@gmail.com</a></p>
             </div>
         </div>
     </footer>
 
-    <script src="js/main.js?v=92" defer></script>
+    <script src="js/main.js?v=93" defer></script>
 </body>
 
 </html>

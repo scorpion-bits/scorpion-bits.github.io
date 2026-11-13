@@ -5,20 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#05090f">
-    <title>Jogos de navegador — Scorpion Bits</title>
+    <title>Jogos — ScorpionBits</title>
     <meta name="description"
-        content="Jogos da Scorpion Bits que rodam direto no navegador, no computador e no celular, sem instalar nada. Idle Bits, Rabo de Cubos e Loja do Aventureiro já estão no ar.">
+        content="Jogos da ScorpionBits para jogar agora e de graça: Tirania, AstroDash, Idle Bits, Rabo de Cubos e Loja do Aventureiro, no navegador ou no itch.io.">
     <link rel="canonical" href="https://scorpionbits.com/jogos.html">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://scorpionbits.com/jogos.html">
-    <meta property="og:title" content="Jogos de navegador — Scorpion Bits">
-    <meta property="og:description" content="Jogos da Scorpion Bits para jogar no navegador, no computador e no celular.">
+    <meta property="og:title" content="Jogos da ScorpionBits">
+    <meta property="og:description" content="Jogue agora, de graça: no navegador, no computador e no celular.">
     <meta property="og:image" content="https://scorpionbits.com/assets/og-cover.png">
+    <meta property="og:site_name" content="ScorpionBits">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ScorpionBits: estúdio que cria jogos e ensina a criar jogos">
     <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" href="assets/favicon.png" type="image/png">
-    <link rel="stylesheet" href="css/style.css?v=92">
+    <link rel="stylesheet" href="css/style.css?v=93">
     <script>
         /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
            efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
@@ -118,17 +123,16 @@
         <div class="dock-inner">
             <a href="index.html" class="dock-brand">
                 <img src="assets/logo-glyph.png" width="25" height="31" alt="">
-                Scorpion<em>Bits</em>
+                <span>Scorpion<em>Bits</em></span>
             </a>
 
             <div class="dock-panel" id="dock-panel">
                 <nav class="dock-nav" aria-label="Principal">
-                    <a class="dock-link" href="index.html#estudio">Estúdio</a>
-                    <a class="dock-link" href="index.html#curso">Cursos</a>
-                    <a class="dock-link" href="index.html#equipe">Equipe</a>
-                    <a class="dock-link" href="index.html#projetos">Projetos</a>
                     <a class="dock-link" href="jogos.html" aria-current="page">Jogos</a>
+                    <a class="dock-link" href="servicos.html">Serviços</a>
+                    <a class="dock-link" href="index.html#curso">Cursos</a>
                     <a class="dock-link" href="sobre.html">Sobre</a>
+                    <a class="dock-link" href="contato.html">Contato</a>
                 </nav>
 
                 <div class="dock-social">
@@ -158,7 +162,7 @@
                     </a>
                 </div>
 
-                <a class="btn btn--solid btn--sm dock-cta" href="https://learn.scorpionbits.com/cursos/astrodash?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=menu">Curso AstroDash</a>
+                <a class="btn btn--solid btn--sm dock-cta" href="solicitar.html">Solicitar serviço</a>
             </div>
 
             <button class="dock-toggle" data-dock-toggle aria-label="Abrir menu" aria-expanded="false"
@@ -178,23 +182,26 @@
                 </svg>
                 Voltar para a home
             </a>
-            <span class="tag">Jogos de navegador</span>
-            <h1>Jogue agora, sem instalar nada</h1>
+            <span class="tag">Jogos</span>
+            <h1>Escolha um e jogue agora</h1>
             <p class="sec-lead">
-                Jogos pequenos feitos pela Scorpion Bits que rodam direto no
-                navegador, no computador e no celular. Sem cadastro: o progresso
-                fica salvo no seu aparelho.
+                Todos de graça e sem cadastro. Os de navegador abrem direto aqui
+                no site, no computador e no celular; os outros estão no itch.io.
             </p>
         </section>
 
+        <!-- =============================================================
+             NO AR — um cartão por jogo: imagem, uma frase, plataformas, selo
+             e o botão "Jogar agora". Navegador abre direto; os outros, itch.io.
+             ============================================================= -->
         <section class="wrap bay" id="no-ar" style="padding-top:0">
             <header class="sec-head reveal">
                 <span class="tag">No ar</span>
-                <h2 class="sec-title">Escolha um e jogue</h2>
+                <h2 class="sec-title">Para jogar com um clique</h2>
             </header>
 
             <div class="games games--stack reveal stagger">
-                <article class="work-item game game--feature">
+                <article class="work-item game game--feature" id="idle-bits">
                     <div class="game-cover">
                         <img src="assets/projetos/idle.webp" width="1440" height="810"
                             loading="lazy" decoding="async"
@@ -203,16 +210,12 @@
                     <div class="game-body">
                         <span class="pill pill--live">No ar</span>
                         <h3>Idle Bits</h3>
-                        <p>
-                            Um clicker isométrico: clique no cubo, contrate time, compre
-                            melhorias e evolua para ganhar bônus permanentes. Tem
-                            desafios, pesquisas, lançamento de jogos do estúdio, missões
-                            diárias e uma árvore de 100 habilidades.
-                        </p>
-                        <ul class="regua">
-                            <li><b>Gênero</b> Idle / clicker</li>
-                            <li><b>Plataformas</b> Navegador (computador e celular)</li>
-                            <li><b>Preço</b> Gratuito</li>
+                        <p>Um clicker isométrico: clique no cubo, monte o seu estúdio e explore uma árvore com 100 habilidades.</p>
+                        <ul class="tool-list" aria-label="Plataformas">
+                            <li>Navegador</li>
+                            <li>Computador</li>
+                            <li>Celular</li>
+                            <li>Grátis</li>
                         </ul>
                         <div class="game-actions">
                             <a class="btn btn--solid" href="jogo/">
@@ -224,8 +227,37 @@
                         </div>
                     </div>
                 </article>
+            </div>
 
-                <article class="work-item game game--feature">
+            <div class="games reveal stagger" style="margin-top:clamp(1rem,2.5vw,1.5rem)">
+                <article class="work-item game" id="loja-do-aventureiro">
+                    <div class="game-cover">
+                        <img src="assets/projetos/loja.webp" width="1440" height="810"
+                            loading="lazy" decoding="async"
+                            alt="Loja do Aventureiro em jogo: prateleiras com poções, armas e armaduras, uma maga estudante no balcão esperando o atendimento e os três preços para escolher: barato, justo e caro.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--live">No ar</span>
+                        <h3>Loja do Aventureiro</h3>
+                        <p>Gerencie uma loja de aventureiros: defina preços, produza itens e atenda clientes lendários.</p>
+                        <ul class="tool-list" aria-label="Plataformas">
+                            <li>Navegador</li>
+                            <li>Computador</li>
+                            <li>Celular</li>
+                            <li>Grátis</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="btn btn--solid" href="loja/">
+                                Jogar agora
+                                <svg class="icon">
+                                    <use href="#i-arrow-right" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="work-item game" id="rabo-de-cubos">
                     <div class="game-cover">
                         <img src="assets/projetos/rabo-de-cubos.webp" width="1440" height="810"
                             loading="lazy" decoding="async"
@@ -234,16 +266,12 @@
                     <div class="game-body">
                         <span class="pill pill--live">No ar</span>
                         <h3>Rabo de Cubos</h3>
-                        <p>
-                            Um jogo da cobrinha em visual isométrico. Você é o escorpião da
-                            Scorpion Bits: coma os bits e cada um vira um cubo na sua
-                            cauda. Não bata nas paredes nem em você mesmo.
-                        </p>
-                        <ul class="regua">
-                            <li><b>Gênero</b> Arcade / snake</li>
-                            <li><b>Controles</b> Setas do teclado ou deslizar no celular</li>
-                            <li><b>Plataformas</b> Navegador (computador e celular)</li>
-                            <li><b>Preço</b> Gratuito</li>
+                        <p>O jogo da cobrinha em visual isométrico: você é o escorpião da ScorpionBits e cada bit vira um cubo na cauda.</p>
+                        <ul class="tool-list" aria-label="Plataformas">
+                            <li>Navegador</li>
+                            <li>Computador</li>
+                            <li>Celular</li>
+                            <li>Grátis</li>
                         </ul>
                         <div class="game-actions">
                             <button type="button" class="btn btn--solid" data-rabo-open aria-haspopup="dialog">
@@ -256,30 +284,56 @@
                     </div>
                 </article>
 
-                <article class="work-item game game--feature">
+                <article class="work-item game" id="tirania">
                     <div class="game-cover">
-                        <img src="assets/projetos/loja.webp" width="1440" height="810"
+                        <img src="assets/projetos/tirania.webp" width="1023" height="604"
                             loading="lazy" decoding="async"
-                            alt="Loja do Aventureiro em jogo: prateleiras com poções, armas e armaduras, uma maga estudante no balcão esperando o atendimento e os três preços para escolher: barato, justo e caro.">
+                            alt="Ilustração de um homem de capa vermelha e gola de pelo, ajoelhado sob um foco de luz e segurando uma coroa.">
                     </div>
                     <div class="game-body">
                         <span class="pill pill--live">No ar</span>
-                        <h3>Loja do Aventureiro</h3>
-                        <p>
-                            Gerencie uma loja de aventureiros: escolha o preço de cada venda,
-                            produza itens na oficina, compre materiais, contrate funcionários
-                            e mande batedores ao mapa. Mais de 100 itens, mais de 50 aventureiros,
-                            10 clientes lendários com histórias em capítulos e novas cidades para expandir.
-                        </p>
-                        <ul class="regua">
-                            <li><b>Gênero</b> Gerenciamento / loja</li>
-                            <li><b>Controles</b> Toque ou mouse</li>
-                            <li><b>Plataformas</b> Navegador (computador e celular)</li>
-                            <li><b>Preço</b> Gratuito, sem anúncios</li>
+                        <h3>Tirania</h3>
+                        <p>Como Aurora, resgate provisões nas ruelas do reino e suba ao trono para um duelo decisivo com o rei.</p>
+                        <ul class="tool-list" aria-label="Plataformas">
+                            <li>Web (itch.io)</li>
+                            <li>Windows</li>
+                            <li>Linux</li>
+                            <li>Grátis</li>
                         </ul>
                         <div class="game-actions">
-                            <a class="btn btn--solid" href="loja/">
+                            <a class="btn btn--solid" href="https://scorpionbits.itch.io/tirania" target="_blank" rel="noopener">
                                 Jogar agora
+                                <svg class="icon">
+                                    <use href="#i-external" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="work-item game" id="astrodash">
+                    <div class="game-cover">
+                        <img src="assets/projetos/astrodash.webp" width="1440" height="810"
+                            loading="lazy" decoding="async"
+                            alt="Tela de título do AstroDash, em pixel art: o nome do jogo cruzando um céu estrelado entre dois meteoros.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--live">No ar</span>
+                        <h3>AstroDash</h3>
+                        <p>Pilote entre meteoros num arcade espacial em pixel art, de gameplay direto e rápido.</p>
+                        <ul class="tool-list" aria-label="Plataformas">
+                            <li>itch.io</li>
+                            <li>Grátis</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="btn btn--solid" href="https://scorpionbits.itch.io/astrodash" target="_blank" rel="noopener">
+                                Jogar agora
+                                <svg class="icon">
+                                    <use href="#i-external" />
+                                </svg>
+                            </a>
+                            <a class="link-arrow" href="https://learn.scorpionbits.com/cursos/astrodash?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=jogos">
+                                Aprenda a criar este jogo
                                 <svg class="icon">
                                     <use href="#i-arrow-right" />
                                 </svg>
@@ -290,18 +344,172 @@
             </div>
         </section>
 
+        <!-- =============================================================
+             NO FORNO — separado dos jogáveis, com o estágio real de cada um
+             ============================================================= -->
+        <section class="wrap bay" id="no-forno" style="padding-top:0">
+            <header class="sec-head reveal">
+                <span class="tag">No forno</span>
+                <h2 class="sec-title">O que vem a seguir</h2>
+                <p class="sec-lead">
+                    Três projetos em produção. Ainda não dá para jogar, mas dá
+                    para acompanhar.
+                </p>
+            </header>
+
+            <div class="games games--trio reveal stagger">
+                <article class="work-item game">
+                    <div class="game-cover">
+                        <img src="assets/projetos/tower-defence.webp" width="960" height="540"
+                            loading="lazy" decoding="async"
+                            alt="Árvore de habilidades do Tower Defence: oito ícones de torres em círculo, cercados por nós vazios.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--wip">Em desenvolvimento</span>
+                        <h3>Tower Defence</h3>
+                        <p>
+                            Defesa de torres em que você fabrica as próprias torres. O
+                            projeto reúne árvore de habilidades, crafting, loja e
+                            inventário, com oito tipos de torre configurados.
+                        </p>
+                        <ul class="tool-list">
+                            <li>Godot</li>
+                            <li>Crafting</li>
+                            <li>Árvore de habilidades</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="link-arrow" href="https://github.com/scorpion-bits/TowerDefence" target="_blank" rel="noopener">
+                                Código no GitHub
+                                <svg class="icon">
+                                    <use href="#i-arrow-right" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="work-item game">
+                    <div class="game-cover game-cover--conceito">
+                        <svg viewBox="-11 -11 22 22" aria-hidden="true" focusable="false">
+                            <path d="M0 -9 L7.8 -4.5 L7.8 4.5 L0 9 L-7.8 4.5 L-7.8 -4.5 Z M0 0 L0 -9 M0 0 L-7.8 4.5 M0 0 L7.8 4.5"
+                                fill="none" stroke="currentColor" stroke-width="0.9" stroke-linejoin="round" />
+                        </svg>
+                        <span>Sem arte final ainda</span>
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--wip">Pré-produção</span>
+                        <h3>Sitis</h3>
+                        <p>
+                            Ação top-down em pixel art. Presa numa dungeon onde a água é
+                            escassa, Iris luta para chegar à superfície com poderes que
+                            gastam a própria hidratação: uma única barra faz de vida e de
+                            energia. Design, bestiário e arquitetura já estão
+                            documentados; a arte final ainda vem.
+                        </p>
+                        <ul class="tool-list">
+                            <li>Godot</li>
+                            <li>Top-down</li>
+                            <li>Pixel art</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="work-item game">
+                    <div class="game-cover">
+                        <img src="assets/projetos/noir.webp" width="1172" height="660"
+                            loading="lazy" decoding="async"
+                            alt="Pixel art de um detetive de cabelo claro em seu escritório, com mapa da cidade, relógio, lâmpada de mesa e telefone.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--wip">Pré-produção</span>
+                        <h3>Projeto noir</h3>
+                        <p>
+                            Jogo de investigação com estética noir, em pixel art. O
+                            personagem principal, com animações de parado e de caminhada,
+                            e o cenário do escritório já estão desenhados. Investigação,
+                            diálogo e decisões ainda estão em planejamento, e o nome
+                            também.
+                        </p>
+                        <ul class="tool-list">
+                            <li>Godot</li>
+                            <li>Investigação</li>
+                            <li>Noir</li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+
+            <div class="work-cta reveal">
+                <a class="btn btn--wire btn--lg" href="portfolio.html">Ver o portfólio completo</a>
+                <a class="btn btn--wire btn--lg" href="https://scorpionbits.itch.io/" target="_blank" rel="noopener">
+                    Todos os jogos no itch.io
+                </a>
+            </div>
+        </section>
     </main>
 
     <footer class="site-footer">
         <div class="wrap">
-            <div class="footer-bottom" style="border-top:0;padding-top:0">
-                <p>© 2026 Scorpion Bits. Todos os direitos reservados.</p>
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <a href="index.html" class="dock-brand" style="margin-right:0">
+                        <img src="assets/logo-glyph.png" width="25" height="31" alt="" loading="lazy">
+                        <span>Scorpion<em>Bits</em></span>
+                    </a>
+                    <p>
+                        Estúdio que cria jogos e ensina a criar jogos.
+                        Feito no Brasil, em Godot.
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Jogar</h4>
+                    <ul>
+                        <li><a href="jogos.html">Todos os jogos</a></li>
+                        <li><a href="jogo/">Jogar Idle Bits</a></li>
+                        <li><a href="loja/">Jogar Loja do Aventureiro</a></li>
+                        <li><a href="portfolio.html">Portfólio completo</a></li>
+                        <li><a href="https://scorpionbits.itch.io/" target="_blank" rel="noopener">itch.io</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contratar</h4>
+                    <ul>
+                        <li><a href="servicos.html">Serviços</a></li>
+                        <li><a href="solicitar.html">Solicitar serviço</a></li>
+                        <li><a href="sobre.html">Sobre nós</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Aprender</h4>
+                    <ul>
+                        <li><a href="https://learn.scorpionbits.com/cursos?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=rodape">ScorpionBits Learn</a></li>
+                        <li><a href="https://learn.scorpionbits.com/cursos/astrodash?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=rodape">Curso online AstroDash</a></li>
+                        <li><a href="index.html#curso">Cursos e oficinas</a></li>
+                        <li>
+                            <a href="https://scorpionbits.com/mini-curso-astrodash/slides/#1" target="_blank"
+                                rel="noopener">Material do AstroDash</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 ScorpionBits. Todos os direitos reservados.</p>
+                <ul class="footer-redes">
+                    <li><a href="https://github.com/scorpion-bits" target="_blank" rel="noopener">GitHub</a></li>
+                    <li><a href="https://instagram.com/scorpionbits_" target="_blank" rel="noopener">Instagram</a></li>
+                    <li><a href="https://www.linkedin.com/company/scorpionbits" target="_blank" rel="noopener">LinkedIn</a></li>
+                </ul>
                 <p><a href="mailto:scorpionbits.contato@gmail.com">scorpionbits.contato@gmail.com</a></p>
             </div>
         </div>
     </footer>
 
-    <script src="js/main.js?v=92" defer></script>
+    <script src="js/main.js?v=93" defer></script>
     <script>
         /* Rabo de Cubos: o mesmo jogo escondido no escorpião da home. O Pixi e o
            jogo só são baixados quando alguém clica em "Jogar agora". */

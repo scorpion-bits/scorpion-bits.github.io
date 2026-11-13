@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Scorpion Bits
+   ScorpionBits
    Paleta tirada da logo (cubo isométrico) + tipografia própria.
    Nada de CDN: fontes, ícones e arte são servidos daqui.
    ========================================================================== */
@@ -1103,20 +1103,6 @@ p {
     /* a máquina de escrever esvazia as linhas: sem piso de altura a caixa
        colapsaria para 0 e o herói inteiro pularia a cada ciclo */
     min-height: 0.92em;
-}
-
-/* o texto real, para leitor de tela e para o buscador: as duas linhas
-   visíveis são aria-hidden porque o conteúdo delas muda o tempo todo */
-.hero-sr {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
 }
 
 /* Cursor de terminal. Fica dentro de um invólucro inline que abraça só o
@@ -3470,6 +3456,714 @@ p {
     background: var(--text);
     border-color: var(--text);
     color: var(--ink-950);
+}
+
+/* ------------------------------------------------- caminhos e serviços -- */
+/* Tudo aqui reaproveita os tokens e os cartões que já existiam
+   (`.work-item`, `.tool-group`, `.pill`, `.regua`). Só entra o que faltava:
+   os três caminhos da home, o cartão de serviço, os passos e o formulário. */
+
+/* seção colada no hero: metade do respiro de cima */
+.bay--tight {
+    padding-top: calc(var(--bay) * 0.5);
+}
+
+/* a frase que diz o que a ScorpionBits é, logo abaixo do título animado */
+.hero-lead {
+    max-width: 34ch;
+    margin: clamp(1rem, 2.5vh, 1.6rem) auto 0;
+    font-size: var(--s-1);
+    color: var(--text-soft);
+    text-wrap: balance;
+}
+
+.hero-lead strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.hero-lead + .hero-actions {
+    margin-top: clamp(1.1rem, 2.5vh, 1.75rem);
+}
+
+/* o "jogar" do mascote virou link: precisa do que o <button> dava de graça */
+a.hero-play {
+    display: block;
+}
+
+/* Os três caminhos. O cartão inteiro é um link: área de toque grande no
+   celular. A cor de cada um vem dos três acentos da marca. */
+.paths {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.9rem, 2.2vw, 1.5rem);
+}
+
+.path {
+    --tom: var(--cyan);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: clamp(200px, 22vw, 270px);
+    border-color: var(--hair-lit);
+    background: linear-gradient(
+            160deg,
+            color-mix(in srgb, var(--tom) 14%, transparent),
+            transparent 58%
+        ),
+        rgba(12, 20, 31, 0.62);
+}
+
+.path--blue {
+    --tom: var(--blue);
+}
+
+.path--violet {
+    --tom: var(--violet);
+}
+
+.path:hover,
+.path:focus-visible {
+    border-color: var(--tom);
+}
+
+.path-num {
+    font-family: var(--font-mono);
+    font-size: var(--s--1);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--tom);
+    margin-bottom: auto;
+    padding-bottom: 1.5rem;
+}
+
+.path-cube {
+    position: absolute;
+    top: clamp(1rem, 2.5vw, 1.6rem);
+    right: clamp(1rem, 2.5vw, 1.6rem);
+    width: clamp(40px, 5vw, 58px);
+    color: var(--tom);
+    opacity: 0.55;
+    transition: transform 0.6s var(--ease), opacity 0.3s;
+}
+
+.path:hover .path-cube {
+    transform: translateY(-4px) rotate(8deg);
+    opacity: 0.95;
+}
+
+.work-item.path h3 {
+    font-size: var(--s-2);
+    margin-bottom: 8px;
+}
+
+.work-item.path p {
+    color: var(--text-soft);
+    margin-bottom: 20px;
+}
+
+.path-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--tom);
+}
+
+.path-go .icon {
+    transition: transform 0.28s var(--ease);
+}
+
+.path:hover .path-go .icon {
+    transform: translateX(5px);
+}
+
+/* dois cartões lado a lado: as duas chamadas de cursos */
+.duo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.cursos-feitos + .cursos-grupo {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+}
+
+.duo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.duo-card .tag {
+    margin-bottom: 16px;
+}
+
+.work-item.duo-card p {
+    color: var(--text-soft);
+    margin-bottom: 24px;
+}
+
+.duo-card .btn {
+    margin-top: auto;
+}
+
+/* cartão de `.tool-groups` que é um link inteiro (resumo de serviços) */
+.tool-group--link {
+    display: block;
+}
+
+.tool-group--link h3 {
+    margin-bottom: 14px;
+}
+
+.tool-group--link p {
+    margin: 0;
+}
+
+.tool-group--link:hover h3 {
+    color: var(--text);
+}
+
+.contact-cta {
+    margin-top: 24px;
+}
+
+.contact .contact-cta + .email-link {
+    margin-top: 16px;
+}
+
+.footer-redes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+}
+
+.footer-bottom a {
+    color: var(--text-dim);
+    transition: color 0.2s;
+}
+
+.footer-bottom a:hover {
+    color: var(--cyan);
+}
+
+/* -- cartão de serviço (servicos.html) ------------------------------------ */
+.services {
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.service {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.25rem, 3.5vw, 3rem);
+    scroll-margin-top: calc(var(--dock-h) + 28px);
+}
+
+.service-num {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--s--1);
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    margin-bottom: 14px;
+}
+
+.work-item.service h2 {
+    font-size: var(--s-2);
+    margin-bottom: 12px;
+}
+
+.work-item.service p {
+    color: var(--text-soft);
+    max-width: 52ch;
+}
+
+.service-para {
+    margin-bottom: 0;
+}
+
+.service-para b,
+.service-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.service-side {
+    display: flex;
+    flex-direction: column;
+    padding-top: 2px;
+}
+
+.service-cases {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.service-cases li {
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--hair);
+    background: rgba(106, 216, 254, 0.03);
+    font-size: 0.9rem;
+    color: var(--text-soft);
+}
+
+.service-cases li b {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.service-cases a {
+    color: var(--cyan);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* marcador de conteúdo que falta: tracejado âmbar, impossível de confundir
+   com texto final */
+.service-cases li.falta,
+.falta {
+    border: 1px dashed rgba(255, 196, 107, 0.5);
+    background: rgba(255, 196, 107, 0.05);
+    color: var(--amber);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+p.falta {
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+}
+
+.service-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    margin-top: auto;
+}
+
+/* case em destaque (Colectal): texto de um lado, espaços de imagem do outro */
+.case {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1.25rem, 3.5vw, 3rem);
+    align-items: start;
+}
+
+.work-item.case h3 {
+    font-size: var(--s-2);
+}
+
+.work-item.case p {
+    color: var(--text-soft);
+}
+
+.case-shots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.case-shots .game-cover {
+    border: 1px solid var(--hair);
+    border-radius: var(--r-sm);
+}
+
+.case-shots .game-cover:first-child {
+    grid-column: 1 / -1;
+}
+
+/* -- como funciona: quatro passos numerados ------------------------------- */
+.steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.9rem, 2vw, 1.25rem);
+    counter-reset: passo;
+}
+
+.step {
+    position: relative;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border: 1px solid var(--hair);
+    border-radius: var(--r);
+    background: rgba(12, 20, 31, 0.5);
+    counter-increment: passo;
+}
+
+.step::before {
+    content: "0" counter(passo);
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--s-3);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 16px;
+    background: linear-gradient(150deg, var(--cyan), var(--indigo));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.step h3 {
+    font-size: var(--s-1);
+    margin-bottom: 8px;
+}
+
+.step p {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+}
+
+/* ---------------------------------------------------------- formulário -- */
+.form-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+}
+
+.form {
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--hair-lit);
+    background: linear-gradient(
+            140deg,
+            rgba(106, 216, 254, 0.07),
+            rgba(139, 92, 246, 0.04) 45%,
+            transparent 70%
+        ),
+        rgba(10, 17, 26, 0.72);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.field {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-width: 0;
+}
+
+.field--full {
+    grid-column: 1 / -1;
+}
+
+.field label,
+.field-label {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+}
+
+.field label i,
+.check i {
+    font-style: normal;
+    color: var(--cyan);
+}
+
+.field small {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+}
+
+.input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--hair-lit);
+    background: rgba(5, 9, 15, 0.7);
+    color: var(--text);
+    font: inherit;
+    /* 16px: abaixo disso o Safari do iPhone dá zoom ao focar o campo */
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.input::placeholder {
+    color: var(--text-dim);
+    opacity: 1;
+}
+
+.input:hover {
+    border-color: rgba(126, 190, 232, 0.55);
+}
+
+.input:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+    border-color: var(--cyan);
+    border-radius: var(--r-sm);
+    background: rgba(8, 14, 22, 0.95);
+}
+
+textarea.input {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.55;
+}
+
+select.input {
+    appearance: none;
+    padding-right: 42px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236ad8fe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+}
+
+select.input option {
+    background: var(--ink-850);
+    color: var(--text);
+}
+
+.input[aria-invalid="true"] {
+    border-color: #ff8a8a;
+}
+
+.field-error {
+    font-size: 0.84rem;
+    color: #ff9c9c;
+}
+
+.field-error:empty {
+    display: none;
+}
+
+/* o rótulo da caixa é uma frase, não um rótulo curto: volta ao texto normal */
+.field label.check {
+    font-family: var(--font-body);
+    font-size: 0.94rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: start;
+    font-size: 0.94rem;
+    color: var(--text-soft);
+    cursor: pointer;
+}
+
+.check input {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    margin: 1px 0 0;
+    border-radius: 7px;
+    border: 1px solid var(--hair-lit);
+    background: rgba(5, 9, 15, 0.7);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.check input::after {
+    content: "";
+    width: 12px;
+    height: 7px;
+    margin-top: -3px;
+    border-left: 2.5px solid var(--ink-950);
+    border-bottom: 2.5px solid var(--ink-950);
+    rotate: -45deg;
+    scale: 0;
+    transition: scale 0.18s var(--ease);
+}
+
+.check input:checked {
+    background: var(--cyan);
+    border-color: var(--cyan);
+}
+
+.check input:checked::after {
+    scale: 1;
+}
+
+.check input[aria-invalid="true"] {
+    border-color: #ff8a8a;
+}
+
+/* honeypot: fora da tela para gente, visível para robô */
+.hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.form-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    margin-top: 26px;
+}
+
+.form-foot small {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+}
+
+button.btn[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+.form-status {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--hair-lit);
+    font-size: 0.94rem;
+}
+
+.form-status:empty {
+    display: none;
+}
+
+.form-status[data-tipo="erro"] {
+    border-color: rgba(255, 138, 138, 0.55);
+    background: rgba(255, 138, 138, 0.08);
+    color: #ffc2c2;
+}
+
+.form-status[data-tipo="ok"] {
+    border-color: rgba(126, 226, 168, 0.5);
+    background: rgba(126, 226, 168, 0.08);
+    color: var(--mint);
+}
+
+.form-status a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* tela de sucesso: troca o formulário inteiro */
+.form-done {
+    text-align: left;
+}
+
+.form-done h2 {
+    font-size: var(--s-3);
+    margin: 14px 0 12px;
+}
+
+.form-done p {
+    color: var(--text-soft);
+    max-width: 48ch;
+    margin-bottom: 24px;
+}
+
+.form-aside {
+    display: grid;
+    gap: 14px;
+    position: sticky;
+    top: calc(var(--dock-h) + 28px);
+}
+
+.form-aside h2 {
+    font-size: var(--s-1);
+    margin-bottom: 4px;
+}
+
+.form-aside > p {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+}
+
+.form-aside .email-link {
+    margin-top: 0;
+    padding: 12px 18px;
+    font-size: 0.86rem;
+}
+
+@media (max-width: 980px) {
+    .paths {
+        grid-template-columns: 1fr;
+    }
+
+    .path {
+        min-height: 0;
+    }
+
+    .path-num {
+        padding-bottom: 1.1rem;
+    }
+
+    .steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .service,
+    .case,
+    .form-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .form-aside {
+        position: static;
+    }
+}
+
+@media (max-width: 700px) {
+    .duo,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-foot .btn,
+    .service-actions .btn,
+    .duo-card .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .steps {
+        grid-template-columns: 1fr;
+    }
+
+    /* os três caminhos cabem lado a lado já na primeira tela do celular */
+    .hero-actions {
+        flex-wrap: nowrap;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .hero-actions .btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding-inline: 8px;
+    }
+
+    .hero-actions .btn .icon {
+        display: none;
+    }
 }
 
 /* -------------------------------------------------------------- reveal  -- */

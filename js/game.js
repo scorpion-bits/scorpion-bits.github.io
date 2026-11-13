@@ -338,7 +338,7 @@
         <p class="sbg-toast" data-toast role="status" aria-live="polite"></p>
 
         <section class="sbg-panel" data-panel="pronto" hidden aria-labelledby="sbg-t1">
-            <p class="sbg-kicker">Scorpion Bits · game lab</p>
+            <p class="sbg-kicker">ScorpionBits · game lab</p>
             <h2 id="sbg-t1" class="sbg-title">Rabo de <em>Cubos</em></h2>
             <p class="sbg-lead">Coma os bits e deixe a cauda crescer. Parede e rabo são fatais.</p>
             <ul class="sbg-howto">
@@ -406,7 +406,7 @@
         el.className = "sbg" + (lite ? " sbg--lite" : "");
         el.setAttribute("role", "dialog");
         el.setAttribute("aria-modal", "true");
-        el.setAttribute("aria-label", "Rabo de Cubos, o jogo da Scorpion Bits");
+        el.setAttribute("aria-label", "Rabo de Cubos, o jogo da ScorpionBits");
         el.tabIndex = -1;
         el.innerHTML = MODELO;
         document.body.appendChild(el);
