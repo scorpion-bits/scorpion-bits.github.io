@@ -3764,6 +3764,38 @@ a.hero-play {
     object-fit: cover;
 }
 
+/* fileira de fotos: mesma proporção para retrato e paisagem */
+.fotos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.fotos li {
+    overflow: hidden;
+    border-radius: var(--r);
+    border: 1px solid var(--hair-lit);
+    background: var(--ink-850);
+}
+
+.fotos img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease);
+}
+
+.fotos li:hover img {
+    transform: scale(1.04);
+}
+
+@media (max-width: 700px) {
+    .fotos {
+        grid-template-columns: 1fr;
+    }
+}
+
 .member-bio {
     font-size: 0.86rem;
     color: var(--text-soft);
