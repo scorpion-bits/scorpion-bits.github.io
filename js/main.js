@@ -1,4 +1,4 @@
-/* Scorpion Bits — comportamento mínimo.
+/* ScorpionBits — comportamento mínimo.
    Sem física, sem loop de requestAnimationFrame solto: cada efeito é
    orientado a evento ou a IntersectionObserver. */
 (() => {
@@ -473,7 +473,9 @@
                 }
             };
 
-            botao.addEventListener("click", async () => {
+            botao.addEventListener("click", async (ev) => {
+                // o botão é um link para jogos.html: com JS, o jogo abre aqui
+                ev.preventDefault();
                 if (aberto) return;
                 aberto = true;
 
@@ -526,7 +528,7 @@
     /* Escreve, apaga e alterna entre as duas frases, com um cursor de
        terminal piscando no fim da linha que está sendo digitada.
 
-       O texto de verdade vive num `.hero-sr` invisível: as duas linhas
+       O nome acessível vem do `aria-label` do <h1>: as duas linhas
        visíveis são `aria-hidden`, senão o leitor de tela anunciaria o
        título de novo a cada letra.
 
@@ -542,7 +544,7 @@
 
         const FRASES = [
             ["Ideias que", "viram jogo."],
-            ["Scorpion", "Bits."],
+            ["Criamos e", "ensinamos."],
         ];
         const ESCREVE = 46;
         const APAGA = 24;
@@ -1174,6 +1176,15 @@
         );
 
         revealed.forEach((el) => revealObserver.observe(el));
+    }
+
+    /* ------------------------------- âncoras antigas da home continuam valendo */
+    /* A home foi reorganizada: #projetos virou #jogos e a seção #estudio
+       mudou para sobre.html. Links antigos são levados ao lugar novo. */
+    if (document.getElementById("caminhos")) {
+        const antigas = { "#projetos": "#jogos", "#estudio": "sobre.html#estudio" };
+        const destino = antigas[location.hash];
+        if (destino) location.replace(destino);
     }
 
     /* ------------------------------------------- link ativo na navegação */

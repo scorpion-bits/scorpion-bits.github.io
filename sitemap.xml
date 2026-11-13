@@ -6,17 +6,27 @@
         <priority>1.0</priority>
     </url>
     <url>
+        <loc>https://scorpionbits.com/servicos.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://scorpionbits.com/solicitar.html</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://scorpionbits.com/jogos.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
         <loc>https://scorpionbits.com/sobre.html</loc>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://scorpionbits.com/portfolio.html</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://scorpionbits.com/jogos.html</loc>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
