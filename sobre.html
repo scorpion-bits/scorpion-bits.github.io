@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" href="assets/favicon.png" type="image/png">
-    <link rel="stylesheet" href="css/style.css?v=94">
+    <link rel="stylesheet" href="css/style.css?v=97">
     <script>
         /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
            efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
@@ -178,51 +178,170 @@
     </header>
 
     <main id="conteudo">
-        <section class="wrap page-hero">
-            <a class="back-link" href="index.html">
-                <svg class="icon">
-                    <use href="#i-arrow-left" />
-                </svg>
-                Voltar para a home
-            </a>
-            <span class="tag">Sobre nós</span>
-            <h1>Um estúdio de quatro pessoas, quatro frentes</h1>
-            <p class="sec-lead">
-                A ScorpionBits nasceu de um grupo de amigos de faculdade e virou um
-                estúdio que faz jogos indie e ensina game dev. Programação, arte,
-                game design e música ficam todas dentro de casa.
-            </p>
-        </section>
-
-        <!-- =============================================================
-             ONDE ESTAMOS — o estagio do estudio, para quem precisa saber
-             ============================================================= -->
-        <section class="wrap bay" id="onde-estamos" style="padding-top:0">
-            <header class="sec-head">
-                <span class="tag">Onde estamos</span>
-                <h2 class="sec-title">Um estúdio em formação</h2>
+        <section class="wrap page-hero page-hero--split">
+            <div>
+                <a class="back-link" href="index.html">
+                    <svg class="icon">
+                        <use href="#i-arrow-left" />
+                    </svg>
+                    Voltar para a home
+                </a>
+                <span class="tag">Sobre nós</span>
+                <h1>Quatro sócios e um estúdio inteiro dentro de casa</h1>
                 <p class="sec-lead">
-                    Trabalhamos juntos desde maio de 2026. Nesse tempo escrevemos
-                    e publicamos um curso de 21 módulos e concluímos a primeira
-                    turma. A formalização como empresa está em curso.
+                    A ScorpionBits nasceu de um grupo de amigos de faculdade e
+                    virou um estúdio que cria jogos e ensina a criar jogos.
+                    Programação, arte, game design e música: tudo feito por nós.
                 </p>
-            </header>
+                <div class="work-cta" style="margin-top:clamp(1.5rem,3vw,2rem)">
+                    <a class="btn btn--solid btn--lg" href="servicos.html">
+                        Ver os serviços
+                        <svg class="icon">
+                            <use href="#i-arrow-right" />
+                        </svg>
+                    </a>
+                    <a class="btn btn--wire btn--lg" href="jogos.html">Jogar os nossos jogos</a>
+                </div>
+            </div>
 
-            <ul class="regua">
-                <li><b>Time</b> 4 pessoas, 4 frentes</li>
-                <li><b>Curso</b> 21 módulos publicados</li>
-                <li><b>Turma</b> GameLab · SESC Araraquara</li>
-                <li><b>Empresa</b> formalização em curso</li>
+            <div class="page-hero-art" aria-hidden="true">
+                <img src="assets/logo-mark.png" width="437" height="535" alt="">
+            </div>
+
+            <ul class="facts facts--grade" aria-label="Resumo">
+                <li class="hero-stat">
+                    <b>4</b>
+                    <span>sócios</span>
+                </li>
+                <li class="hero-stat">
+                    <b>5</b>
+                    <span>jogos no ar</span>
+                </li>
+                <li class="hero-stat">
+                    <b>3</b>
+                    <span>projetos no forno</span>
+                </li>
+                <li class="hero-stat">
+                    <b>45h</b>
+                    <span>de oficina</span>
+                </li>
             </ul>
         </section>
 
-        <section class="wrap bay" id="estudio" style="padding-top:0">
+        <!-- =============================================================
+             EQUIPE — as pessoas vêm primeiro
+             ============================================================= -->
+        <section class="wrap bay" id="equipe" style="padding-top:0">
+            <header class="sec-head reveal">
+                <span class="tag">Quem faz</span>
+                <h2 class="sec-title" style="margin-top:16px">Nossa equipe</h2>
+                <p class="sec-lead">
+                    Começamos em 6 e hoje somos 4 sócios. Cada um cuida de uma
+                    frente, e todas ficam dentro de casa.
+                </p>
+            </header>
+
+            <div class="grid--team">
+                <article class="member">
+                    <div class="member-avatar">
+                        <img src="assets/equipe/thales-rosto.webp" width="86" height="86"
+                            loading="lazy" decoding="async" alt="Thales Hajes">
+                    </div>
+                    <h3 class="member-name">Thales Hajes</h3>
+                    <p class="member-role">Música & Sound Design</p>
+                    <p class="member-bio">Compõe a trilha sonora e desenha os efeitos, da gravação à mixagem final.</p>
+                    <a class="member-link" href="https://github.com/thalesmiguelhajes" target="_blank" rel="noopener">
+                        <svg class="icon icon--brand">
+                            <use href="#i-github" />
+                        </svg>@thalesmiguelhajes
+                    </a>
+                </article>
+
+                <article class="member">
+                    <div class="member-avatar">
+                        <img src="assets/equipe/giovane-rosto.webp" width="86" height="86" loading="lazy"
+                            decoding="async" alt="Giovane Sotratto">
+                    </div>
+                    <h3 class="member-name">Giovane Sotratto</h3>
+                    <p class="member-role">Programação · Gameplay</p>
+                    <p class="member-bio">Programa controle, câmera e a interação do jogador com o mundo.</p>
+                    <a class="member-link" href="https://github.com/gisotra" target="_blank" rel="noopener">
+                        <svg class="icon icon--brand">
+                            <use href="#i-github" />
+                        </svg>@gisotra
+                    </a>
+                </article>
+
+                <article class="member">
+                    <div class="member-avatar">
+                        <img src="assets/equipe/milan-rosto.webp" width="86" height="86" loading="lazy"
+                            decoding="async" alt="Milan Bahrami">
+                    </div>
+                    <h3 class="member-name">Milan Bahrami</h3>
+                    <p class="member-role">Programação · Sistemas</p>
+                    <p class="member-bio">Programa a arquitetura do projeto: componentes, inventário, progressão e ferramentas internas.</p>
+                    <a class="member-link" href="https://github.com/neverevis" target="_blank" rel="noopener">
+                        <svg class="icon icon--brand">
+                            <use href="#i-github" />
+                        </svg>@neverevis
+                    </a>
+                </article>
+
+                <article class="member">
+                    <div class="member-avatar">
+                        <img src="assets/equipe/christian-rosto.webp" width="86" height="86" loading="lazy"
+                            decoding="async" alt="Christian Amancio">
+                    </div>
+                    <h3 class="member-name">Christian Amancio</h3>
+                    <p class="member-role">Arte · Animação</p>
+                    <p class="member-bio">Leva o conceito até a arte final e anima personagens, inimigos e efeitos.</p>
+                    <a class="member-link" href="https://github.com/gidessu" target="_blank" rel="noopener">
+                        <svg class="icon icon--brand">
+                            <use href="#i-github" />
+                        </svg>@gidessu
+                    </a>
+                </article>
+            </div>
+        </section>
+
+        <!-- =============================================================
+             HISTÓRIA — o estágio do estúdio, para quem precisa saber
+             ============================================================= -->
+        <section class="wrap bay" id="onde-estamos" style="padding-top:0">
+            <div class="story reveal">
+                <div>
+                    <span class="tag">Nossa história</span>
+                    <h2 class="sec-title" style="margin-top:16px">Um estúdio em formação</h2>
+                    <p class="sec-lead">
+                        Trabalhamos juntos desde maio de 2026. Nesse tempo
+                        publicamos nossos primeiros jogos, lançamos um curso
+                        online e concluímos a primeira turma presencial, no
+                        SESC Araraquara.
+                    </p>
+                    <p class="nota-formal">
+                        A formalização da ScorpionBits como empresa está em curso.
+                    </p>
+                </div>
+
+                <div class="work-item">
+                    <ul class="regua" style="margin:0;padding-top:0;border-top:0;max-width:none">
+                        <li><b>Juntos desde</b> Maio de 2026</li>
+                        <li><b>Time</b> Começamos em 6, hoje 4 sócios</li>
+                        <li><b>Primeira turma</b> GameLab · SESC Araraquara</li>
+                        <li><b>Curso online</b> AstroDash · 7 módulos</li>
+                        <li><b>Engine</b> Godot</li>
+                        <li><b>Empresa</b> Formalização em curso</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="wrap bay" id="estudio">
             <header class="sec-head reveal" style="max-width:52ch">
                 <span class="tag">Como trabalhamos</span>
                 <h2 class="sec-title" style="margin-top:16px">Jogo bom é jogo<br>que responde bem</h2>
                 <p class="sec-lead">
-                    Começamos em 6 e hoje somos 4 sócios, construindo os primeiros títulos da casa. Quatro
-                    coisas seguram tudo o que sai daqui.
+                    Quatro coisas seguram tudo o que sai daqui.
                 </p>
             </header>
 
@@ -281,72 +400,8 @@
             </div>
         </section>
 
-        <section class="wrap bay" id="equipe" style="padding-top:0">
-            <header class="sec-head">
-                <h2 class="sec-title">Nossa equipe</h2>
-            </header>
-
-            <div class="grid--team">
-                <article class="member">
-                    <div class="member-avatar">
-                        <img src="assets/equipe/thales-rosto.webp" width="86" height="86"
-                            loading="lazy" decoding="async" alt="Thales Hajes">
-                    </div>
-                    <h3 class="member-name">Thales Hajes</h3>
-                    <p class="member-role">Música & Sound Design</p>
-                    <a class="member-link" href="https://github.com/thalesmiguelhajes" target="_blank" rel="noopener">
-                        <svg class="icon icon--brand">
-                            <use href="#i-github" />
-                        </svg>@thalesmiguelhajes
-                    </a>
-                </article>
-
-                <article class="member">
-                    <div class="member-avatar">
-                        <img src="assets/equipe/giovane-rosto.webp" width="86" height="86" loading="lazy"
-                            decoding="async" alt="Giovane Sotratto">
-                    </div>
-                    <h3 class="member-name">Giovane Sotratto</h3>
-                    <p class="member-role">Programação · Gameplay</p>
-                    <a class="member-link" href="https://github.com/gisotra" target="_blank" rel="noopener">
-                        <svg class="icon icon--brand">
-                            <use href="#i-github" />
-                        </svg>@gisotra
-                    </a>
-                </article>
-
-                <article class="member">
-                    <div class="member-avatar">
-                        <img src="assets/equipe/milan-rosto.webp" width="86" height="86" loading="lazy"
-                            decoding="async" alt="Milan Bahrami">
-                    </div>
-                    <h3 class="member-name">Milan Bahrami</h3>
-                    <p class="member-role">Programação · Sistemas</p>
-                    <a class="member-link" href="https://github.com/neverevis" target="_blank" rel="noopener">
-                        <svg class="icon icon--brand">
-                            <use href="#i-github" />
-                        </svg>@neverevis
-                    </a>
-                </article>
-
-                <article class="member">
-                    <div class="member-avatar">
-                        <img src="assets/equipe/christian-rosto.webp" width="86" height="86" loading="lazy"
-                            decoding="async" alt="Christian Amancio">
-                    </div>
-                    <h3 class="member-name">Christian Amancio</h3>
-                    <p class="member-role">Arte · Animação</p>
-                    <a class="member-link" href="https://github.com/gidessu" target="_blank" rel="noopener">
-                        <svg class="icon icon--brand">
-                            <use href="#i-github" />
-                        </svg>@gidessu
-                    </a>
-                </article>
-            </div>
-        </section>
-
         <section class="wrap bay" id="ferramentas">
-            <header class="sec-head">
+            <header class="sec-head reveal">
                 <span class="tag">Linha de produção</span>
                 <h2 class="sec-title">Ferramentas que usamos</h2>
                 <p class="sec-lead">
@@ -355,7 +410,7 @@
                 </p>
             </header>
 
-            <div class="tool-groups">
+            <div class="tool-groups reveal stagger">
                 <div class="tool-group">
                     <h3>
                         <svg class="icon">
@@ -393,6 +448,70 @@
                         <li>FL Studio</li>
                     </ul>
                 </div>
+            </div>
+        </section>
+
+        <section class="wrap bay" style="padding-top:0">
+            <div class="contact reveal">
+                <div>
+                    <span class="sec-index">Próximo passo</span>
+                    <h2>Vamos fazer algo juntos</h2>
+                    <p>
+                        Tem uma ideia de jogo, precisa de arte ou quer levar uma
+                        oficina para a sua instituição? Conta pra gente.
+                    </p>
+                    <div class="contact-actions">
+                        <a class="btn btn--solid btn--lg" href="solicitar.html">
+                            Solicitar serviço
+                            <svg class="icon">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                        <a class="email-link" href="mailto:scorpionbits.contato@gmail.com">
+                            <svg class="icon icon--lg">
+                                <use href="#i-mail" />
+                            </svg>
+                            scorpionbits.contato@gmail.com
+                        </a>
+                    </div>
+                </div>
+
+                <ul class="social-list">
+                    <li>
+                        <a class="social-link" href="servicos.html">
+                            <svg class="icon">
+                                <use href="#i-code" />
+                            </svg>
+                            O que fazemos
+                            <svg class="icon go">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-link" href="portfolio.html">
+                            <svg class="icon">
+                                <use href="#i-code" />
+                            </svg>
+                            Portfólio completo
+                            <svg class="icon go">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-link" data-brand="instagram" href="https://instagram.com/scorpionbits_"
+                            target="_blank" rel="noopener">
+                            <svg class="icon icon--brand">
+                                <use href="#i-instagram" />
+                            </svg>
+                            Instagram
+                            <svg class="icon go">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </section>
     </main>

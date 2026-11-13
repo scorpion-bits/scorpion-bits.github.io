@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image">
 
     <link rel="icon" href="assets/favicon.png" type="image/png">
-    <link rel="stylesheet" href="css/style.css?v=94">
+    <link rel="stylesheet" href="css/style.css?v=97">
     <script>
         /* Modo leve: decidido antes da primeira pintura. Níveis: 1 = sem os
            efeitos decorativos; 2 = também sem o vídeo do mascote. Vem de
@@ -175,24 +175,54 @@
     </header>
 
     <main id="conteudo">
-        <section class="wrap page-hero">
-            <a class="back-link" href="index.html">
-                <svg class="icon">
-                    <use href="#i-arrow-left" />
-                </svg>
-                Voltar para a home
-            </a>
-            <span class="tag">Portfólio</span>
-            <h1>Jogos no ar e jogos no forno</h1>
-            <p class="sec-lead">
-                Somos um estúdio novo, mas já temos jogo no ar. Nada aqui é
-                vaporware: este é o estado real de cada projeto, do que dá para
-                jogar hoje ao que ainda é conceito.
-            </p>
+        <section class="wrap page-hero page-hero--split">
+            <div>
+                <a class="back-link" href="index.html">
+                    <svg class="icon">
+                        <use href="#i-arrow-left" />
+                    </svg>
+                    Voltar para a home
+                </a>
+                <span class="tag">Portfólio</span>
+                <h1>Jogos que já saíram do papel</h1>
+                <p class="sec-lead">
+                    Cinco jogos no ar, todos de graça, e três em produção. Este é
+                    o estado real de cada projeto, do que dá para jogar hoje ao
+                    que ainda é conceito.
+                </p>
+                <div class="work-cta" style="margin-top:clamp(1.5rem,3vw,2rem)">
+                    <a class="btn btn--solid btn--lg" href="#no-ar">
+                        Jogar agora
+                        <svg class="icon">
+                            <use href="#i-arrow-right" />
+                        </svg>
+                    </a>
+                    <a class="btn btn--wire btn--lg" href="servicos.html">Contratar o estúdio</a>
+                </div>
+            </div>
+
+            <div class="mosaic">
+                <a class="mosaic-tile" href="#tirania" aria-label="Ver Tirania">
+                    <img src="assets/projetos/tirania.webp" width="1440" height="810" alt="" decoding="async">
+                    <span>Tirania</span>
+                </a>
+                <a class="mosaic-tile" href="#astrodash" aria-label="Ver AstroDash">
+                    <img src="assets/projetos/astrodash.webp" width="1440" height="810" alt="" decoding="async">
+                    <span>AstroDash</span>
+                </a>
+                <a class="mosaic-tile" href="#idle-bits" aria-label="Ver Idle Bits">
+                    <img src="assets/projetos/idle.webp" width="1440" height="810" alt="" decoding="async">
+                    <span>Idle Bits</span>
+                </a>
+                <a class="mosaic-tile" href="#loja-do-aventureiro" aria-label="Ver Loja do Aventureiro">
+                    <img src="assets/projetos/loja.webp" width="1440" height="810" alt="" decoding="async">
+                    <span>Loja do Aventureiro</span>
+                </a>
+            </div>
 
             <ul class="facts facts--grade" aria-label="Resumo">
                 <li class="hero-stat">
-                    <b>2</b>
+                    <b>5</b>
                     <span>jogos no ar</span>
                 </li>
                 <li class="hero-stat">
@@ -201,11 +231,11 @@
                 </li>
                 <li class="hero-stat">
                     <b>4</b>
-                    <span>pessoas no time</span>
+                    <span>sócios</span>
                 </li>
                 <li class="hero-stat">
                     <b>45h</b>
-                    <span>de curso ministradas</span>
+                    <span>de oficina</span>
                 </li>
             </ul>
         </section>
@@ -217,11 +247,11 @@
             <header class="sec-head reveal">
                 <span class="tag">No ar</span>
                 <h2 class="sec-title">Dá para jogar agora</h2>
-                <p class="sec-lead">Dois estão no itch.io e um roda direto aqui no site. Todos de graça.</p>
+                <p class="sec-lead">Três rodam direto aqui no site e dois estão no itch.io. Todos de graça.</p>
             </header>
 
             <div class="games games--stack reveal stagger">
-                <article class="work-item game game--feature">
+                <article class="work-item game game--feature" id="tirania">
                     <div class="game-cover">
                         <img src="assets/projetos/tirania.webp" width="1023" height="604"
                             loading="lazy" decoding="async"
@@ -249,7 +279,7 @@
                         </ul>
                         <div class="game-actions">
                             <a class="btn btn--solid" href="https://scorpionbits.itch.io/tirania" target="_blank" rel="noopener">
-                                Jogar no itch.io
+                                Jogar agora
                                 <svg class="icon">
                                     <use href="#i-external" />
                                 </svg>
@@ -264,7 +294,7 @@
                     </div>
                 </article>
 
-                <article class="work-item game game--feature">
+                <article class="work-item game game--feature game--flip" id="astrodash">
                     <div class="game-cover">
                         <img src="assets/projetos/astrodash.webp" width="1440" height="810"
                             loading="lazy" decoding="async"
@@ -290,7 +320,7 @@
                         </ul>
                         <div class="game-actions">
                             <a class="btn btn--solid" href="https://scorpionbits.itch.io/astrodash" target="_blank" rel="noopener">
-                                Jogar no itch.io
+                                Jogar agora
                                 <svg class="icon">
                                     <use href="#i-external" />
                                 </svg>
@@ -299,7 +329,7 @@
                     </div>
                 </article>
 
-                <article class="work-item game game--feature">
+                <article class="work-item game game--feature" id="idle-bits">
                     <div class="game-cover">
                         <img src="assets/projetos/idle.webp" width="1440" height="810"
                             loading="lazy" decoding="async"
@@ -334,6 +364,61 @@
                             </a>
                             <a class="link-arrow" href="https://github.com/scorpion-bits/idle-game-scorpion" target="_blank" rel="noopener">
                                 Código no GitHub
+                                <svg class="icon">
+                                    <use href="#i-arrow-right" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="games reveal stagger" style="margin-top:clamp(1rem,2.5vw,1.5rem)">
+                <article class="work-item game" id="loja-do-aventureiro">
+                    <div class="game-cover">
+                        <img src="assets/projetos/loja.webp" width="1440" height="810"
+                            loading="lazy" decoding="async"
+                            alt="Loja do Aventureiro em jogo: prateleiras com poções, armas e armaduras, uma maga estudante no balcão esperando o atendimento e os três preços para escolher: barato, justo e caro.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--live">No ar</span>
+                        <h3>Loja do Aventureiro</h3>
+                        <p>Gerencie uma loja de aventureiros: defina preços, produza itens e atenda clientes lendários.</p>
+                        <ul class="tool-list" aria-label="Plataformas">
+                            <li>Navegador</li>
+                            <li>Computador</li>
+                            <li>Celular</li>
+                            <li>Grátis</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="btn btn--solid" href="loja/">
+                                Jogar agora
+                                <svg class="icon">
+                                    <use href="#i-arrow-right" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="work-item game" id="rabo-de-cubos">
+                    <div class="game-cover">
+                        <img src="assets/projetos/rabo-de-cubos.webp" width="1440" height="810"
+                            loading="lazy" decoding="async"
+                            alt="Rabo de Cubos em jogo: uma cauda longa de cubos azuis, do azul-claro ao violeta, serpenteia no meio do tabuleiro isométrico, com um cubo vermelho brilhante no canto.">
+                    </div>
+                    <div class="game-body">
+                        <span class="pill pill--live">No ar</span>
+                        <h3>Rabo de Cubos</h3>
+                        <p>O jogo da cobrinha em visual isométrico: você é o escorpião da ScorpionBits e cada bit vira um cubo na cauda.</p>
+                        <ul class="tool-list" aria-label="Plataformas">
+                            <li>Navegador</li>
+                            <li>Computador</li>
+                            <li>Celular</li>
+                            <li>Grátis</li>
+                        </ul>
+                        <div class="game-actions">
+                            <a class="btn btn--solid" href="jogos.html#rabo-de-cubos">
+                                Jogar agora
                                 <svg class="icon">
                                     <use href="#i-arrow-right" />
                                 </svg>
@@ -444,40 +529,121 @@
              ENSINO — a prova de entrega mais forte do estúdio hoje
              ============================================================= -->
         <section class="wrap bay" id="ensino" style="padding-top:0">
-            <header class="sec-head reveal">
-                <span class="tag">Ensino</span>
-                <h2 class="sec-title">GameLab no SESC Araraquara</h2>
-                <p class="sec-lead">
-                    Organizamos e ministramos a primeira turma, de 4 de agosto a 22
-                    de setembro de 2026, com plano de ensino e material próprios.
-                </p>
-            </header>
+            <div class="story story--foto reveal">
+                <figure class="story-foto">
+                    <img src="assets/gamelab/aula-godot.webp" width="1280" height="721" loading="lazy" decoding="async"
+                        alt="Aula do GameLab no SESC Araraquara: o instrutor apresenta o slide Por quê o Godot? para a turma sentada com notebooks.">
+                </figure>
 
-            <div class="reveal">
-                <ul class="facts" style="margin-top:0" aria-label="Números do GameLab">
-                    <li class="hero-stat">
-                        <b>45h</b>
-                        <span>em 15 aulas de 3h</span>
-                    </li>
-                    <li class="hero-stat">
-                        <b>17</b>
-                        <span>alunos simultâneos</span>
-                    </li>
-                    <li class="hero-stat">
-                        <b>13/13</b>
-                        <span>respondentes fariam outra edição</span>
-                    </li>
-                </ul>
+                <div>
+                    <span class="tag">Ensino</span>
+                    <h2 class="sec-title" style="margin-top:16px">GameLab no SESC Araraquara</h2>
+                    <p class="sec-lead">
+                        Organizamos e ministramos a primeira turma, de 4 de agosto
+                        a 22 de setembro de 2026, com plano de ensino e material
+                        próprios. A turma criou e publicou o Tirania.
+                    </p>
 
-                <p class="nota" style="margin-top:1.5rem">
-                    A pesquisa de satisfação teve 13 respostas entre os 17 alunos. O
-                    pedido mais comum foi mais tempo de curso.
-                </p>
+                    <ul class="facts" aria-label="Números do GameLab">
+                        <li class="hero-stat">
+                            <b>45h</b>
+                            <span>em 15 aulas de 3h</span>
+                        </li>
+                        <li class="hero-stat">
+                            <b>17</b>
+                            <span>alunos simultâneos</span>
+                        </li>
+                        <li class="hero-stat">
+                            <b>13/13</b>
+                            <span>respondentes fariam outra edição</span>
+                        </li>
+                    </ul>
 
-                <div class="work-cta" style="margin-top:0">
-                    <a class="btn btn--wire" href="index.html#curso">Ver os cursos</a>
+                    <p class="nota" style="margin-top:1.5rem">
+                        A pesquisa de satisfação teve 13 respostas entre os 17
+                        alunos. O pedido mais comum foi mais tempo de curso.
+                    </p>
+
+                    <div class="work-cta" style="margin-top:0">
+                        <a class="btn btn--solid" href="solicitar.html?servico=oficinas">
+                            Levar para a minha instituição
+                            <svg class="icon">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                        <a class="btn btn--wire" href="index.html#curso">Ver os cursos</a>
+                    </div>
                 </div>
             </div>
+            <!-- fotos do GameLab: para trocar ou acrescentar, salve em assets/gamelab/ (WebP) -->
+            <ul class="fotos reveal stagger" aria-label="Fotos do GameLab">
+                <li>
+                    <img src="assets/gamelab/aula-pixel-art.webp" width="800" height="1421" loading="lazy" decoding="async"
+                        style="object-position:50% 62%"
+                        alt="Aula de pixel art: a turma acompanha nos notebooks o desenho de uma espada projetado na parede.">
+                </li>
+                <li>
+                    <img src="assets/gamelab/aula-programacao.webp" width="800" height="1421" loading="lazy" decoding="async"
+                        style="object-position:50% 42%"
+                        alt="Aula de introdução à programação, vista do fundo da sala: o slide Sintaxe: comentários projetado na parede.">
+                </li>
+                <li>
+                    <img src="assets/game-lab-turma.jpg" width="1200" height="900" loading="lazy" decoding="async"
+                        alt="Foto de grupo da turma do GameLab no fim do primeiro encontro, no SESC Araraquara.">
+                </li>
+            </ul>
+        </section>
+
+        <!-- =============================================================
+             IFSP — minicurso e palestra. Fotos em assets/ifsp/ (WebP).
+             ============================================================= -->
+        <section class="wrap bay" id="ifsp" style="padding-top:0">
+            <div class="story reveal">
+                <div>
+                    <span class="tag">Ensino</span>
+                    <h2 class="sec-title" style="margin-top:16px">Minicurso e palestra no IFSP Araraquara</h2>
+                    <p class="sec-lead">
+                        Na Semana da Informática do IFSP Araraquara, demos um
+                        minicurso em que a turma criou do zero, em Godot, o
+                        AstroDash, e uma palestra sobre o mercado de jogos no
+                        Brasil, no auditório do campus.
+                    </p>
+
+                    <ul class="regua" style="margin-top:clamp(1.5rem,3vw,2rem)">
+                        <li><b>Quando</b> Outubro de 2026</li>
+                        <li><b>Minicurso</b> 2 aulas · Godot 4.7</li>
+                        <li><b>Jogo criado</b> AstroDash</li>
+                        <li><b>Palestra</b> Mercado de jogos no Brasil</li>
+                    </ul>
+
+                    <div class="work-cta" style="margin-top:0">
+                        <a class="btn btn--solid" href="solicitar.html?servico=oficinas">
+                            Levar para a minha instituição
+                            <svg class="icon">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                        <a class="btn btn--wire" href="https://learn.scorpionbits.com/cursos/astrodash?utm_source=site&amp;utm_medium=referral&amp;utm_campaign=site_scorpionbits&amp;utm_content=portfolio">Curso online AstroDash</a>
+                    </div>
+                </div>
+
+                <figure class="story-foto">
+                    <img src="assets/ifsp/palestra-palco.webp" width="1280" height="721" loading="lazy" decoding="async"
+                        alt="Palestra da ScorpionBits sobre o mercado de jogos no Brasil, no auditório do IFSP Araraquara: o palestrante no palco, com um slide projetado, diante da plateia.">
+                </figure>
+            </div>
+
+            <ul class="fotos fotos--duo reveal stagger" aria-label="Fotos no IFSP Araraquara">
+                <li>
+                    <img src="assets/ifsp/palestra-plateia.webp" width="1280" height="721" loading="lazy" decoding="async"
+                        alt="O auditório do IFSP Araraquara cheio durante a palestra, visto do fundo da plateia.">
+                </li>
+                <li>
+                    <img src="assets/ifsp/minicurso-laboratorio.webp" width="1280" height="960" loading="lazy" decoding="async"
+                        style="object-position:50% 78%"
+                        alt="Minicurso no laboratório de informática do IFSP Araraquara: a turma acompanha a aula nos computadores, com a sala à meia-luz.">
+                </li>
+            </ul>
         </section>
 
         <!-- =============================================================
@@ -489,16 +655,24 @@
                     <span class="sec-index">Próximo passo</span>
                     <h2>Vamos conversar</h2>
                     <p>
-                        Publicadora, instituição de ensino, agência ou parceiro:
-                        conta o que você procura e a gente volta com um plano.
+                        Gostou do que viu? Conta o que você procura e a gente
+                        volta com uma proposta.
                     </p>
 
-                    <a class="email-link" href="mailto:scorpionbits.contato@gmail.com">
-                        <svg class="icon icon--lg">
-                            <use href="#i-mail" />
-                        </svg>
-                        scorpionbits.contato@gmail.com
-                    </a>
+                    <div class="contact-actions">
+                        <a class="btn btn--solid btn--lg" href="solicitar.html">
+                            Solicitar serviço
+                            <svg class="icon">
+                                <use href="#i-arrow-right" />
+                            </svg>
+                        </a>
+                        <a class="email-link" href="mailto:scorpionbits.contato@gmail.com">
+                            <svg class="icon icon--lg">
+                                <use href="#i-mail" />
+                            </svg>
+                            scorpionbits.contato@gmail.com
+                        </a>
+                    </div>
                 </div>
 
                 <ul class="social-list">
