@@ -3790,6 +3790,14 @@ a.hero-play {
     transform: scale(1.04);
 }
 
+.fotos--duo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fotos--duo img {
+    aspect-ratio: 16 / 9;
+}
+
 @media (max-width: 700px) {
     .fotos {
         grid-template-columns: 1fr;
